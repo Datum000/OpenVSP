@@ -602,6 +602,65 @@ void NameValData::ReRegisterNestedCollections()
         attrCollPtr->SetCollAttach( m_ID, vsp::ATTROBJ_ATTR );
     }
 }
+string NameValData::GetAsString()
+{
+    char str[255];
+    string outstring;
+
+    switch ( m_Type ){
+        case vsp::INVALID_TYPE:
+            outstring = "invalid";
+            break;
+        case vsp::INT_DATA:
+            for ( unsigned int i = 0; i < m_IntData.size(); i++ )
+            {
+                snprintf( str, sizeof( str ), "%d ", m_IntData[i] );
+                outstring.append( str );
+            }
+            break;
+        case vsp::DOUBLE_DATA:
+            for ( unsigned int i = 0; i < m_DoubleData.size(); i++ )
+            {
+                snprintf( str, sizeof( str ), "%.*e ", DBL_DIG + 3, m_DoubleData[i] );
+                outstring.append( str );
+            }
+            break;
+        case vsp::STRING_DATA:
+            for ( unsigned int i = 0; i < m_StringData.size(); i++ )
+            {
+                outstring.append( m_StringData[i] + " " );
+            }
+            break;
+        case vsp::VEC3D_DATA:
+            for ( unsigned int i = 0; i < m_Vec3dData.size(); i++ )
+            {
+                snprintf( str, sizeof( str ), "%.*e,%.*e,%.*e ", DBL_DIG + 3, m_Vec3dData[i].x(), DBL_DIG + 3, m_Vec3dData[i].y(), DBL_DIG + 3, m_Vec3dData[i].z() );
+                outstring.append( str );
+            }
+            break;
+        case vsp::DOUBLE_MATRIX_DATA:
+            for ( unsigned int row = 0; row < m_DoubleMatData.size(); row++ )
+            {
+                for ( unsigned int col = 0; col < m_DoubleMatData[row].size(); col++ )
+                {
+                    snprintf( str, sizeof( str ), "%.*e ", DBL_DIG + 3, m_DoubleMatData[row][col] );
+                    outstring.append( str );
+                }
+                if ( row < m_DoubleMatData.size() - 1 )
+                {
+                    snprintf( str, sizeof( str ), "\n\t\t%-20s \t\t \t", "");
+                    outstring.append( str );
+                }
+            }
+            break;
+        default:
+            outstring = "unknown";
+            break;
+    }
+
+    return outstring;
+}
+
 
 //==== Update Attachment IDs ====//
 
