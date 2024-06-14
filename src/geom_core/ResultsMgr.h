@@ -101,6 +101,26 @@ public:
     {
         return m_AttributeCollectionData;
     }
+    vector<int> & GetIntData()
+    {
+        return m_IntData;
+    }
+    vector<double> & GetDoubleData()
+    {
+        return m_DoubleData;
+    }
+    vector<string> & GetStringData()
+    {
+        return m_StringData;
+    }
+    vector<vec3d> & GetVec3dData()
+    {
+        return m_Vec3dData;
+    }
+    vector< vector< double > > & GetDoubleMatData()
+    {
+        return m_DoubleMatData;
+    }
 
     bool GetBool( int index ) const;
     int GetInt( int index ) const;
