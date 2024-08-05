@@ -747,6 +747,7 @@ GeomScreen::GeomScreen( ScreenMgr* mgr, int w, int h, const string & title, cons
     static int col_widths[] = { m_SubSurfLayout.GetW() / 2, m_SubSurfLayout.GetW() / 3, m_SubSurfLayout.GetW() / 6, 0 }; // 3 columns
 
     int browser_h = 100;
+
     m_SubSurfBrowser = m_SubSurfLayout.AddColResizeBrowser( col_widths, 3, browser_h );
     m_SubSurfBrowser->callback( staticScreenCB, this );
 
@@ -1714,6 +1715,11 @@ void GeomScreen::GuiDeviceCallBack( GuiDevice* device )
     }
 
     m_AttributeEditor.GuiDeviceCallBack( device );
+    m_SSLineAttrEditor.GuiDeviceCallBack( device );
+    m_SSRecAttrEditor.GuiDeviceCallBack( device );
+    m_SSEllAttrEditor.GuiDeviceCallBack( device );
+    m_SSConAttrEditor.GuiDeviceCallBack( device );
+    m_SSFLineAttrEditor.GuiDeviceCallBack( device );
 
     m_ScreenMgr->SetUpdateFlag( true );
 }
@@ -1771,6 +1777,11 @@ void GeomScreen::CallBack( Fl_Widget *w )
 
     //forward Fl_widget to attribute editor callback
     m_AttributeEditor.DeviceCB( w );
+    m_SSLineAttrEditor.DeviceCB( w );
+    m_SSRecAttrEditor.DeviceCB( w );
+    m_SSEllAttrEditor.DeviceCB( w );
+    m_SSConAttrEditor.DeviceCB( w );
+    m_SSFLineAttrEditor.DeviceCB( w );
 
     m_ScreenMgr->SetUpdateFlag( true );
 }

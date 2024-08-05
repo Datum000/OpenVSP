@@ -381,6 +381,7 @@ public:
     ToggleButton m_SSLine01Toggle;
     ToggleButton m_SSLine0NToggle;
     ToggleRadioGroup m_SSLineScaleToggleGroup;
+    AttributeEditor m_SSLineAttrEditor;
 
     // SS_Rectangle
     GroupLayout m_SSRecGroup;
@@ -392,6 +393,7 @@ public:
     ToggleButton m_SSRecInsideButton;
     ToggleButton m_SSRecOutsideButton;
     ToggleRadioGroup m_SSRecTestToggleGroup;
+    AttributeEditor m_SSRecAttrEditor;
 
     // SS_Ellipse
     GroupLayout m_SSEllGroup;
@@ -404,6 +406,7 @@ public:
     ToggleButton m_SSEllInsideButton;
     ToggleButton m_SSEllOutsideButton;
     ToggleRadioGroup m_SSEllTestToggleGroup;
+    AttributeEditor m_SSEllAttrEditor;
 
     // SS_Control
     GroupLayout m_SSConGroup;
@@ -440,12 +443,15 @@ public:
 
     SliderAdjRangeInput m_SSConTessSlider;
 
+    AttributeEditor m_SSConAttrEditor;
+
     // SS_FiniteLine
     GroupLayout m_SSFLineGroup;
     SliderAdjRangeInput m_SSFLineUStartSlider;
     SliderAdjRangeInput m_SSFLineUEndSlider;
     SliderAdjRangeInput m_SSFLineWStartSlider;
     SliderAdjRangeInput m_SSFLineWEndSlider;
+    AttributeEditor m_SSFLineAttrEditor;
 
     //======Mass Prop Tab=====//
     int m_MassPropTab_ind;
