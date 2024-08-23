@@ -65,7 +65,9 @@ public:
     void RemoveParmContainer( ParmContainer* parm_container_ptr );
 
     Parm* FindParm( const string & id );
+    vector < Parm* > GetAllParmPtrs();
     ParmContainer* FindParmContainer( const string & id );
+    vector < ParmContainer* > GetAllParmContainerPtrs();
 
     bool ValidateParmMap();
     bool ValidateParmContainerMap();
@@ -92,6 +94,7 @@ public:
 
     bool GetDirtyFlag()                     { return m_DirtyFlag; }
     void SetDirtyFlag( bool flag )          { m_DirtyFlag = flag; }
+
 
 };
 

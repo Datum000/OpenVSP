@@ -233,8 +233,6 @@ void ParmScreen::Show()
         TabScreen::Show();
         m_AttributeEditor.Show();
     }
-    //refresh entry fields to clean when opening a new tab/window
-    m_AttributeEditor.ClearAttrInputs();
 }
 
 //==== Hide Screen ====//
