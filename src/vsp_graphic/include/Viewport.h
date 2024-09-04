@@ -11,6 +11,7 @@ namespace VSPGraphic
 class TextMgr;
 class Camera;
 class Background;
+class Watermark;
 
 /*!
 * Viewport Class.
@@ -65,6 +66,10 @@ public:
     * Draw Background.
     */
     virtual void drawBackground();
+    /*!
+    * Draw Watermark.
+    */
+    virtual void drawWatermark();
 
 public:
     /*!
@@ -77,6 +82,12 @@ public:
     Background * getBackground();
 
     virtual void clearBackground();
+    /*!
+    * Get Watermark object of this Viewport.
+    */
+    Watermark * getWatermark();
+
+    virtual void clearWatermark();
     virtual void clearFont();
 
 public:
@@ -164,6 +175,7 @@ private:
     bool _showBorders;
     bool _showArrows;
     bool _showGrid;
+    bool _showWatermark;
 
     float _screenSizeDiffRatio;
 
@@ -172,6 +184,8 @@ private:
 
     Camera* _camera;
     Background * _background;
+
+    Watermark * _watermark;
 
     TextMgr * _textMgr;
 };
