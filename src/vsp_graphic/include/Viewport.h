@@ -157,6 +157,12 @@ public:
     void showGridOverlay( bool showFlag );
 
     /*
+    * Show / hide watermark.
+    * Hide on default.
+    */
+    void showWatermark( bool showFlag );
+
+    /*
     * Define Values for Grid Overlay
     * -5 to +5 spacing on default.
     */

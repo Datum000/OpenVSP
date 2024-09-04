@@ -419,6 +419,11 @@ void Viewport::showGridOverlay( bool showFlag )
     _showGrid = showFlag;
 }
 
+void Viewport::showWatermark( bool showFlag )
+{
+    _showWatermark = showFlag;
+}
+
 glm::vec3 Viewport::screenToWorld( const glm::vec2 &screenCoord)
 {
     return glm::unProject(glm::vec3(screenCoord, 0.5), 
