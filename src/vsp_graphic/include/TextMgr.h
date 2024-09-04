@@ -29,6 +29,8 @@ public:
 
     virtual void clearFont();
 
+    static double getBaseScale();
+
     /*!
     * Load font from file and return the font object.
     */

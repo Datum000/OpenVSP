@@ -32,6 +32,11 @@ namespace VSPGraphic
         }
     }
 
+    double TextMgr::getBaseScale()
+    {
+        return FONT_BASE_SCALE;
+    }
+
     GLFont * TextMgr::loadFont()
     {
         // We only want to generate a font (texture) once.
