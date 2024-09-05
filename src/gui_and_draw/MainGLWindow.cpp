@@ -54,6 +54,7 @@
 #include "Vehicle.h"
 #include "VehicleMgr.h"
 #include "Viewport.h"
+#include "Watermark.h"
 #include "VSPAEROScreen.h"
 #include "WaveDragScreen.h"
 
@@ -280,6 +281,41 @@ void VspGlWindow::update()
 
                 camera->setZNearFar( zn, zf );
             }
+
+            if ( AttributeMgr.GetDirtyFlag( vsp::ATTR_GROUP_WATERMARK ) )
+            {
+                AttributeMgr.ClearDirtyFlag( vsp::ATTR_GROUP_WATERMARK );
+
+                VSPGraphic::Viewport *vp = display->getViewport();
+                AttributeCollection* ac = vPtr->GetAttrCollection();
+                AttributeCollection* wm_ac = ac->FindPtr( "VSP::WatermarkGroup", 0 )->GetAttributeCollectionPtr( 0 );
+                if ( vp && wm_ac )
+                {
+                    VSPGraphic::Watermark * wm = display->getViewport()->getWatermark();
+
+                    if ( wm )
+                    {
+                        display->getViewport()->showWatermark( wm_ac->FindPtr( "VSP::Flag", 0 )->GetBool( 0 ) );
+
+                        wm->setText( wm_ac->FindPtr("VSP::Text", 0)->GetString(0) );
+
+                        wm->setTextScale( wm_ac->FindPtr( "VSP::TextScale", 0 )->GetDouble( 0 ) );
+
+                        vec3d tc = wm_ac->FindPtr( "VSP::TextColor", 0 )->GetVec3d( 0 );
+                        double ta = wm_ac->FindPtr( "VSP::TextAlpha", 0 )->GetDouble( 0 );
+                        wm->setTextColor( tc.x(), tc.y(), tc.z(), ta );
+
+                        vec3d bc = wm_ac->FindPtr( "VSP::BoxColor", 0 )->GetVec3d( 0 );
+                        double ba = wm_ac->FindPtr( "VSP::BoxAlpha", 0 )->GetDouble( 0 );
+                        wm->setLineColor( bc.x(), bc.y(), bc.z(), ba );
+
+                        vec3d fc = wm_ac->FindPtr( "VSP::FillColor", 0 )->GetVec3d( 0 );
+                        double fa = wm_ac->FindPtr( "VSP::FillAlpha", 0 )->GetDouble( 0 );
+                        wm->setFillColor( fc.x(), fc.y(), fc.z(), fa );
+                    }
+                }
+            }
+
         }
 
         vector<DrawObj *> drawObjs;
