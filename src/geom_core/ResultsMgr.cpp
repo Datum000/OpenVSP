@@ -111,6 +111,13 @@ NameValData::NameValData( const string & name, const vector< vec3d > & v_data, c
     m_Doc = doc;
 }
 
+NameValData::NameValData( const string &name, const vector< vector< int > > &imat_data, const string & doc )
+{
+    Init( name, vsp::INT_MATRIX_DATA );
+    m_IntMatData = imat_data;
+    m_Doc = doc;
+}
+
 NameValData::NameValData( const string &name, const vector< vector< double > > &dmat_data, const string & doc )
 {
     Init( name, vsp::DOUBLE_MATRIX_DATA );
@@ -180,6 +187,10 @@ string NameValData::GetTypeName( int type, bool capitalize, bool short_name )
             string_long = "vec3d";
             string_mini = "vec3d";
             break;
+        case vsp::INT_MATRIX_DATA:
+            string_long = "int matrix";
+            string_mini = "imat";
+            break;
         case vsp::DOUBLE_MATRIX_DATA:
             string_long = "double matrix";
             string_mini = "dmat";
@@ -236,6 +247,18 @@ int NameValData::GetInt( int i ) const
     if ( i >= 0 && i < ( int )m_IntData.size() )
     {
         return m_IntData[i];
+    }
+    return 0;
+}
+
+int NameValData::GetInt( int row, int col ) const
+{
+    if ( row >= 0 && row < ( int )m_IntMatData.size() )
+    {
+        if ( col >= 0 && col < ( int )m_IntMatData[row].size() )
+        {
+            return m_IntMatData[row][col];
+        }
     }
     return 0;
 }
@@ -403,9 +426,56 @@ void NameValData::EncodeXml( xmlNodePtr & node )
     {
         XmlUtil::AddVectorVec3dNode( dnode, "Vec3dData", GetVec3dData() );
     }
+    else if ( m_Type == vsp::INT_MATRIX_DATA )
+    {
+        int nrow = 0;
+        int ncol = 0;
+
+        nrow = m_IntMatData.size();
+        if ( nrow )
+        {
+            ncol = m_IntMatData[0].size();
+        }
+
+        std::vector < int > flatIntMatData;
+
+        for ( int i = 0; i != m_IntMatData.size(); ++i )
+        {
+            for ( int j = 0; j != m_IntMatData[i].size(); ++j )
+            {
+                flatIntMatData.push_back( m_IntMatData[i][j] );
+            }
+        }
+
+        XmlUtil::SetIntProp( dnode, "Rows", nrow );
+        XmlUtil::SetIntProp( dnode, "Cols", ncol );
+        XmlUtil::AddVectorIntNode( dnode, "IntMatData", flatIntMatData );
+    }
     else if ( m_Type == vsp::DOUBLE_MATRIX_DATA )
     {
-        // XmlUtil::SetIntProp( dnode, "IntData", m_IntData );
+        int nrow = 0;
+        int ncol = 0;
+
+        nrow = m_DoubleMatData.size();
+        if ( nrow )
+        {
+            ncol = m_DoubleMatData[0].size();
+        }
+
+        std::vector < double > flatDblMatData;
+
+        for ( int i = 0; i != m_DoubleMatData.size(); ++i )
+        {
+            for ( int j = 0; j != m_DoubleMatData[i].size(); ++j )
+            {
+                flatDblMatData.push_back( m_DoubleMatData[i][j] );
+            }
+        }
+
+        XmlUtil::SetIntProp( dnode, "Rows", nrow );
+        XmlUtil::SetIntProp( dnode, "Cols", ncol );
+        XmlUtil::AddVectorDoubleNode( dnode, "DoubleMatData", flatDblMatData );
+
     }
     else if ( m_Type == vsp::ATTR_COLLECTION_DATA )
     {
@@ -472,9 +542,49 @@ void NameValData::DecodeXml( xmlNodePtr & node, vector < string > name_vector )
             xmlNodePtr vec3dNode = XmlUtil::GetNode( node, attrXmlName.c_str(), 0 );
             m_Vec3dData = XmlUtil::GetVectorVec3dNode( vec3dNode );
         }
+        else if ( m_Type == vsp::INT_MATRIX_DATA )
+        {
+            int nrow = XmlUtil::FindIntProp( node, "Rows", default_int );
+            int ncol = XmlUtil::FindIntProp( node, "Cols", default_int );
+
+            std::vector < int > flatMatData;
+            std::vector < std::vector < int > > matData;
+
+            flatMatData = XmlUtil::ExtractVectorIntNode( node, "IntMatData" );
+
+            int k = 0;
+            for ( int i = 0; i != nrow; ++i )
+            {
+                matData.push_back( {} );
+                for ( int j = 0; j != ncol; ++j )
+                {
+                    matData[i].push_back( flatMatData[k] );
+                    ++k;
+                }
+            }
+            m_IntMatData = matData;
+        }
         else if ( m_Type == vsp::DOUBLE_MATRIX_DATA )
         {
+            int nrow = XmlUtil::FindIntProp( node, "Rows", default_int );
+            int ncol = XmlUtil::FindIntProp( node, "Cols", default_int );
 
+            std::vector < double > flatMatData;
+            std::vector < std::vector < double > > matData;
+
+            flatMatData = XmlUtil::ExtractVectorDoubleNode( node, "DoubleMatData" );
+
+            int k = 0;
+            for ( int i = 0; i != nrow; ++i )
+            {
+                matData.push_back( {} );
+                for ( int j = 0; j != ncol; ++j )
+                {
+                    matData[i].push_back( flatMatData[k] );
+                    ++k;
+                }
+            }
+            m_DoubleMatData = matData;
         }
         else if ( m_Type == vsp::ATTR_COLLECTION_DATA )
         {

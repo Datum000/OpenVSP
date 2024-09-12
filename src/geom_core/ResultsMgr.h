@@ -45,6 +45,7 @@ public:
     NameValData( const string & name, const vector< double > & d_data, const string & doc );
     NameValData( const string & name, const vector< string > & s_data, const string & doc );
     NameValData( const string & name, const vector< vec3d > & v_data, const string & doc );
+    NameValData( const string & name, const vector< vector< int > > &imat_data, const string & doc );
     NameValData( const string & name, const vector< vector< double > > &dmat_data, const string & doc );
     NameValData( const string & name, const vector< NameValCollection > &c_data, const string & doc );
     NameValData( const string & name, const vector< AttributeCollection > &c_data, const string & doc );
@@ -89,6 +90,10 @@ public:
     {
         return m_Vec3dData;
     }
+    const vector< vector< int > > & GetIntMatData() const
+    {
+        return m_IntMatData;
+    }
     const vector< vector< double > > & GetDoubleMatData() const
     {
         return m_DoubleMatData;
@@ -121,6 +126,10 @@ public:
     {
         return m_Vec3dData;
     }
+    vector< vector< int > > & GetIntMatData()
+    {
+        return m_IntMatData;
+    }
     vector< vector< double > > & GetDoubleMatData()
     {
         return m_DoubleMatData;
@@ -128,6 +137,7 @@ public:
 
     bool GetBool( int index ) const;
     int GetInt( int index ) const;
+    int GetInt( int row, int col ) const;
     double GetDouble( int index ) const;
     double GetDouble( int row, int col ) const;
     string GetString( int index ) const;
@@ -163,6 +173,11 @@ public:
     void SetVec3dData( const vector< vec3d > & d )
     {
         m_Vec3dData = d;
+    }
+
+    void SetIntMatData( const vector< vector< int > > & i )
+    {
+        m_IntMatData = i;
     }
 
     void SetDoubleMatData( const vector< vector< double > > & d )
@@ -235,6 +250,7 @@ protected:
     vector< double > m_DoubleData;
     vector< string > m_StringData;
     vector< vec3d > m_Vec3dData;
+    vector< vector< int > >  m_IntMatData;
     vector< vector< double > >  m_DoubleMatData;
     vector< NameValCollection > m_NameValCollectionData;
     vector< AttributeCollection > m_AttributeCollectionData;
