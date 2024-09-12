@@ -1352,6 +1352,21 @@ void Results::WriteCSVFile( FILE* fid )
                         fprintf( fid, ",%.*e", DBL_DIG + 3, iter->second[i].GetDoubleData()[d] );
                     }
                 }
+                else if ( iter->second[i].GetType() == vsp::INT_MATRIX_DATA )
+                {
+                    vector< vector< int > > current_int_mat_val = iter->second[i].GetIntMatData();
+                    for ( unsigned int row = 0; row < current_int_mat_val.size(); row++ )
+                    {
+                        for ( unsigned int col = 0; col < current_int_mat_val[row].size(); col++ )
+                        {
+                            fprintf( fid, ",%d", current_int_mat_val[row][col] );
+                        }
+                        if ( row < current_int_mat_val.size() - 1 )
+                        {
+                            fprintf( fid, "\n ");
+                        }
+                    }
+                }
                 else if ( iter->second[i].GetType() == vsp::DOUBLE_MATRIX_DATA )
                 {
                     vector< vector< double > > current_double_mat_val = iter->second[i].GetDoubleMatData();
@@ -1958,6 +1973,9 @@ void Results::Copy( NameValData* nvd )
             Add( ( NameValData( nvd->GetName(), nvd->GetStringData(), nvd->GetDoc().c_str() ) ) );
             break;
         }
+        case ( vsp::INT_MATRIX_DATA ):
+            Add( ( NameValData( nvd->GetName(), nvd->GetIntMatData(), nvd->GetDoc().c_str() ) ) );
+            break;
         case ( vsp::DOUBLE_MATRIX_DATA ):
         {
             Add( ( NameValData( nvd->GetName(), nvd->GetDoubleMatData(), nvd->GetDoc().c_str() ) ) );
@@ -2330,6 +2348,8 @@ void ResultsMgrSingleton::PrintResults( FILE * outputStream, const string &resul
                 }
                 break;
             }
+            // case vsp::RES_DATA_TYPE::INT_MATRIX_DATA :
+            //     break;
             case vsp::RES_DATA_TYPE::DOUBLE_MATRIX_DATA :
             {
                 vector< vector< double > > current_double_mat_val = GetDoubleMatResults( results_id, results_names[i_result_name], i_val );
