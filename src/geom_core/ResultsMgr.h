@@ -101,6 +101,10 @@ public:
     {
         return m_AttributeCollectionData;
     }
+    vector<int> & GetBoolData()
+    {
+        return m_IntData;
+    }
     vector<int> & GetIntData()
     {
         return m_IntData;
