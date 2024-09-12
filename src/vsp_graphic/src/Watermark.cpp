@@ -55,6 +55,16 @@ void Watermark::reset()
     setTextColor( 0.0f, 0.0f, 0.0f, 1.0f );
 }
 
+void Watermark::setText( const std::string &str )
+{
+    _text = str;
+}
+
+void Watermark::setTextScale( const float & s )
+{
+    _textScale = s;
+}
+
 void Watermark::setFillColor( float r, float g, float b, float a )
 {
     setMeshColor( r, g, b, a );
