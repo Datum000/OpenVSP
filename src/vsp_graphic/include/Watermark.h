@@ -2,6 +2,7 @@
 #define _VSP_GRAPHIC_WATERMARK_H
 
 #include <vector>
+#include <string>
 
 #include "Renderable.h"
 #include "Common.h"
