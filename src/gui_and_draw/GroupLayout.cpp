@@ -1800,6 +1800,26 @@ Fl_Text_Editor* GroupLayout::AddFlTextEditor( int height , bool resizable )
     return text_editor;
 }
 
+//==== Add Vsp Text Editor ====//
+VspTextEditor* GroupLayout::AddVspTextEditor( int height , bool resizable )
+{
+    assert( m_Group && m_Screen );
+
+    VspTextEditor* text_editor = new VspTextEditor (m_X, m_Y, m_W, height, "");
+
+    m_Group->add( text_editor );
+    if (resizable)
+    {
+        m_Group->resizable( text_editor );
+    }
+
+    AddY( height );
+    NewLineX();
+
+    return text_editor;
+}
+
+
 //==== Add Fl Text Display ====//
 Fl_Text_Display* GroupLayout::AddFlTextDisplay( int height )
 {
