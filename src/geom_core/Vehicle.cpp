@@ -780,7 +780,7 @@ int Vehicle::RunScript( const string & file_name, const string & function_name )
 //==== Find Geom Based on GeomID ====//
 Geom* Vehicle::FindGeom( const string & geom_id )
 {
-    if ( geom_id == string( "NONE" ) )
+    if ( geom_id == string( "NONE" ) || geom_id.size() != vsp::ID_LENGTH_PARMCONTAINER || !(AttributeMgr.AllUpper(geom_id) ) )
     {
         return NULL;
     }
