@@ -28,6 +28,7 @@
 #include "MaterialMgr.h"
 #include "WaveDragMgr.h"
 #include "GroupTransformations.h"
+#include "ResultsMgr.h"
 
 #include <cassert>
 
