@@ -40,6 +40,13 @@ public:
     void SetTreeAutoSelectID( const string & id );
     void AttributeAdd();
     void AttributeModify( GuiDevice* gui_device, Fl_Widget* w );
+    void ResizeColVec3d( vector < vec3d > *v3dPtr, const int row_delta = 0, const vec3d &new_vec = {0., 0., 0.} );
+    void ResizeIntMat( vector < vector < int > > *matPtr, const pair < int, int > row_col_delta = { 0, 0 }, const int &new_val = 0 );
+    void ResizeDoubleMat( vector < vector < double > > *matPtr, const pair < int, int > row_col_delta = { 0, 0 }, const double &new_val = 0. );
+
+    pair < int, int > GetIntMatSize( vector < vector < int > > *matPtr );
+    pair < int, int > GetDoubleMatSize( vector < vector < double > > *matPtr );
+
     virtual void CallBack( Fl_Widget *w );
 
     void GuiDeviceCallBack( GuiDevice* gui_device );
@@ -73,6 +80,10 @@ protected:
     StringInput m_AttrNameIn;
     StringInput m_AttrDescIn;
 
+    SpreadColumnVec3d *m_Vec3dSpreadSingle;
+    SpreadSheetInt *m_IntMatrixSpreadSheet;
+    SpreadSheetDouble *m_DoubleMatrixSpreadSheet;
+
     Fl_Box* m_DataLabel;
 
     GroupLayout m_TreeGroupLayout;
@@ -84,6 +95,22 @@ protected:
     GroupLayout m_ToggleEntryLayout;
     GroupLayout m_InlineEntryLayout;
     GroupLayout m_StringEntryLayout;
+    GroupLayout m_Vec3dEntryLayout;
+    GroupLayout m_IntMatEntryLayout;
+    GroupLayout m_DblMatEntryLayout;
+
+    TriggerButton m_AttrVec3dRowAdd;
+    TriggerButton m_AttrVec3dRowDel;
+
+    TriggerButton m_AttrDmatRowAdd;
+    TriggerButton m_AttrDmatRowDel;
+    TriggerButton m_AttrDmatColAdd;
+    TriggerButton m_AttrDmatColDel;
+
+    TriggerButton m_AttrImatRowAdd;
+    TriggerButton m_AttrImatRowDel;
+    TriggerButton m_AttrImatColAdd;
+    TriggerButton m_AttrImatColDel;
 
     BoolParm* m_AttrBoolParmPtr;
     ToggleButton m_AttrDataToggleIn;

@@ -65,6 +65,7 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::INT_DATA, capitalize ), vsp::INT_DATA );
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::DOUBLE_DATA, capitalize ), vsp::DOUBLE_DATA );
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::STRING_DATA, capitalize ), vsp::STRING_DATA );
+    m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::VEC3D_DATA, capitalize ), vsp::VEC3D_DATA );
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::INT_MATRIX_DATA, capitalize ), vsp::INT_MATRIX_DATA );
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::DOUBLE_MATRIX_DATA, capitalize ), vsp::DOUBLE_MATRIX_DATA );
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::ATTR_COLLECTION_DATA, capitalize ), vsp::ATTR_COLLECTION_DATA );
@@ -148,6 +149,7 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::INT_DATA, capitalize ), vsp::INT_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::DOUBLE_DATA, capitalize ), vsp::DOUBLE_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::STRING_DATA, capitalize ), vsp::STRING_DATA );
+    m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::VEC3D_DATA, capitalize ), vsp::VEC3D_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::INT_MATRIX_DATA, capitalize ), vsp::INT_MATRIX_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::DOUBLE_MATRIX_DATA, capitalize ), vsp::DOUBLE_MATRIX_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::ATTR_COLLECTION_DATA, capitalize ), vsp::ATTR_COLLECTION_DATA );
@@ -206,6 +208,67 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_DataText->add_key_binding( FL_KP_Enter, FL_SHIFT , Fl_Text_Editor::kf_enter );
     m_DataText->add_key_binding( FL_KP_Enter, FL_CTRL , Fl_Text_Editor::kf_enter );
     m_DataBuffer->text( "" );
+
+
+    // add vec3d layout
+    m_CommonEntryLayout.AddSubGroupLayout( m_Vec3dEntryLayout, m_CommonEntryLayout.GetW(), m_CommonEntryLayout.GetRemainY() );
+    m_Vec3dSpreadSingle = m_Vec3dEntryLayout.AddSpreadSheet < vec3d >( editor_ht - 2*m_Vec3dEntryLayout.GetStdHeight()  );
+    m_Vec3dEntryLayout.GetGroup()->resizable( m_Vec3dSpreadSingle );
+    m_Vec3dSpreadSingle->set_HeaderOffset( 'X' - 'A' );
+
+    int w_vec3d_btn = m_Vec3dEntryLayout.GetW() / 4;
+
+    m_Vec3dEntryLayout.AddButton( m_AttrVec3dRowAdd , "Add Row" );
+    m_Vec3dEntryLayout.AddButton( m_AttrVec3dRowDel , "Del Row" );
+    m_AttrVec3dRowAdd.SetWidth( w_vec3d_btn );
+    m_AttrVec3dRowDel.SetWidth( w_vec3d_btn );
+
+    m_Vec3dEntryLayout.ForceNewLine();
+
+    // add int & double matrix layouts
+    m_CommonEntryLayout.AddSubGroupLayout( m_IntMatEntryLayout, m_CommonEntryLayout.GetW(), m_CommonEntryLayout.GetRemainY() );
+    m_IntMatrixSpreadSheet = m_IntMatEntryLayout.AddSpreadSheet < vector < int > >( editor_ht - 2*m_IntMatEntryLayout.GetStdHeight()  );
+    m_IntMatEntryLayout.GetGroup()->resizable( m_IntMatrixSpreadSheet );
+
+    int w_imat_btn = m_IntMatEntryLayout.GetW() / 4;
+
+    m_IntMatEntryLayout.SetSameLineFlag( true );
+    m_IntMatEntryLayout.AddButton( m_AttrImatRowAdd , "Add Row" );
+    m_IntMatEntryLayout.AddButton( m_AttrImatColAdd , "Add Col" );
+    m_IntMatEntryLayout.ForceNewLine();
+    m_IntMatEntryLayout.AddButton( m_AttrImatRowDel , "Del Row" );
+    m_IntMatEntryLayout.AddButton( m_AttrImatColDel , "Del Col" );
+
+    m_AttrImatRowAdd.SetWidth( w_imat_btn );
+    m_AttrImatRowDel.SetWidth( w_imat_btn );
+    m_AttrImatColAdd.SetWidth( w_imat_btn );
+    m_AttrImatColDel.SetWidth( w_imat_btn );
+    m_AttrImatColAdd.SetX( m_CommonEntryLayout.GetStartX() + w_imat_btn );
+    m_AttrImatColDel.SetX( m_CommonEntryLayout.GetStartX() + w_imat_btn );
+
+    m_IntMatEntryLayout.ForceNewLine();
+
+    m_CommonEntryLayout.AddSubGroupLayout( m_DblMatEntryLayout, m_CommonEntryLayout.GetW(), m_CommonEntryLayout.GetRemainY() );
+    m_DoubleMatrixSpreadSheet = m_DblMatEntryLayout.AddSpreadSheet < vector < double > >( editor_ht - 2*m_DblMatEntryLayout.GetStdHeight() );
+    m_DblMatEntryLayout.GetGroup()->resizable( m_DoubleMatrixSpreadSheet );
+
+    int w_dmat_btn = m_DblMatEntryLayout.GetW() / 4;
+
+    m_DblMatEntryLayout.SetSameLineFlag( true );
+    m_DblMatEntryLayout.AddButton( m_AttrDmatRowAdd , "Add Row" );
+    m_DblMatEntryLayout.AddButton( m_AttrDmatColAdd , "Add Col" );
+    m_DblMatEntryLayout.ForceNewLine();
+    m_DblMatEntryLayout.AddButton( m_AttrDmatRowDel , "Del Row" );
+    m_DblMatEntryLayout.AddButton( m_AttrDmatColDel , "Del Col" );
+
+    m_AttrDmatRowAdd.SetWidth( w_dmat_btn );
+    m_AttrDmatRowDel.SetWidth( w_dmat_btn );
+    m_AttrDmatColAdd.SetWidth( w_dmat_btn );
+    m_AttrDmatColDel.SetWidth( w_dmat_btn );
+    m_AttrDmatColAdd.SetX( m_CommonEntryLayout.GetStartX() + w_dmat_btn );
+    m_AttrDmatColDel.SetX( m_CommonEntryLayout.GetStartX() + w_dmat_btn );
+
+    m_DblMatEntryLayout.ForceNewLine();
 
     //initialize pointers etc.
     m_CurAttrGroup = &m_StringEntryLayout;
@@ -266,8 +329,14 @@ bool AttributeExplorer::Update()
         case vsp::ATTR_COLLECTION_DATA:
             group_choice = &m_EmptyEntryLayout;
             break;
+        case vsp::VEC3D_DATA:
+            group_choice = &m_Vec3dEntryLayout;
+            break;
+        case vsp::INT_MATRIX_DATA:
+            group_choice = &m_IntMatEntryLayout;
+            break;
         case vsp::DOUBLE_MATRIX_DATA:
-            group_choice = &m_MatrixEntryLayout;
+            group_choice = &m_DblMatEntryLayout;
             break;
         }
     }
@@ -371,6 +440,40 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
 
         attrDescStr = attr_ptr->GetDoc();
 
+        if ( attr_type == vsp::VEC3D_DATA
+          || attr_type == vsp::INT_MATRIX_DATA
+          || attr_type == vsp::DOUBLE_MATRIX_DATA )
+        {
+            NameValData* col_attr = ac_ptr->FindPtr( name_str+"_col" );
+            NameValData* row_attr = ac_ptr->FindPtr( name_str+"_row" );
+
+            if ( col_attr && col_attr->GetType() == vsp::STRING_DATA )
+            {
+                m_Vec3dSpreadSingle->set_col_header_txt( col_attr->GetString( 0 ) );
+                m_IntMatrixSpreadSheet->set_col_header_txt( col_attr->GetString( 0 ) );
+                m_DoubleMatrixSpreadSheet->set_col_header_txt( col_attr->GetString( 0 ) );
+            }
+            else
+            {
+                m_Vec3dSpreadSingle->set_col_user_header_flag( false );
+                m_IntMatrixSpreadSheet->set_col_user_header_flag( false );
+                m_DoubleMatrixSpreadSheet->set_col_user_header_flag( false );
+            }
+
+            if ( row_attr && row_attr->GetType() == vsp::STRING_DATA )
+            {
+                m_Vec3dSpreadSingle->set_row_header_txt( row_attr->GetString( 0 ) );
+                m_IntMatrixSpreadSheet->set_row_header_txt( row_attr->GetString( 0 ) );
+                m_DoubleMatrixSpreadSheet->set_row_header_txt( row_attr->GetString( 0 ) );
+            }
+            else
+            {
+                m_Vec3dSpreadSingle->set_row_user_header_flag( false );
+                m_IntMatrixSpreadSheet->set_row_user_header_flag( false );
+                m_DoubleMatrixSpreadSheet->set_row_user_header_flag( false );
+            }
+        }
+
         switch ( attr_type )
         {
         case vsp::BOOL_DATA:
@@ -386,6 +489,15 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
             attrInlineText = to_string( attrDataDbl );
             break;
         case vsp::ATTR_COLLECTION_DATA:
+            break;
+        case vsp::VEC3D_DATA:
+            m_Vec3dSpreadSingle->set_data( &( attr_ptr->GetVec3dData() ) );
+            break;
+        case vsp::INT_MATRIX_DATA:
+            m_IntMatrixSpreadSheet->set_data( &( attr_ptr->GetIntMatData() ) );
+            break;
+        case vsp::DOUBLE_MATRIX_DATA:
+            m_DoubleMatrixSpreadSheet->set_data( &( attr_ptr->GetDoubleMatData() ) );
             break;
         }
 
@@ -536,7 +648,275 @@ void AttributeExplorer::AttributeModify( GuiDevice* gui_device, Fl_Widget *w )
         {
             AttributeMgr.SetAttributeString( m_AttrID, m_DataBuffer->text() );
         }
+
+        //vec3d & matrix data modification already done via the spreadsheet widgets
+
+        //vec3d resizing
+        else if ( gui_device == &m_AttrVec3dRowAdd && attrType == vsp::VEC3D_DATA )
+        {
+            vector < vec3d > * attrVec3dPtr = &attr_ptr->GetVec3dData();
+            ResizeColVec3d( attrVec3dPtr, 1 );
+        }
+
+        else if ( gui_device == &m_AttrVec3dRowDel && attrType == vsp::VEC3D_DATA )
+        {
+            vector < vec3d > * attrVec3dPtr = &attr_ptr->GetVec3dData();
+            ResizeColVec3d( attrVec3dPtr, -1 );
+        }
+
+        //int matrix resizing
+        else if ( gui_device == &m_AttrImatRowAdd && attrType == vsp::INT_MATRIX_DATA )
+        {
+            vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
+            ResizeIntMat( attrImatPtr, {1, 0} );
+        }
+
+        else if ( gui_device == &m_AttrImatRowDel && attrType == vsp::INT_MATRIX_DATA )
+        {
+            vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
+            ResizeIntMat( attrImatPtr, {-1, 0} );
+        }
+
+        else if ( gui_device == &m_AttrImatColAdd && attrType == vsp::INT_MATRIX_DATA )
+        {
+            vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
+            ResizeIntMat( attrImatPtr, {0, 1} );
+        }
+
+        else if ( gui_device == &m_AttrImatColDel && attrType == vsp::INT_MATRIX_DATA )
+        {
+            vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
+            ResizeIntMat( attrImatPtr, {0, -1} );
+        }
+
+        //double matrix resizing
+        else if ( gui_device == &m_AttrDmatRowAdd && attrType == vsp::DOUBLE_MATRIX_DATA )
+        {
+            vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
+            ResizeDoubleMat( attrDmatPtr, {1, 0} );
+        }
+
+        else if ( gui_device == &m_AttrDmatRowDel && attrType == vsp::DOUBLE_MATRIX_DATA )
+        {
+            vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
+            ResizeDoubleMat( attrDmatPtr, {-1, 0} );
+        }
+
+        else if ( gui_device == &m_AttrDmatColAdd && attrType == vsp::DOUBLE_MATRIX_DATA )
+        {
+            vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
+            ResizeDoubleMat( attrDmatPtr, {0, 1} );
+        }
+
+        else if ( gui_device == &m_AttrDmatColDel && attrType == vsp::DOUBLE_MATRIX_DATA )
+        {
+            vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
+            ResizeDoubleMat( attrDmatPtr, {0, -1} );
+        }
     }
+}
+
+void AttributeExplorer::ResizeColVec3d( vector < vec3d > *v3dPtr, const int row_delta, const vec3d &new_vec )
+{
+    int n_row = v3dPtr->size();
+
+    int row_add = 0;
+    int row_del = 0;
+
+    if ( row_delta > 0 )
+    {
+        row_add = row_delta;
+    }
+    else if ( row_delta < 0 )
+    {
+        row_del = row_delta;
+    }
+
+    // push back rows of new vals if adding
+    for ( int i = 0; i!= row_add; ++i )
+    {
+        v3dPtr->push_back( new_vec );
+    }
+
+    // delete rows of old vals from end of matrix
+    for ( int i = 0; i!= row_del; --i )
+    {
+        // prohibit less than 1 size in either dimension
+        if ( v3dPtr->size() > 1 )
+        {
+            v3dPtr->pop_back();
+        }
+    }
+}
+
+// add/delete rows/cols of a matrix of ints. Prevents reduction to 0-size in any dimension
+void AttributeExplorer::ResizeIntMat( vector < vector < int > > *matPtr, const pair < int, int > row_col_delta, const int &new_val )
+{
+    int n_row = matPtr->size();
+    int n_col = 0;
+
+    // initialize 1st-row adding variables to 0
+    int row_min_add = 0;
+    int col_min_add = 0;
+
+    // if there are any rows, get column size from first row's size
+    if ( n_row )
+    {
+        n_col = matPtr[0].size();
+    }
+
+    // add 1st row or column if missing
+    if ( n_row < 1 )
+    {
+        row_min_add = 1;
+    }
+    if ( n_col < 1 )
+    {
+        col_min_add = 1;
+    }
+
+    const int col_set = n_col + row_col_delta.second;
+
+    const int row_del = min( { row_col_delta.first , 0 } );
+    const int col_del = min( { row_col_delta.second , 0 } );
+
+    const int row_add = max( { row_col_delta.first , 0 } ) + row_min_add;
+    const int col_add = max( { row_col_delta.second , 0 } ) + col_min_add;
+
+    // modify cols of all existing rows
+    for ( int i = 0; i != n_row; ++i )
+    {
+        // for all new columns to add, push back the new val
+        for ( int j = 0; j != col_add ; ++j )
+        {
+            matPtr->at(i).push_back( new_val );
+        }
+
+        // for all column deletions, delete from end of vector
+        for ( int j = 0; j != col_del ; --j )
+        {
+            // prohibit less than 1 size in either dimension
+            if ( matPtr->at(i).size() > 1 )
+            {
+                matPtr->at(i).pop_back();
+            }
+        }
+    }
+
+    // push back rows of new vals if adding
+    for ( int i = 0; i!= row_add; ++i )
+    {
+        vector < int > new_row( col_set, new_val );
+        matPtr->push_back( new_row );
+    }
+
+    // delete rows of old vals from end of matrix
+    for ( int i = 0; i!= row_del; --i )
+    {
+        // prohibit less than 1 size in either dimension
+        if ( matPtr->size() > 1 )
+        {
+            matPtr->pop_back();
+        }
+    }
+}
+
+// add/delete rows/cols of a matrix of doubles. Prevents reduction to 0-size in any dimension
+void AttributeExplorer::ResizeDoubleMat( vector < vector < double > > *matPtr, const pair < int, int > row_col_delta, const double &new_val )
+{
+    int n_row = matPtr->size();
+    int n_col = 0;
+
+    // initialize 1st-row adding variables to 0
+    int row_min_add = 0;
+    int col_min_add = 0;
+
+    // if there are any rows, get column size from first row's size
+    if ( n_row )
+    {
+        n_col = matPtr[0].size();
+    }
+
+    // add 1st row or column if missing
+    if ( n_row < 1 )
+    {
+        row_min_add = 1;
+    }
+    if ( n_col < 1 )
+    {
+        col_min_add = 1;
+    }
+
+    const int col_set = n_col + row_col_delta.second;
+
+    const int row_del = min( { row_col_delta.first , 0 } );
+    const int col_del = min( { row_col_delta.second , 0 } );
+
+    const int row_add = max( { row_col_delta.first , 0 } ) + row_min_add;
+    const int col_add = max( { row_col_delta.second , 0 } ) + col_min_add;
+
+    // modify cols of all existing rows
+    for ( int i = 0; i != n_row; ++i )
+    {
+        // for all new columns to add, push back the new val
+        for ( int j = 0; j != col_add ; ++j )
+        {
+            matPtr->at(i).push_back( new_val );
+        }
+
+        // for all column deletions, delete from end of vector
+        for ( int j = 0; j != col_del ; --j )
+        {
+            // prohibit less than 1 size in either dimension
+            if ( matPtr->at(i).size() > 1 )
+            {
+                matPtr->at(i).pop_back();
+            }
+        }
+    }
+
+    // push back rows of new vals if adding
+    for ( int i = 0; i!= row_add; ++i )
+    {
+        vector < double > new_row( col_set, new_val );
+        matPtr->push_back( new_row );
+    }
+
+    // delete rows of old vals from end of matrix
+    for ( int i = 0; i!= row_del; --i )
+    {
+        // prohibit less than 1 size in either dimension
+        if ( matPtr->size() > 1 )
+        {
+            matPtr->pop_back();
+        }
+    }
+}
+
+pair < int, int > AttributeExplorer::GetDoubleMatSize( vector < vector < double > > *matPtr )
+{
+    int n_row = matPtr->size();
+    int n_col = 0;
+
+    // if there are any rows, get column size from first row's size
+    if ( n_row )
+    {
+        n_col = matPtr->at(0).size();
+    }
+    return { n_row, n_col };
+}
+
+pair < int, int > AttributeExplorer::GetIntMatSize( vector < vector < int > > *matPtr )
+{
+    int n_row = matPtr->size();
+    int n_col = 0;
+
+    // if there are any rows, get column size from first row's size
+    if ( n_row )
+    {
+        n_col = matPtr->at(0).size();
+    }
+    return { n_row, n_col };
 }
 
 void AttributeExplorer::AttrTypeDispGroup( int attr_type, GroupLayout * group )
@@ -552,6 +932,26 @@ void AttributeExplorer::AttrTypeDispGroup( int attr_type, GroupLayout * group )
     }
     data_name += "Data";
 
+    NameValData* attr_ptr = AttributeMgr.GetAttributePtr( m_AttrID );
+
+    if ( attr_ptr )
+    {
+        pair < int, int > row_col_size = { 0, 0 };
+
+        if ( attr_ptr->GetType() == vsp::INT_MATRIX_DATA )
+        {
+            row_col_size = GetIntMatSize( &(attr_ptr->GetIntMatData()) );
+        }
+        else if ( attr_ptr->GetType() == vsp::DOUBLE_MATRIX_DATA )
+        {
+            row_col_size = GetDoubleMatSize( &(attr_ptr->GetDoubleMatData()) );
+        }
+        if ( row_col_size.first && row_col_size.second )
+        {
+            data_name += " : " + to_string(row_col_size.first) + " x " + to_string(row_col_size.second);
+        }
+    }
+
     m_DataLabel->copy_label( data_name.c_str() );
 
     // select active GUI group by datatype
@@ -564,6 +964,9 @@ void AttributeExplorer::AttrTypeDispGroup( int attr_type, GroupLayout * group )
     m_ToggleEntryLayout.Hide();
     m_InlineEntryLayout.Hide();
     m_StringEntryLayout.Hide();
+    m_Vec3dEntryLayout.Hide();
+    m_IntMatEntryLayout.Hide();
+    m_DblMatEntryLayout.Hide();
 
     m_CurAttrGroup = group;
 
