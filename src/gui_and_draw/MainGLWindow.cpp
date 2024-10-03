@@ -305,8 +305,8 @@ void VspGlWindow::update()
                         double ta = wm_ac->FindPtr( "VSP::TextAlpha", 0 )->GetDouble( 0 );
                         wm->setTextColor( tc.x(), tc.y(), tc.z(), ta );
 
-                        vec3d bc = wm_ac->FindPtr( "VSP::BoxColor", 0 )->GetVec3d( 0 );
-                        double ba = wm_ac->FindPtr( "VSP::BoxAlpha", 0 )->GetDouble( 0 );
+                        vec3d bc = wm_ac->FindPtr( "VSP::EdgeColor", 0 )->GetVec3d( 0 );
+                        double ba = wm_ac->FindPtr( "VSP::EdgeAlpha", 0 )->GetDouble( 0 );
                         wm->setLineColor( bc.x(), bc.y(), bc.z(), ba );
 
                         vec3d fc = wm_ac->FindPtr( "VSP::FillColor", 0 )->GetVec3d( 0 );
