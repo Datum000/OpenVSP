@@ -716,6 +716,8 @@ void AttributeExplorer::AttributeModify( GuiDevice* gui_device, Fl_Widget *w )
             vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
             ResizeDoubleMat( attrDmatPtr, {0, -1} );
         }
+
+        AttributeMgr.SetAttrDirtyFlag( attr_ptr->GetID() );
     }
 }
 
@@ -987,17 +989,11 @@ void AttributeExplorer::CallBack( Fl_Widget *w )
     {
         AttributeModify( nullptr, m_DataText );
     }
-    else if ( w == m_Vec3dSpreadSingle )
+    else if ( w == m_Vec3dSpreadSingle
+           || w == m_IntMatrixSpreadSheet
+           || w == m_DoubleMatrixSpreadSheet )
     {
-        printf( "Spreadsheet change event.\n" );
-    }
-    else if ( w == m_IntMatrixSpreadSheet )
-    {
-        printf( "Spreadsheet change event.\n" );
-    }
-    else if ( w == m_DoubleMatrixSpreadSheet )
-    {
-        printf( "Spreadsheet change event.\n" );
+        AttributeModify( nullptr, w );
     }
 
     m_ScreenMgr->SetUpdateFlag( true );
