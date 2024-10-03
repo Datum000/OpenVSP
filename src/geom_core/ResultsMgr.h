@@ -12,6 +12,8 @@
 #define RESULTSMGR__INCLUDED_
 
 #include "Vec3d.h"
+#include "XmlUtil.h"
+#include "APIDefines.h"
 
 #include <map>
 #include <list>
@@ -23,38 +25,54 @@ using std::vector;
 using std::string;
 
 //==== Results Data - Named Vectors Of Ints/Double/Strings or Vec3d ====//
+class NameValCollection;
+class AttributeCollection;
+
 class NameValData
 {
 public:
     NameValData();
     NameValData( const string & name );
+    NameValData( const string & name, const bool & b_data, const string & doc );
     NameValData( const string & name, const int & i_data, const string & doc );
     NameValData( const string & name, const double & d_data, const string & doc );
     NameValData( const string & name, const string & s_data, const string & doc );
     NameValData( const string & name, const vec3d & v_data, const string & doc );
+    NameValData( const string & name, const NameValCollection &c_data, const string & doc );
+    NameValData( const string & name, const AttributeCollection &c_data, const string & doc );
+    NameValData( const string & name, const vector< bool > & b_data, const string & doc );
     NameValData( const string & name, const vector< int > & i_data, const string & doc );
     NameValData( const string & name, const vector< double > & d_data, const string & doc );
     NameValData( const string & name, const vector< string > & s_data, const string & doc );
     NameValData( const string & name, const vector< vec3d > & v_data, const string & doc );
     NameValData( const string & name, const vector< vector< double > > &dmat_data, const string & doc );
-
-    void Init( const string & name, int type = 0, int index = 0 );
+    NameValData( const string & name, const vector< NameValCollection > &c_data, const string & doc );
+    NameValData( const string & name, const vector< AttributeCollection > &c_data, const string & doc );
 
     string GetName() const
     {
         return m_Name;
+    }
+    string GetID() const
+    {
+        return m_ID;
     }
     int GetType() const
     {
         return m_Type;
     }
     string GetTypeName() const;
+    static string GetTypeName( int type, bool capitalize = false, bool short_name = false );
 
     string GetDoc() const
     {
         return m_Doc;
     }
 
+    const vector<int> & GetBoolData() const
+    {
+        return m_IntData;
+    }
     const vector<int> & GetIntData() const
     {
         return m_IntData;
@@ -75,86 +93,186 @@ public:
     {
         return m_DoubleMatData;
     }
+    const vector< NameValCollection > & GetNameValCollectionData() const
+    {
+        return m_NameValCollectionData;
+    }
+    const vector< AttributeCollection > & GetAttributeCollectionData() const
+    {
+        return m_AttributeCollectionData;
+    }
 
+    bool GetBool( int index ) const;
     int GetInt( int index ) const;
     double GetDouble( int index ) const;
     double GetDouble( int row, int col ) const;
     string GetString( int index ) const;
     vec3d GetVec3d( int index ) const;
+    NameValCollection GetNameValCollection( int index ) const;
+    NameValCollection* GetNameValCollectionPtr( int index );
+    AttributeCollection* GetAttributeCollectionPtr( int index );
+
+    void AddAttributeCollection();
+    void DecodeCollXml( xmlNodePtr & node );
+
+
+    void SetBoolData( const vector< int > & b )
+    {
+        m_IntData = b;
+    }
 
     void SetIntData( const vector< int > & d )
     {
         m_IntData = d;
     }
+
     void SetDoubleData( const vector< double > & d )
     {
         m_DoubleData = d;
     }
+
     void SetStringData( const vector< string > & d )
     {
         m_StringData = d;
     }
+
     void SetVec3dData( const vector< vec3d > & d )
     {
         m_Vec3dData = d;
     }
+
     void SetDoubleMatData( const vector< vector< double > > & d )
     {
         m_DoubleMatData = d;
     }
 
+    void SetNameValCollectionData( const vector< NameValCollection > & d )
+    {
+        m_NameValCollectionData = d;
+    }
+
+    void SetAttributeCollectionData( const vector< AttributeCollection > & d )
+    {
+        m_AttributeCollectionData = d;
+    }
+
+    void SetName( const string & name )
+    {
+        m_Name = name;
+    }
+
+    void SetType( const int & type )
+    {
+        m_Type = type;
+    }
+
+    void SetDoc( const string & doc )
+    {
+        m_Doc = doc;
+    }
+
+    void SetAttrAttach( string attachID );
+
+    string GetAttachID() const
+    {
+        return m_AttachID;
+    }
+
+    void SetProtection( bool protect_flag )
+    {
+        m_ProtectFlag = protect_flag;
+    }
+
+    bool IsProtected() const
+    {
+        return m_ProtectFlag;
+    }
+
+    string GenerateID();
+    void ChangeID( string id );
+
+    void CopyFrom( NameValData* nvd, vector < string > name_vector = {} );
+
+    static string TruncateString( string str , int len );
+
+    virtual void EncodeXml( xmlNodePtr & node );
+    virtual void DecodeXml( xmlNodePtr & node, vector < string > name_vector = {} );
+    void ReRegisterNestedCollections();
+
 protected:
+
+    void Init( const string & name, int type = 0 );
 
     string m_Name;
     int m_Type;
     string m_Doc;
+    string m_ID;
     vector< int > m_IntData;
     vector< double > m_DoubleData;
     vector< string > m_StringData;
     vector< vec3d > m_Vec3dData;
     vector< vector< double > >  m_DoubleMatData;
+    vector< NameValCollection > m_NameValCollectionData;
+    vector< AttributeCollection > m_AttributeCollectionData;
 
+    bool m_ProtectFlag;
+    string m_AttachID;
 };
 
-
 //======================================================================================//
 //======================================================================================//
 //======================================================================================//
-
 
 //==== A Collection of Results Data From One Computation ====//
 class NameValCollection
 {
 public:
-    NameValCollection() {};
+    NameValCollection();
     NameValCollection( const string & name, const string & id, const string & doc  );
+
+    string GenerateID();
 
     void Init( const char *name, const char *doc = "" )
     {
         m_Name = name;
         m_Doc = doc;
+        m_DataMap.clear();
     }
 
-    string GetName()
+    void SetName( const string & name )
+    {
+        m_Name = name;
+    }
+
+    void SetDoc( const string & doc )
+    {
+        m_Doc = doc;
+    }
+
+    string GetName() const
     {
         return m_Name;
     }
-    string GetID()
+
+    string GetID() const
     {
         return m_ID;
     }
+
     string GetDoc() const
     {
         return m_Doc;
     }
 
-    void Add( const NameValData & d );
-    void Add( const vector< vector< vec3d > > & d, const string &prefix, const string &doc );
+    virtual void Add( const NameValData & d );
+    virtual void Add( const vector< vector< vec3d > > & d, const string &prefix, const string &doc );
 
     int GetNumData( const string & name );
     vector< string > GetAllDataNames();
+
     NameValData Find( const string & name, int index = 0 );
     NameValData* FindPtr( const string & name, int index = 0 );
+    vector< NameValData* > GetAllPtrs();
 
 protected:
 
@@ -166,6 +284,63 @@ protected:
     map< string, vector< NameValData > > m_DataMap;
 
 };
+
+//======================================================================================//
+//======================================================================================//
+//======================================================================================//
+
+class AttributeCollection : public NameValCollection
+{
+public:
+
+    AttributeCollection();
+    AttributeCollection( const string & name, const string & id, const string & doc  );
+
+    void Add( const NameValData & d, const int & attr_event_group = vsp::ATTR_GROUP_NONE, bool set_event_group = false );
+
+    string GetLastAddedID()
+    {
+        return m_LastAddID;
+    }
+
+    void Del( const string & name );
+
+    NameValData* GetAttrPtr( const string & id );
+
+    void SetCollAttach( const string & attachID , int attachType );
+
+    static bool CanAddName( const vector < string > & nameVec, const string & attrDataName );
+    static bool CanGetName( const vector < string > & nameVec, const string & attrDataName );
+    string GetNewAttrName( int attr_type );
+    void RenameAttr( const string & oldName, const string & newName );
+
+    string GetAttachID();
+    int GetAttachType();
+    bool GetAttrDataFlag();
+    int GetDataMapSize();
+
+    vector< string > GetAllAttrNames ();
+    vector< string > GetAllAttrIDs();
+
+    void BuildCollectorVec( vector < AttributeCollection* > & in_vec );
+
+    void ChangeID( const string & id );
+
+    virtual void EncodeXml( xmlNodePtr & node );
+    virtual void DecodeXml( xmlNodePtr & node, bool retainIDs = false );
+
+    void Wype();
+
+protected:
+
+    string m_AttachID;
+    string m_LastAddID;
+    int m_AttachType;
+};
+
+//======================================================================================//
+//======================================================================================//
+//======================================================================================//
 
 //==== A Collection of Results Data From One Computation ====//
 class Results : public NameValCollection
