@@ -16,6 +16,7 @@
 
 #include "Parm.h"
 #include "ParmContainer.h"
+#include "ResultsMgr.h"
 
 using std::string;
 
