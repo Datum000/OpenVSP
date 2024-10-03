@@ -34,6 +34,7 @@ AeroStructMgr.cpp
 Airfoil.cpp
 AnalysisMgr.cpp
 Atmosphere.cpp
+AttributeManager.cpp
 Background3D.cpp
 Background3DMgr.cpp
 BlankGeom.cpp
@@ -105,6 +106,7 @@ AeroStructMgr.h
 Airfoil.h
 AnalysisMgr.h
 Atmosphere.h
+AttributeManager.h
 Background3D.h
 Background3DMgr.h
 BlankGeom.h
