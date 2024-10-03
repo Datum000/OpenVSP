@@ -642,6 +642,10 @@ xmlNodePtr AdvLink::EncodeXml( xmlNodePtr & node )
     {
         m_OutputVars[i].EncodeXml( output_vars_node );
     }
+
+    //==== Attribute Data ====//
+    m_AdvLinkAttrCollection.EncodeXml( adv_link_node );
+
     return adv_link_node;
 }
 
