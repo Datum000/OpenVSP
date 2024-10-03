@@ -14,6 +14,9 @@
 //==== Constructor ====//
 Link::Link()
 {
+    m_ParmContainer_Type = vsp::ATTROBJ_LINK;
+    m_AttrCollection.SetCollAttach( m_ID, m_ParmContainer_Type );
+
     m_Name = "Link";
     m_OffsetFlag = true;
     m_ScaleFlag = false;
@@ -129,6 +132,8 @@ xmlNodePtr Link::DecodeXml( xmlNodePtr & link_node )
             m_ScaleFlag = !!XmlUtil::FindInt( link_node, "ScaleFlag", m_ScaleFlag );
             m_LowerLimitFlag = !!XmlUtil::FindInt( link_node, "LowerLimitFlag", m_LowerLimitFlag );
             m_UpperLimitFlag = !!XmlUtil::FindInt( link_node, "UpperLimitFlag", m_UpperLimitFlag );
+
+            m_AttrCollection.DecodeXml( link_node );
         }
     }
     return link_node;

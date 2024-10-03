@@ -106,6 +106,7 @@ public:
     void RemoveGeomVecFromHierarchy( const vector<string> & cut_vec );
     void DeleteClipBoard();
     vector< string > PasteClipboard();
+    bool IDinClipboard( const string & id );
     vector< string > CopyGeomVec( const vector<string> & geom_vec );
 
     void LoadDrawObjs( vector< DrawObj* > & draw_obj_vec );
@@ -564,6 +565,9 @@ protected:
 
     // Color of lines in XSecViewScreen
     vec3d m_XSecLineColor;
+
+    // Default Vehicle Attributes
+    void AddDefaultAttributes();
 
 private:
 

@@ -17,6 +17,7 @@
 #include "AdvLinkMgr.h"
 #include "AeroStructMgr.h"
 #include "AnalysisMgr.h"
+#include "AttributeManager.h"
 #include "Background3DMgr.h"
 #include "BlankGeom.h"
 #include "BORGeom.h"
@@ -57,6 +58,9 @@ using namespace vsp;
 Vehicle::Vehicle()
 {
     m_Name = "Vehicle_Constructor";
+
+    m_ParmContainer_Type = vsp::ATTROBJ_VEH;
+    m_AttrCollection.SetCollAttach( m_ID, m_ParmContainer_Type );
 
     m_STEPLenUnit.Init( "LenUnit", "STEPSettings", this, vsp::LEN_FT, vsp::LEN_MM, vsp::LEN_YD );
     m_STEPTol.Init( "Tolerance", "STEPSettings", this, 1e-6, 1e-12, 1e12 );
@@ -345,6 +349,9 @@ void Vehicle::Init()
         m_SetNameVec.push_back( str );
     }
 
+    //==== Initialize Protected Vehicle Attributes ====//
+    AddDefaultAttributes();
+
     //==== Load Geom Types =====//
     m_GeomTypeVec.push_back( GeomType( POD_GEOM_TYPE, "POD", true ) );
     m_GeomTypeVec.push_back( GeomType( FUSELAGE_GEOM_TYPE, "FUSELAGE", true ) );
@@ -473,6 +480,70 @@ void Vehicle::RunTestScripts()
     ScriptMgr.RunTestScripts();
 }
 
+void Vehicle::AddDefaultAttributes()
+{
+    int attachType = vsp::ATTROBJ_VEH;
+    // for Vehicle attributes, initialize with a few protected attributes
+
+    m_AttrCollection.SetCollAttach( GetID(), attachType );
+
+    m_AttrCollection.Add( NameValData( "VSP::WatermarkGroup",
+                                AttributeCollection(),
+                                "Watermark attributes for text & display controls" ),
+                                vsp::ATTR_GROUP_WATERMARK,
+                                true );
+
+    NameValData* wm_group_attr = m_AttrCollection.FindPtr( "VSP::WatermarkGroup" );
+
+    AttributeCollection* wm_group_ac_ptr = wm_group_attr->GetAttributeCollectionPtr( 0 );
+    wm_group_attr->SetAttrAttach( m_AttrCollection.GetID() );
+    wm_group_attr->SetProtection( true );
+
+    vector < NameValData > wm_data;
+    wm_data.push_back( NameValData( "VSP::Text",
+                                      std::string("Example Watermark"),
+                                      "Single line of text to be displayed as watermark" ) );
+
+    wm_data.push_back( NameValData( "VSP::Flag",
+                                      false,
+                                      "False for no watermark, True for watermark" ) );
+
+    wm_data.push_back( NameValData( "VSP::TextScale",
+                                    2.0,
+                                    "Scale factor for watermark text" ) );
+
+    wm_data.push_back( NameValData( "VSP::TextColor",
+                                    vec3d( 0, 0, 0 ),
+                                    "RGB color to use for watermark text\n(Values range from 0.0->1.0)" ) );
+
+    wm_data.push_back( NameValData( "VSP::EdgeColor",
+                                vec3d( 0, 0, 0 ),
+                                "RGB Color to use for watermark box\n(Values range from 0.0->1.0)" ) );
+
+    wm_data.push_back( NameValData( "VSP::FillColor",
+                                vec3d( 1, 1, 1 ),
+                                "RGB Color to use for watermark fill\n(Values range from 0.0->1.0)" ) );
+
+    wm_data.push_back( NameValData( "VSP::TextAlpha",
+                                    1.0,
+                                    "Alpha for watermark text" ) );
+
+    wm_data.push_back( NameValData( "VSP::FillAlpha",
+                                    0.0,
+                                    "Alpha for watermark fill" ) );
+
+    wm_data.push_back( NameValData( "VSP::EdgeAlpha",
+                                    0.0,
+                                    "Alpha for watermark box" ) );
+
+    for ( int i = 0; i < wm_data.size(); i++ )
+    {
+        wm_data[i].SetAttrAttach( wm_group_ac_ptr->GetID() );
+        wm_data[i].SetProtection( true );
+        wm_group_ac_ptr->Add( wm_data[i], vsp::ATTR_GROUP_WATERMARK, true );
+    }
+}
+
 //=== Wype ===//
 void Vehicle::Wype()
 {
@@ -482,6 +553,10 @@ void Vehicle::Wype()
     // up the variables on the stack.
 
     // Remove references to this set up in Init()
+
+    //wype the attributeManager BEFORE removing geoms etc.
+    AttributeMgr.Wype();
+
     LinkMgr.UnRegisterContainer( this->GetID() );
 
     // Public member variables
@@ -491,6 +566,7 @@ void Vehicle::Wype()
     m_NumMassSlices = int();
     m_MassSliceDir = vsp::X_DIR;
     m_TotalMass = double();
+    m_AttrCollection.Wype();
 
 
     // Private member variables
@@ -1444,6 +1520,19 @@ vector< string > Vehicle::PasteClipboard()
     return pasted_ids;
 }
 
+//==== Return bool if id found in vehicle clipboard ====//
+bool Vehicle::IDinClipboard( const string & id )
+{
+    for ( int i = 0; i != m_ClipBoard.size(); ++i )
+    {
+        if ( m_ClipBoard.at( i ).compare( id ) == 0 )
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 //==== Copy Geoms In Vec - Create New IDs But Keep Parent/Child ====//
 vector< string > Vehicle::CopyGeomVec( const vector< string > & geom_vec )
 {
@@ -2020,6 +2109,9 @@ int Vehicle::ReadXMLFile( const string & file_name )
     //==== Decode Vehicle from document ====//
     DecodeXml( root );
 
+    //==== Add Default Vehicle Attributes ====//
+    AddDefaultAttributes();
+
     //===== Free Doc =====//
     xmlFreeDoc( doc );
 
@@ -2080,6 +2172,16 @@ int Vehicle::ReadXMLFileGeomsOnly( const string & file_name )
     }
 
     //==== Decode Vehicle from document ====//
+
+    // get vehicle level attributes imported
+    xmlNodePtr vehicle_node = XmlUtil::GetNode( root, "Vehicle", 0 );
+    if ( vehicle_node )
+    {
+        // Get Vehicle-level attributes
+        xmlNodePtr child_node = XmlUtil::GetNode( vehicle_node, "ParmContainer", 0 );
+        GetAttrCollection()->DecodeXml( child_node, true );
+    }
+    // get the rest of the XML decoded
     DecodeXmlGeomsOnly( root );
 
     //===== Free Doc =====//

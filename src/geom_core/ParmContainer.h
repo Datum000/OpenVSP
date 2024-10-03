@@ -17,6 +17,7 @@
 #include <climits>
 
 #include "XmlUtil.h"
+#include "ResultsMgr.h"
 
 using std::string;
 using std::map;
@@ -55,6 +56,11 @@ public:
     virtual void SetName( const string& name, bool removeslashes = true );
     virtual string GetName() const                  { return m_Name; }
 
+    int GetParmContainerType()
+    {
+        return m_ParmContainer_Type;
+    }
+
     virtual xmlNodePtr EncodeXml( xmlNodePtr & node );
     virtual xmlNodePtr DecodeXml( xmlNodePtr & node );
 
@@ -75,6 +81,13 @@ public:
 
     virtual void SwapIDs( ParmContainer* from );
 
+    AttributeCollection* GetAttrCollection()
+    {
+        return &m_AttrCollection;
+    }
+
+    AttributeCollection m_AttrCollection;
+
 protected:
 
     string m_ID;                                        // Unique ID
@@ -89,6 +102,8 @@ protected:
 
     vector< string > m_GroupNames;                      // Linkable Group Names
     map< string, vector< string > > m_GroupParmMap;     // Group names mapped to vectors of parms
+
+    int m_ParmContainer_Type;                           // Enumerated type for setting collection attachments (geom, veh, link, etc.)
 
     //==== Methods ====//
     virtual string GenerateID();
