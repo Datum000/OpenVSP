@@ -215,6 +215,7 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_Vec3dSpreadSingle = m_Vec3dEntryLayout.AddSpreadSheet < vec3d >( editor_ht - 2*m_Vec3dEntryLayout.GetStdHeight()  );
     m_Vec3dEntryLayout.GetGroup()->resizable( m_Vec3dSpreadSingle );
     m_Vec3dSpreadSingle->set_HeaderOffset( 'X' - 'A' );
+    m_Vec3dSpreadSingle->set_ChangeCallback( staticScreenCB, this );
 
     int w_vec3d_btn = m_Vec3dEntryLayout.GetW() / 4;
 
@@ -229,6 +230,7 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_CommonEntryLayout.AddSubGroupLayout( m_IntMatEntryLayout, m_CommonEntryLayout.GetW(), m_CommonEntryLayout.GetRemainY() );
     m_IntMatrixSpreadSheet = m_IntMatEntryLayout.AddSpreadSheet < vector < int > >( editor_ht - 2*m_IntMatEntryLayout.GetStdHeight()  );
     m_IntMatEntryLayout.GetGroup()->resizable( m_IntMatrixSpreadSheet );
+    m_IntMatrixSpreadSheet->set_ChangeCallback( staticScreenCB, this );
 
     int w_imat_btn = m_IntMatEntryLayout.GetW() / 4;
 
@@ -251,6 +253,7 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_CommonEntryLayout.AddSubGroupLayout( m_DblMatEntryLayout, m_CommonEntryLayout.GetW(), m_CommonEntryLayout.GetRemainY() );
     m_DoubleMatrixSpreadSheet = m_DblMatEntryLayout.AddSpreadSheet < vector < double > >( editor_ht - 2*m_DblMatEntryLayout.GetStdHeight() );
     m_DblMatEntryLayout.GetGroup()->resizable( m_DoubleMatrixSpreadSheet );
+    m_DoubleMatrixSpreadSheet->set_ChangeCallback( staticScreenCB, this );
 
     int w_dmat_btn = m_DblMatEntryLayout.GetW() / 4;
 
@@ -983,6 +986,18 @@ void AttributeExplorer::CallBack( Fl_Widget *w )
     if ( static_cast<Fl_Text_Editor * >( w ) == m_DataText )
     {
         AttributeModify( nullptr, m_DataText );
+    }
+    else if ( w == m_Vec3dSpreadSingle )
+    {
+        printf( "Spreadsheet change event.\n" );
+    }
+    else if ( w == m_IntMatrixSpreadSheet )
+    {
+        printf( "Spreadsheet change event.\n" );
+    }
+    else if ( w == m_DoubleMatrixSpreadSheet )
+    {
+        printf( "Spreadsheet change event.\n" );
     }
 
     m_ScreenMgr->SetUpdateFlag( true );
