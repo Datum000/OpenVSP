@@ -122,6 +122,15 @@ enum ATTRIBUTABLE_TYPE { ATTROBJ_PARM = 0,	/*!< Parm */
 /*!
 	\ingroup Enumerations
 */
+/*! Enum for attribute event group. */
+enum ATTRIBUTE_EVENT_GROUP { ATTR_GROUP_NONE = -1,	/*!< No event (user attributes) */
+                             ATTR_GROUP_WATERMARK,	/*!< Watermark group */
+                             NUM_ATTR_EVENT_GROUPS	/*!< Number attribute event groups */
+};
+
+/*!
+	\ingroup Enumerations
+*/
 /*! Enum for Body of Revolution mode control. */
 enum BOR_MODE { BOR_FLOWTHROUGH,	/*!< Flowthrough mode (default) */
                 BOR_UPPER,	/*!< Upper surface mode */

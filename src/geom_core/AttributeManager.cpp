@@ -31,6 +31,7 @@
 AttributeMgrSingleton::AttributeMgrSingleton()
 {
     m_AttrClipboard.clear();
+    m_DirtyFlags.resize( vsp::NUM_ATTR_EVENT_GROUPS, false );
 }
 
 AttributeMgrSingleton::~AttributeMgrSingleton()

@@ -228,6 +228,16 @@ public:
         return m_ProtectFlag;
     }
 
+    int GetAttributeEventGroup() const
+    {
+        return m_AttributeEventGroup;
+    }
+
+    void SetAttributeEventGroup( int g )
+    {
+        m_AttributeEventGroup = g;
+    }
+
     string GenerateID();
     void ChangeID( string id );
 
@@ -258,6 +268,7 @@ protected:
 
     bool m_ProtectFlag;
     string m_AttachID;
+    int m_AttributeEventGroup;
 };
 
 //======================================================================================//

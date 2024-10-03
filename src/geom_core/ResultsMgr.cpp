@@ -150,6 +150,7 @@ void NameValData::Init( const string & name, int type )
     m_ID = GenerateID();
     m_ProtectFlag = false;
     m_AttachID = "NONE";
+    m_AttributeEventGroup = vsp::ATTR_GROUP_NONE;
 }
 
 string NameValData::GetTypeName() const{

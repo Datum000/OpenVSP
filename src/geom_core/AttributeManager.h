@@ -136,6 +136,8 @@ protected:
     map< string, NameValData*> m_AttrPtrMap;
 
     vector < NameValData > m_AttrClipboard;
+    vector < bool > m_DirtyFlags;
+
 private:
     AttributeMgrSingleton();
 };
