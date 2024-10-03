@@ -331,6 +331,80 @@ Fl_Scroll* TabScreen::AddSubScroll( Fl_Group* group, int border, int lessh )
     return sub_group;
 }
 
+//=====================================================================//
+//=====================================================================//
+//=====================================================================//
+VehScreen::VehScreen( ScreenMgr* mgr, int w, int h, const string & title ) :
+    TabScreen( mgr, w, h, title )
+{
+    // Set the window as a geom screen window
+    VSP_Window* vsp_win = dynamic_cast<VSP_Window*>(m_FLTK_Window);
+    vsp_win->SetGeomScreenFlag( true );
+
+    Fl_Group* attribute_tab = AddTab( "Attributes" );
+    Fl_Group* attribute_group = AddSubGroup( attribute_tab, 5 );
+    m_AttributeLayout.SetGroupAndScreen( attribute_group , this );
+    m_AttributeLayout.AddDividerBox( "Attributes" );
+    m_AttributeEditor.Init( mgr , &m_AttributeLayout , attribute_group, this, staticScreenCB, false, 0, 250 );
+};
+
+void VehScreen::Show( )
+{
+    if ( Update() )
+    {
+        VspScreen::Show( );
+    }
+};
+
+
+bool VehScreen::Update()
+{
+    assert( m_ScreenMgr );
+
+    Vehicle* veh = VehicleMgr.GetVehicle();
+
+    Geom* geom_ptr = m_ScreenMgr->GetCurrGeom();
+
+    if (geom_ptr)
+    {
+        Hide();
+        return false;
+    }
+
+    if ( veh )
+    {
+        SetTitle( veh->GetName() );
+    }
+
+    TabScreen::Update();
+
+    //==== Attributes ====//
+    if ( veh )
+    {
+        m_AttributeEditor.SetEditorCollID( veh->m_AttrCollection.GetID() );
+        m_AttributeEditor.Update();
+    }
+    return true;
+};
+
+void VehScreen::CallBack( Fl_Widget *w )
+{
+    assert( m_ScreenMgr );
+    m_AttributeEditor.DeviceCB( w );
+    m_ScreenMgr->SetUpdateFlag( true );
+};
+
+void VehScreen::GuiDeviceCallBack( GuiDevice* device )
+{
+    assert( m_ScreenMgr );
+    m_AttributeEditor.GuiDeviceCallBack( device );
+    m_ScreenMgr->SetUpdateFlag( true );
+};
+
+std::vector < std::string > VehScreen::GetCollIDs()
+{
+    return { m_AttributeEditor.GetAttrCollID() };
+}
 
 //=====================================================================//
 //=====================================================================//
