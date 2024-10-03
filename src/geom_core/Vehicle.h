@@ -506,6 +506,11 @@ public:
 
     IntParm m_NumUserSets;
 
+    // Attribute Explorer Screen
+
+    BoolParm m_AttrCaseSensitivity;
+    BoolParm m_AttrBoolButtonParm;
+
 protected:
 
     virtual void SetExportPropMainSurf( bool b );

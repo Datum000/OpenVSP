@@ -31,6 +31,8 @@ AdvLinkScreen.cpp
 AdvLinkVarRenameScreen.cpp
 AeroStructScreen.cpp
 AirfoilExportScreen.cpp
+AttributeEditor.cpp
+AttributeScreen.cpp
 BlankScreen.cpp
 BEMOptionsScreen.cpp
 BORScreen.cpp
@@ -114,6 +116,8 @@ AdvLinkScreen.h
 AdvLinkVarRenameScreen.h
 AeroStructScreen.h
 AirfoilExportScreen.h
+AttributeEditor.h
+AttributeScreen.h
 BlankScreen.h
 BEMOptionsScreen.h
 BORScreen.h
