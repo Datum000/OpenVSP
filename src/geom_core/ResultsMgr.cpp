@@ -602,14 +602,36 @@ void NameValData::ReRegisterNestedCollections()
         attrCollPtr->SetCollAttach( m_ID, vsp::ATTROBJ_ATTR );
     }
 }
-string NameValData::GetAsString()
+
+string NameValData::GetAsString( bool inline_data_flag )
 {
     char str[255];
     string outstring;
 
+    int vec_row = 0;
+    int mat_row = 0;
+    int mat_col = 0;
+    int ac_size = 0;
+    AttributeCollection* ac;
+    std::vector < NameValData* > nvd_vec;
+
     switch ( m_Type ){
         case vsp::INVALID_TYPE:
             outstring = "invalid";
+            break;
+        case vsp::BOOL_DATA:
+            for ( unsigned int i = 0; i < m_IntData.size(); i++ )
+            {
+                if ( m_IntData[i] )
+                {
+                    snprintf( str, sizeof( str ), "True" );
+                }
+                else
+                {
+                    snprintf( str, sizeof( str ), "False" );
+                }
+                outstring.append( str );
+            }
             break;
         case vsp::INT_DATA:
             for ( unsigned int i = 0; i < m_IntData.size(); i++ )
@@ -621,7 +643,7 @@ string NameValData::GetAsString()
         case vsp::DOUBLE_DATA:
             for ( unsigned int i = 0; i < m_DoubleData.size(); i++ )
             {
-                snprintf( str, sizeof( str ), "%.*e ", DBL_DIG + 3, m_DoubleData[i] );
+                snprintf( str, sizeof( str ), "%g ", m_DoubleData[i] );
                 outstring.append( str );
             }
             break;
@@ -632,25 +654,109 @@ string NameValData::GetAsString()
             }
             break;
         case vsp::VEC3D_DATA:
-            for ( unsigned int i = 0; i < m_Vec3dData.size(); i++ )
+            if ( !inline_data_flag )
             {
-                snprintf( str, sizeof( str ), "%.*e,%.*e,%.*e ", DBL_DIG + 3, m_Vec3dData[i].x(), DBL_DIG + 3, m_Vec3dData[i].y(), DBL_DIG + 3, m_Vec3dData[i].z() );
+                for ( unsigned int i = 0; i < m_Vec3dData.size(); i++ )
+                {
+                    snprintf( str, sizeof( str ), "%g,%g,%g ", m_Vec3dData[i].x(), m_Vec3dData[i].y(), m_Vec3dData[i].z() );
+                    outstring.append( str );
+                }
+            }
+            else
+            {
+                vec_row = m_Vec3dData.size();
+                if ( vec_row < 2 )
+                {
+                    snprintf( str, sizeof( str ), "%g,%g,%g ", m_Vec3dData[0].x(), m_Vec3dData[0].y(), m_Vec3dData[0].z() );
+                }
+                else
+                {
+                    snprintf( str, sizeof( str ), "(%d rows)", vec_row );
+                }
+                outstring.append( str );
+            }
+            break;
+        case vsp::INT_MATRIX_DATA:
+            if ( !inline_data_flag )
+            {
+                for ( unsigned int row = 0; row < m_IntMatData.size(); row++ )
+                {
+                    for ( unsigned int col = 0; col < m_IntMatData[row].size(); col++ )
+                    {
+                        snprintf( str, sizeof( str ), "%d ", m_IntMatData[row][col] );
+                        outstring.append( str );
+                    }
+                    if ( row < m_IntMatData.size() - 1 )
+                    {
+                        snprintf( str, sizeof( str ), "\n\t\t%-20s \t\t \t", "");
+                        outstring.append( str );
+                    }
+                }
+            }
+            else
+            {
+                mat_row = m_IntMatData.size();
+                if ( mat_row )
+                {
+                    mat_col = m_IntMatData[0].size();
+                }
+                snprintf( str, sizeof( str ), "(%d x %d)", mat_row, mat_col );
                 outstring.append( str );
             }
             break;
         case vsp::DOUBLE_MATRIX_DATA:
-            for ( unsigned int row = 0; row < m_DoubleMatData.size(); row++ )
+            if ( !inline_data_flag )
             {
-                for ( unsigned int col = 0; col < m_DoubleMatData[row].size(); col++ )
+                for ( unsigned int row = 0; row < m_DoubleMatData.size(); row++ )
                 {
-                    snprintf( str, sizeof( str ), "%.*e ", DBL_DIG + 3, m_DoubleMatData[row][col] );
-                    outstring.append( str );
+                    for ( unsigned int col = 0; col < m_DoubleMatData[row].size(); col++ )
+                    {
+                        snprintf( str, sizeof( str ), "%.*e ", DBL_DIG + 3, m_DoubleMatData[row][col] );
+                        outstring.append( str );
+                    }
+                    if ( row < m_DoubleMatData.size() - 1 )
+                    {
+                        snprintf( str, sizeof( str ), "\n\t\t%-20s \t\t \t", "");
+                        outstring.append( str );
+                    }
                 }
-                if ( row < m_DoubleMatData.size() - 1 )
+            }
+            else
+            {
+                mat_row = m_DoubleMatData.size();
+                if ( mat_row )
                 {
-                    snprintf( str, sizeof( str ), "\n\t\t%-20s \t\t \t", "");
-                    outstring.append( str );
+                    mat_col = m_DoubleMatData[0].size();
                 }
+                snprintf( str, sizeof( str ), "(%d x %d)", mat_row, mat_col );
+                outstring.append( str );
+            }
+            break;
+        case vsp::ATTR_COLLECTION_DATA:
+            ac = GetAttributeCollectionPtr( 0 );
+            ac_size = ac->GetDataMapSize();
+            nvd_vec = ac->GetAllPtrs();
+            if ( !inline_data_flag )
+            {
+                //possibly incomplete, 
+                for ( unsigned int i_attr = 0; i_attr < nvd_vec.size(); i_attr++ )
+                {
+                    //print out name, typename, and short data
+                    snprintf( str, sizeof( str ), "%s, %s, %s", nvd_vec[i_attr]->GetName().c_str(), nvd_vec[i_attr]->GetTypeName( nvd_vec[i_attr]->GetType(), true, true ).c_str() , nvd_vec[i_attr]->GetAsString( true ).c_str() );
+                    outstring.append( str );
+
+                    //newline for i_attr < max attributes
+                    if ( i_attr < nvd_vec.size() - 1 )
+                    {
+                        snprintf( str, sizeof( str ), "\n" );
+                        outstring.append( str );
+                    }
+                }
+            }
+            else
+            {
+                snprintf( str, sizeof( str ), "%d Attributes", ac_size );
+                outstring.append( str );
             }
             break;
         default:

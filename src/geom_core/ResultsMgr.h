@@ -149,7 +149,7 @@ public:
     void AddAttributeCollection();
     void DecodeCollXml( xmlNodePtr & node );
 
-    string GetAsString();
+    string GetAsString( bool inline_data_flag = false );
 
     void SetBoolData( const vector< int > & b )
     {
