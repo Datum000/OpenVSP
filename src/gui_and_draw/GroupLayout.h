@@ -170,7 +170,7 @@ public:
 
     Fl_Browser* AddFlBrowser( int height );
     ColResizeBrowser* AddColResizeBrowser( int* width_array_ptr, size_t num_col, int height );
-    Fl_Text_Editor* AddFlTextEditor( int height );
+    Fl_Text_Editor* AddFlTextEditor( int height , bool resizable = false );
     Fl_Text_Display* AddFlTextDisplay( int height );
     Fl_Scroll* AddFlScroll( int height );
     Fl_Sys_Menu_Bar* AddFlMenuBar( int height );

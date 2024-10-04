@@ -18,6 +18,7 @@
 #include "AdvLinkVarRenameScreen.h"
 #include "AeroStructScreen.h"
 #include "AirfoilExportScreen.h"
+#include "AttributeScreen.h"
 #include "BEMOptionsScreen.h"
 #include "CfdMeshScreen.h"
 #include "ClippingScreen.h"
@@ -609,6 +610,7 @@ void ScreenMgr::Init()
     m_ScreenVec[vsp::VSP_AERO_STRUCT_SCREEN] = new AeroStructScreen( this );
     m_ScreenVec[vsp::VSP_AIRFOIL_CURVES_EXPORT_SCREEN] = new BezierAirfoilExportScreen( this );
     m_ScreenVec[vsp::VSP_AIRFOIL_POINTS_EXPORT_SCREEN] = new SeligAirfoilExportScreen( this );
+    m_ScreenVec[vsp::VSP_ATTRIBUTE_EXPLORER_SCREEN] = new AttributeExplorer( this );
     m_ScreenVec[vsp::VSP_BACKGROUND_SCREEN] = new ManageBackgroundScreen( this );
     m_ScreenVec[vsp::VSP_BACKGROUND3D_SCREEN] = new ManageBackground3DScreen( this );
     m_ScreenVec[vsp::VSP_BACKGROUND3D_PREVIEW_SCREEN] = new Background3DPreviewScreen( this );
@@ -757,6 +759,11 @@ VspScreen * ScreenMgr::GetScreen( int id )
     // Should not reach here.
     assert( false );
     return NULL;
+}
+
+vector < VspScreen* > ScreenMgr::GetAllScreens()
+{
+    return m_ScreenVec;
 }
 
 void ScreenMgr::LaunchSystemDefaultBrowser( const string &url )

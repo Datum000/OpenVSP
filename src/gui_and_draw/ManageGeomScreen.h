@@ -59,6 +59,11 @@ public:
 
     void UpdateGeomScreens();
 
+    vector< VspScreen* > GetGeomScreenVec()
+    {
+        return m_GeomScreenVec;
+    }
+
     /*
     * Get Feedback Group's name.
     */

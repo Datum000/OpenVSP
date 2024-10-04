@@ -28,6 +28,8 @@
 #include "GroupLayout.h"
 #include "SubGLWindow.h"
 #include "VSPWindow.h"
+#include "AttributeEditor.h"
+#include "AttributeManager.h"
 
 class ScreenMgr;
 class Vehicle;
@@ -70,6 +72,11 @@ public:
     virtual bool IsShown();
     virtual void Hide();
     virtual bool Update();
+    virtual std::vector < std::string > GetCollIDs()
+    {
+        return {};
+    }
+
     ScreenMgr* GetScreenMgr()
     {
         return m_ScreenMgr;
@@ -78,6 +85,11 @@ public:
     virtual void SetScreenType( int t )
     {
         m_ScreenType = t;
+    }
+
+    const int GetScreenType()
+    {
+        return m_ScreenType;
     }
 
     /*!
@@ -129,6 +141,10 @@ public:
         VspScreen::Update();
         return false;
     }
+    virtual std::vector < std::string > GetCollIDs()
+    {
+        return {};
+    }
 
     void HelpCallBack( Fl_Widget *w );
     static void staticHelpCB( Fl_Widget *w, void* data )
@@ -158,6 +174,11 @@ public:
     {
         BasicScreen::Update();
         return false;
+    }
+
+    virtual std::vector < std::string > GetCollIDs()
+    {
+        return {};
     }
 
     virtual Fl_Group* AddTab( const string& title );
@@ -193,6 +214,7 @@ public:
     virtual ~GeomScreen()                               {}
 
     virtual bool Update( );
+    virtual void Show( );
     virtual void CallBack( Fl_Widget *w );
     static void staticScreenCB( Fl_Widget* w, void* data )
     {
@@ -202,6 +224,8 @@ public:
     virtual void SubSurfDispGroup( GroupLayout * group );
 
     virtual void UpdateMaterialNames();
+
+    virtual std::vector < std::string > GetCollIDs();
 
     //==== Group Layouts ====//
     GroupLayout m_GenLayout;
@@ -228,6 +252,9 @@ public:
     ToggleButton m_NegativeVolumeBtn;
 
     Fl_Check_Browser* m_SetBrowser;
+
+    //===== Attributes =====//
+    AttributeEditor m_AttributeEditor;
 
     //==== XForms ====//
     ToggleButton m_XFormAbsoluteToggle;

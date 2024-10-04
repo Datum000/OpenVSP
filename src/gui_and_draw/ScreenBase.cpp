@@ -394,9 +394,17 @@ GeomScreen::GeomScreen( ScreenMgr* mgr, int w, int h, const string & title, cons
     m_GenLayout.AddYGap();
 
     m_GenLayout.AddDividerBox( "Set Export/Analysis" );
-    int remain_y = ( m_GenLayout.GetH() + m_GenLayout.GetStartY() ) - m_GenLayout.GetY();
+    int attrColHt = 100;
+    int buffer = 50;
+    int remain_y = ( m_GenLayout.GetH() + m_GenLayout.GetStartY() ) - m_GenLayout.GetY() - attrColHt - buffer ;
     m_SetBrowser = m_GenLayout.AddCheckBrowser( remain_y );
     m_SetBrowser->callback( staticCB, this );
+    m_GenLayout.AddY( m_SetBrowser->h() - 21 );
+
+    // //===== Attributes ====//
+    m_GenLayout.AddYGap();
+    m_GenLayout.AddDividerBox( "Attributes" );
+    m_AttributeEditor.Init( mgr, &m_GenLayout, gen_group, this, staticScreenCB, true, m_GenLayout.GetY(), attrColHt );
 
     gen_tab->show();
 
@@ -739,6 +747,11 @@ GeomScreen::GeomScreen( ScreenMgr* mgr, int w, int h, const string & title, cons
     m_SSLineGroup.AddSlider( m_SSLineConstSlider, "Value01", 1, "%7.6f" );
     m_SSLineGroup.AddSlider( m_SSLineConstSlider0N, "Value0N", 1, "%7.6f" );
 
+    m_SSLineGroup.AddYGap();
+    m_SSLineGroup.AddDividerBox( "Attributes" );
+
+    m_SSLineAttrEditor.Init( mgr , &m_SSLineGroup , subsurf_group, this, staticScreenCB , true , m_SSLineGroup.GetY() , browser_h );
+
     //==== SSRectangle ====//
     m_SSCommonGroup.AddSubGroupLayout( m_SSRecGroup, m_SSCommonGroup.GetW(), m_SSCommonGroup.GetRemainY() );
     remain_x = m_SSRecGroup.GetRemainX();
@@ -763,6 +776,11 @@ GeomScreen::GeomScreen( ScreenMgr* mgr, int w, int h, const string & title, cons
     m_SSRecGroup.AddSlider( m_SSRecULenSlider, "U Length", 1, "%7.6f" );
     m_SSRecGroup.AddSlider( m_SSRecWLenSlider, "W Length", 1, "%7.6f" );
     m_SSRecGroup.AddSlider( m_SSRecThetaSlider, "Theta", 25, "%7.6f" );
+
+    m_SSRecGroup.AddYGap();
+    m_SSRecGroup.AddDividerBox( "Attributes" );
+
+    m_SSRecAttrEditor.Init( mgr , &m_SSRecGroup , subsurf_group , this, staticScreenCB , true , m_SSRecGroup.GetY() , browser_h );
 
     //==== SS_Ellipse ====//
     m_SSCommonGroup.AddSubGroupLayout( m_SSEllGroup, m_SSCommonGroup.GetW(), m_SSCommonGroup.GetRemainY() );
@@ -789,6 +807,11 @@ GeomScreen::GeomScreen( ScreenMgr* mgr, int w, int h, const string & title, cons
     m_SSEllGroup.AddSlider( m_SSEllULenSlider, "U Length", 1, "%7.6f" );
     m_SSEllGroup.AddSlider( m_SSEllWLenSlider, "W Length", 1, "%7.6f" );
     m_SSEllGroup.AddSlider( m_SSEllThetaSlider, "Theta", 25, "%7.6f" );
+
+    m_SSEllGroup.AddYGap();
+    m_SSEllGroup.AddDividerBox( "Attributes" );
+
+    m_SSEllAttrEditor.Init( mgr , &m_SSEllGroup , subsurf_group , this, staticScreenCB , true , m_SSEllGroup.GetY() , browser_h );
 
     //===== SSControl ====//
     m_SSCommonGroup.AddSubGroupLayout( m_SSConGroup, m_SSCommonGroup.GetW(), m_SSCommonGroup.GetRemainY() );
@@ -879,6 +902,11 @@ GeomScreen::GeomScreen( ScreenMgr* mgr, int w, int h, const string & title, cons
 
     m_SSConGroup.AddSlider( m_SSConTessSlider, "Num Points", 100, "%5.0f" );
 
+    m_SSConGroup.AddYGap();
+    m_SSConGroup.AddDividerBox( "Attributes" );
+
+    m_SSConAttrEditor.Init( mgr , &m_SSConGroup , subsurf_group , this, staticScreenCB , true , m_SSConGroup.GetY() , browser_h );
+
     //==== SSFiniteLine ====//
     m_SSCommonGroup.AddSubGroupLayout( m_SSFLineGroup, m_SSCommonGroup.GetW(), m_SSCommonGroup.GetRemainY() );
     remain_x = m_SSFLineGroup.GetRemainX();
@@ -893,6 +921,11 @@ GeomScreen::GeomScreen( ScreenMgr* mgr, int w, int h, const string & title, cons
     m_SSFLineGroup.AddSlider( m_SSFLineWEndSlider, "W End", 1, "%7.6f" );
 
     m_RotActive = true;
+
+    m_SSFLineGroup.AddYGap();
+    m_SSFLineGroup.AddDividerBox( "Attributes" );
+
+    m_SSFLineAttrEditor.Init( mgr , &m_SSFLineGroup , subsurf_group , this, staticScreenCB , true , m_SSFLineGroup.GetY() , browser_h );
 
     //=============== MassProp Tab ===================//
     m_MassPropLayout.SetGroupAndScreen( massprop_group, this );
@@ -927,6 +960,14 @@ GeomScreen::GeomScreen( ScreenMgr* mgr, int w, int h, const string & title, cons
     m_MassPropLayout.AddSlider( m_IxySlider, "Ixy", 100, "%7.6f" );
     m_MassPropLayout.AddSlider( m_IxzSlider, "Ixz", 100, "%7.6f" );
     m_MassPropLayout.AddSlider( m_IyzSlider, "Iyz", 100, "%7.6f" );
+
+
+}
+
+void GeomScreen::Show( )
+{
+    // inherit base class method, add a line to clear the entry fields of the AttributeEditor GUI when changing tab/screen
+    VspScreen::Show( );
 }
 
 bool GeomScreen::Update()
@@ -984,6 +1025,10 @@ bool GeomScreen::Update()
             break;
         }
     }
+
+    //==== Attributes ====//
+    m_AttributeEditor.SetEditorCollID( geom_ptr->m_AttrCollection.GetID() );
+    m_AttributeEditor.Update();
 
     //==== XForms ====//
     m_ScaleSlider.Update( geom_ptr->m_Scale.GetID() );
@@ -1241,6 +1286,10 @@ bool GeomScreen::Update()
 
             SubSurfDispGroup( &m_SSLineGroup );
 
+            // update attribute pointer to SSLineAttrEditor
+            m_SSLineAttrEditor.SetEditorCollID( subsurf->m_AttrCollection.GetID() );
+            m_SSLineAttrEditor.Update();
+
         }
         else if ( subsurf->GetType() == vsp::SS_RECTANGLE )
         {
@@ -1254,6 +1303,10 @@ bool GeomScreen::Update()
             m_SSRecWLenSlider.Update( ssrec->m_WLength.GetID() );
             m_SSRecThetaSlider.Update( ssrec->m_Theta.GetID() );
             SubSurfDispGroup( &m_SSRecGroup );
+
+            // update attribute pointer to SSRecAttrEditor
+            m_SSRecAttrEditor.SetEditorCollID( subsurf->m_AttrCollection.GetID() );
+            m_SSRecAttrEditor.Update();
         }
         else if ( subsurf->GetType() == vsp::SS_ELLIPSE )
         {
@@ -1268,6 +1321,10 @@ bool GeomScreen::Update()
             m_SSEllWLenSlider.Update( ssell->m_WLength.GetID() );
             m_SSEllThetaSlider.Update( ssell->m_Theta.GetID() );
             SubSurfDispGroup( & m_SSEllGroup );
+
+            // update attribute pointer to SSEllAttrEditor
+            m_SSEllAttrEditor.SetEditorCollID( subsurf->m_AttrCollection.GetID() );
+            m_SSEllAttrEditor.Update();
         }
         else if (subsurf->GetType() == vsp::SS_CONTROL)
         {
@@ -1374,6 +1431,10 @@ bool GeomScreen::Update()
 
             m_SSConSurfTypeChoice.Update(sscon->m_SurfType.GetID());
             SubSurfDispGroup(&m_SSConGroup);
+
+            // update attribute pointer to SSConAttrEditor
+            m_SSConAttrEditor.SetEditorCollID( subsurf->m_AttrCollection.GetID() );
+            m_SSConAttrEditor.Update();
         }
         else if ( subsurf->GetType() == vsp::SS_FINITE_LINE )
         {
@@ -1385,10 +1446,20 @@ bool GeomScreen::Update()
             m_SSFLineWStartSlider.Update( ssfline->m_WStart.GetID() );
             m_SSFLineWEndSlider.Update( ssfline->m_WEnd.GetID() );
             SubSurfDispGroup( &m_SSFLineGroup );
+
+            // update attribute pointer to SSFLineAttrEditor
+            m_SSFLineAttrEditor.SetEditorCollID( subsurf->m_AttrCollection.GetID() );
+            m_SSFLineAttrEditor.Update();
         }
     }
     else
     {
+        m_SSLineAttrEditor.SetEditorCollID();
+        m_SSEllAttrEditor.SetEditorCollID();
+        m_SSRecAttrEditor.SetEditorCollID();
+        m_SSConAttrEditor.SetEditorCollID();
+        m_SSFLineAttrEditor.SetEditorCollID();
+
         SubSurfDispGroup( NULL );
     }
 
@@ -1568,6 +1639,8 @@ void GeomScreen::GuiDeviceCallBack( GuiDevice* device )
         m_SSCurrMainSurfIndx = m_SubSurfSelectSurface.GetVal();
     }
 
+    m_AttributeEditor.GuiDeviceCallBack( device );
+
     m_ScreenMgr->SetUpdateFlag( true );
 }
 
@@ -1622,7 +1695,32 @@ void GeomScreen::CallBack( Fl_Widget *w )
         geom_ptr->SetSetFlag( curr_index, flag );
     }
 
+    //forward Fl_widget to attribute editor callback
+    m_AttributeEditor.DeviceCB( w );
+
     m_ScreenMgr->SetUpdateFlag( true );
+}
+
+std::vector < std::string > GeomScreen::GetCollIDs()
+{
+    // std::vector < AttributeCollection* > ac_vec;
+    std::vector < std::string > id_vec;
+
+    id_vec.push_back( m_AttributeEditor.GetAttrCollID() );
+    id_vec.push_back( m_SSLineAttrEditor.GetAttrCollID() );
+    id_vec.push_back( m_SSRecAttrEditor.GetAttrCollID() );
+    id_vec.push_back( m_SSEllAttrEditor.GetAttrCollID() );
+    id_vec.push_back( m_SSConAttrEditor.GetAttrCollID() );
+    id_vec.push_back( m_SSFLineAttrEditor.GetAttrCollID() );
+
+    // for ( int i = 0; i != ac_vec.size(); ++i )
+    // {
+    //     if ( ac_vec[i] )
+    //     {
+    //         id_vec.push_back( ac_vec[i]->GetID() );
+    //     }
+    // }
+    return id_vec;
 }
 
 //=====================================================================//

@@ -1142,6 +1142,18 @@ void ParmButton::Update( const string& parm_id )
             DebugLabelSize( m_Button );
         }
     }
+    Parm* parm_ptr = ParmMgr.FindParm( m_ParmID );
+    if ( parm_ptr )
+    {
+        if ( parm_ptr->m_ParmAttrCollection.GetAttrDataFlag() )
+        {
+            m_Button->labelcolor( FL_DARK_MAGENTA );
+        }
+        else
+        {
+            m_Button->labelcolor( FL_BLACK );
+        }
+    }
 }
 
 //==== Update Name ====//
@@ -2203,6 +2215,12 @@ void StringInput::Update( const string & val )
 {
     m_String = val;
     m_Input->value( m_String.c_str() );
+}
+
+//==== Set Max Chars ====//
+void StringInput::SetMaxChars( int len )
+{
+    m_Input->maximum_size( len );
 }
 
 //==== CallBack ====//

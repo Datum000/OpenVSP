@@ -189,7 +189,12 @@ void ManageGeomScreen::LoadBrowser()
 
     //==== Display Vehicle Name ====//
     m_GeomBrowser->clear();
-    m_GeomBrowser->add( m_VehiclePtr->GetName().c_str() );
+    string vstr = m_VehiclePtr->GetName().c_str();
+    if ( m_VehiclePtr->GetAttrCollection()->GetAttrDataFlag() )
+    {
+        vstr = "@C" + std::to_string(FL_DARK_MAGENTA)+"@." + vstr;
+    }
+    m_GeomBrowser->add( vstr.c_str() );
 
     //==== Get Geoms To Display ====//
     m_DisplayedGeomVec = m_VehiclePtr->GetGeomVec( true );
@@ -200,11 +205,16 @@ void ManageGeomScreen::LoadBrowser()
         Geom* gPtr = m_VehiclePtr->FindGeom( m_DisplayedGeomVec[i] );
         if ( gPtr )
         {
+            bool has_attr = gPtr->GetAttrCollection()->GetAttrDataFlag();
             string str;
             //==== Check if Parent is Selected ====//
             if ( IsParentSelected( m_DisplayedGeomVec[i], activeVec ) )
             {
                 str.append( "@b@." );
+            }
+            else if ( has_attr )
+            {
+                str.append( "@C" + std::to_string(FL_DARK_MAGENTA)+"@." );
             }
 
             int numindents = gPtr->CountParents( 0 );
@@ -639,6 +649,7 @@ void ManageGeomScreen::EditName( const string &name )
 void ManageGeomScreen::CreateScreens()
 {
     m_GeomScreenVec.resize( vsp::NUM_GEOM_SCREENS );
+    m_GeomScreenVec[vsp::VEH_GEOM_SCREEN] = new VehScreen( m_ScreenMgr );
     m_GeomScreenVec[vsp::POD_GEOM_SCREEN] = new PodScreen( m_ScreenMgr );
     m_GeomScreenVec[vsp::FUSELAGE_GEOM_SCREEN] = new FuselageScreen( m_ScreenMgr );
     m_GeomScreenVec[vsp::MS_WING_GEOM_SCREEN] = new WingScreen( m_ScreenMgr );

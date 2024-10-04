@@ -142,6 +142,7 @@ MainVSPScreen::MainVSPScreen( ScreenMgr* mgr ) : ActionScreen( mgr )
     m_TextureMenuItem.Init( mgr, m_MenuBar, "Model/Texture...", vsp::VSP_MANAGE_TEXTURE_SCREEN );
     m_AdvLinkMenuItem.Init( mgr, m_MenuBar, "Model/Adv Link...", vsp::VSP_ADV_LINK_SCREEN );
     m_UserParmMenuItem.Init( mgr, m_MenuBar, "Model/User Parms...", vsp::VSP_USER_PARM_SCREEN );
+    m_AttributeMenuItem.Init( mgr, m_MenuBar, "Model/User Attributes...", vsp::VSP_ATTRIBUTE_EXPLORER_SCREEN );
     m_FitModelMenuItem.Init( mgr, m_MenuBar, "Model/Fit Model...", vsp::VSP_FIT_MODEL_SCREEN );
     m_SnapToMenuItem.Init( mgr, m_MenuBar, "Model/Snap To...", vsp::VSP_SNAP_TO_SCREEN );
     m_VarPresetMenuItem.Init( mgr, m_MenuBar, "Model/Variable Presets...", vsp::VSP_VAR_PRESET_SCREEN );

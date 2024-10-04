@@ -35,6 +35,8 @@ public:
 
     void GuiDeviceCallBack( GuiDevice* gui_device );
 
+    virtual std::vector < std::string > GetCollIDs();
+
 protected:
 
 
@@ -54,6 +56,8 @@ protected:
     GroupLayout m_AdvLinkLayout;
     Fl_Browser* m_AdvLinkInputBrowser;
     Fl_Browser* m_AdvLinkOutputBrowser;
+
+    AttributeEditor m_AttributeEditor;
 
 };
 

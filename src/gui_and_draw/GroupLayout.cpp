@@ -1781,13 +1781,17 @@ ColResizeBrowser* GroupLayout::AddColResizeBrowser( int* width_array_ptr, size_t
 }
 
 //==== Add Fl Text Editor ====//
-Fl_Text_Editor* GroupLayout::AddFlTextEditor( int height )
+Fl_Text_Editor* GroupLayout::AddFlTextEditor( int height , bool resizable )
 {
     assert( m_Group && m_Screen );
 
     Fl_Text_Editor* text_editor = new Fl_Text_Editor (m_X, m_Y, m_W, height, "");
 
     m_Group->add( text_editor );
+    if (resizable)
+    {
+        m_Group->resizable( text_editor );
+    }
 
     AddY( height );
     NewLineX();
