@@ -407,6 +407,7 @@ void NameValData::EncodeXml( xmlNodePtr & node )
     XmlUtil::SetStringProp( dnode, "AttachID", m_AttachID );
     XmlUtil::SetStringProp( dnode, "Name", m_Name );
     XmlUtil::SetIntProp( dnode, "Type", m_Type );
+    XmlUtil::SetIntProp( dnode, "EventGroup", m_AttributeEventGroup );
     if ( m_Type == vsp::BOOL_DATA )
     {
         XmlUtil::SetIntProp( dnode, "BoolData", GetBool( 0 ) );
@@ -512,6 +513,7 @@ void NameValData::DecodeXml( xmlNodePtr & node, vector < string > name_vector )
         m_Name = iter_name;
         m_Type = XmlUtil::FindIntProp( node, "Type", default_int );
         m_Doc = XmlUtil::FindStringProp( node, "Desc", default_str );
+        m_AttributeEventGroup = XmlUtil::FindIntProp( node, "EventGroup", vsp::ATTR_GROUP_NONE );
 
         ChangeID( ID );
         SetAttrAttach( attachID );
@@ -592,6 +594,7 @@ void NameValData::DecodeXml( xmlNodePtr & node, vector < string > name_vector )
             DecodeCollXml( node );
             ReRegisterNestedCollections();
         }
+        AttributeMgr.SetDirtyFlag( m_AttributeEventGroup );
     }
 }
 
@@ -961,7 +964,6 @@ void AttributeCollection::Add( const NameValData & d, const int & attr_event_gro
     }
 }
 
-
 //==== Delete NameValData from map ====//
 void AttributeCollection::Del( const string & name )
 {
@@ -972,6 +974,7 @@ void AttributeCollection::Del( const string & name )
         {
             AttributeMgr.DeregisterCollID( nvd_ptr->GetAttributeCollectionPtr( 0 )->GetID() );
         }
+        AttributeMgr.SetDirtyFlag( nvd_ptr->GetAttributeEventGroup() );
         AttributeMgr.DeregisterAttrID( nvd_ptr->GetID() );
         m_DataMap.erase( name );
     }
