@@ -43,6 +43,13 @@ public:
         return m_AttrPtrMap.count( attrID );
     }
 
+    void SetAttrDirtyFlag( const string &attrID );
+    void SetDirtyFlag( int f );
+    bool GetDirtyFlag( int f );
+    void ClearDirtyFlag( int f );
+
+    void Update();
+
     AttributeCollection* GetCollectionPtr( string collID, bool only_populated_collections = false );
     static AttributeCollection* GetCollectionFromParentID( const string & id );
     vector < AttributeCollection* > GetAllCollectionPtrs( int permit_empty_collection_type = -2, vector < string > inc_ids = {} );
@@ -82,36 +89,36 @@ public:
     vector < vector < int > > GetAttributeIntMatrixVal( const string &attrID );
     vector < vector < double > > GetAttributeDoubleMatrixVal( const string &attrID );
 
-    void SetAttributeName( const string &attrID, const string &name );
-    void SetAttributeDoc( const string &attrID, const string &doc );
-    void SetAttributeBool( const string &attrID, int value );
-    void SetAttributeInt( const string &attrID, int value );
-    void SetAttributeDouble( const string &attrID, double value );
-    void SetAttributeString( const string &attrID, const string &value );
-    void SetAttributeVec3d( const string &attrID, const vec3d &value );
-    void SetAttributeIntMatrix( const string &attrID, const vector< vector< int > > &value );
-    void SetAttributeDoubleMatrix( const string &attrID, const vector< vector< double > > &value );
+    void SetAttributeName( const string &attrID, const string &name, bool updateFlag = true );
+    void SetAttributeDoc( const string &attrID, const string &doc, bool updateFlag = true );
+    void SetAttributeBool( const string &attrID, int value, bool updateFlag = true );
+    void SetAttributeInt( const string &attrID, int value, bool updateFlag = true );
+    void SetAttributeDouble( const string &attrID, double value, bool updateFlag = true );
+    void SetAttributeString( const string &attrID, const string &value, bool updateFlag = true );
+    void SetAttributeVec3d( const string &attrID, const vec3d &value, bool updateFlag = true );
+    void SetAttributeIntMatrix( const string &attrID, const vector< vector< int > > &value, bool updateFlag = true );
+    void SetAttributeDoubleMatrix( const string &attrID, const vector< vector< double > > &value, bool updateFlag = true );
 
-    void DeleteAttribute( const string &attrID );
+    void DeleteAttribute( const string &attrID, bool updateFlag = true );
 
-    void GuiAddAttribute( AttributeCollection* ac_ptr, const int & attrType );
-    void AddAttributeBool( const string &collID, const string &attributeName, int value );
-    void AddAttributeInt( const string &collID, const string &attributeName, int value );
-    void AddAttributeDouble( const string &collID, const string &attributeName, double value );
-    void AddAttributeString( const string &collID, const string &attributeName, const string &value );
-    void AddAttributeVec3d( const string &collID, const string &attributeName, const vec3d &value );
-    void AddAttributeIntMatrix( const string &collID, const string &attributeName, const vector< vector< int > > &value );
-    void AddAttributeDoubleMatrix( const string &collID, const string &attributeName, const vector< vector< double > > &value );
-    void AddAttributeGroup( const string &collID, const string &attributeName );
-    void AddAttributeUtil( const string &collID, NameValData &attrAdd );
+    void GuiAddAttribute( AttributeCollection* ac_ptr, const int & attrType, bool updateFlag = true );
+    void AddAttributeBool( const string &collID, const string &attributeName, int value, bool updateFlag = true );
+    void AddAttributeInt( const string &collID, const string &attributeName, int value, bool updateFlag = true );
+    void AddAttributeDouble( const string &collID, const string &attributeName, double value, bool updateFlag = true );
+    void AddAttributeString( const string &collID, const string &attributeName, const string &value, bool updateFlag = true );
+    void AddAttributeVec3d( const string &collID, const string &attributeName, const vec3d &value, bool updateFlag = true );
+    void AddAttributeIntMatrix( const string &collID, const string &attributeName, const vector< vector< int > > &value, bool updateFlag = true );
+    void AddAttributeDoubleMatrix( const string &collID, const string &attributeName, const vector< vector< double > > &value, bool updateFlag = true );
+    void AddAttributeGroup( const string &collID, const string &attributeName, bool updateFlag = true );
+    void AddAttributeUtil( const string &collID, NameValData &attrAdd, bool updateFlag = true );
 
-    int CopyAttribute( const string &attr_id );
-    void CutAttribute( const string &obj_id );
-    void PasteAttribute( const string &obj_id );
+    int CopyAttribute( const string &attr_id, bool updateFlag = true );
+    void CutAttribute( const string &obj_id, bool updateFlag = true );
+    void PasteAttribute( const string &obj_id, bool updateFlag = true );
 
-    int CopyAttributeUtil( const string &attr_id );
-    void CutAttributeUtil( const string &obj_id );
-    void PasteAttributeUtil( const string &obj_id );
+    int CopyAttributeUtil( const string &attr_id, bool updateFlag = true );
+    void CutAttributeUtil( const string &obj_id, bool updateFlag = true );
+    void PasteAttributeUtil( const string &obj_id, bool updateFlag = true );
 
     //tree things
     vector < vector < vector < string > > > GetAttrTreeVec( const string & root_id = "", vector < string > inc_ids = {}, bool exclude_clipboard = true, int attr_type = vsp::INVALID_TYPE, int attach_type = vsp::ATTROBJ_FREE, const string & attr_search = "", bool case_sens = false );

@@ -49,6 +49,58 @@ void AttributeMgrSingleton::Wype()
     m_DirtyFlags.resize( vsp::NUM_ATTR_EVENT_GROUPS, false );
 }
 
+
+void AttributeMgrSingleton::SetAttrDirtyFlag( const string &attrID )
+{
+    NameValData* attr_ptr = GetAttributePtr( attrID );
+    if ( attr_ptr )
+    {
+        int f = attr_ptr->GetAttributeEventGroup();
+        SetDirtyFlag( f );
+    }
+}
+
+void AttributeMgrSingleton::SetDirtyFlag( int f )
+{
+    if ( f >= 0 && f < vsp::NUM_ATTR_EVENT_GROUPS )
+    {
+        m_DirtyFlags[f] = true;
+    }
+}
+
+bool AttributeMgrSingleton::GetDirtyFlag( int f )
+{
+    if ( f >= 0 && f < vsp::NUM_ATTR_EVENT_GROUPS )
+    {
+        return m_DirtyFlags[f];
+    }
+    return false;
+}
+
+void AttributeMgrSingleton::ClearDirtyFlag( int f )
+{
+    if ( f >= 0 && f < vsp::NUM_ATTR_EVENT_GROUPS )
+    {
+        m_DirtyFlags[f] = false;
+    }
+}
+
+
+void AttributeMgrSingleton::Update()
+{
+
+    if ( m_DirtyFlags[ vsp::ATTR_GROUP_WATERMARK] )
+    {
+        // Normally handled here.  However, this is handled as a pull from
+        // VspGlWindow::update()
+        // Because vsp_graphic can access geom_core and not the other way around.
+
+
+        // m_DirtyFlags[ vsp::ATTR_GROUP_WATERMARK] = false;
+    }
+
+}
+
 void AttributeMgrSingleton::RegisterCollID( const string & collID, AttributeCollection* ac_ptr )
 {
     if ( !m_AttrCollMap.count( collID ) )
@@ -636,7 +688,7 @@ vector< vector< double > > AttributeMgrSingleton::GetAttributeDoubleMatrixVal( c
     return attr_value;
 }
 
-void AttributeMgrSingleton::DeleteAttribute( const string &attrID )
+void AttributeMgrSingleton::DeleteAttribute( const string &attrID, bool updateFlag )
 {
     // Are all these if statements necessary?
     // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
@@ -649,12 +701,17 @@ void AttributeMgrSingleton::DeleteAttribute( const string &attrID )
         string name = attribute_data->GetName();
         if ( m_AttrCollMap.count( collID ) == 1 )
         {
+            SetAttrDirtyFlag( attrID );
+            if ( updateFlag )
+            {
+                Update();
+            }
             m_AttrCollMap.at( collID )->Del( name );
         }
     }
 }
 
-void AttributeMgrSingleton::GuiAddAttribute( AttributeCollection* ac_ptr, const int & attrType )
+void AttributeMgrSingleton::GuiAddAttribute( AttributeCollection* ac_ptr, const int & attrType, bool updateFlag )
 {
     string attrName = ac_ptr->GetNewAttrName( attrType );
     string attrDesc = "";
@@ -674,122 +731,143 @@ void AttributeMgrSingleton::GuiAddAttribute( AttributeCollection* ac_ptr, const 
     case vsp::BOOL_DATA:
         attrAdd = NameValData( attrName, attrDataBool, attrDesc );
         attrAdd.SetAttrAttach( ac_ptr->GetID() );
+        SetDirtyFlag( attrAdd.GetAttributeEventGroup() );
         ac_ptr->Add( attrAdd );
         break;
     case vsp::INT_DATA:
         attrAdd = NameValData( attrName, attrDataInt, attrDesc );
         attrAdd.SetAttrAttach( ac_ptr->GetID() );
+        SetDirtyFlag( attrAdd.GetAttributeEventGroup() );
         ac_ptr->Add( attrAdd );
         break;
     case vsp::DOUBLE_DATA:
         attrAdd = NameValData( attrName, attrDataDouble, attrDesc );
         attrAdd.SetAttrAttach( ac_ptr->GetID() );
+        SetDirtyFlag( attrAdd.GetAttributeEventGroup() );
         ac_ptr->Add( attrAdd );
         break;
     case vsp::STRING_DATA:
         attrAdd = NameValData( attrName, attrDataString, attrDesc );
         attrAdd.SetAttrAttach( ac_ptr->GetID() );
+        SetDirtyFlag( attrAdd.GetAttributeEventGroup() );
         ac_ptr->Add( attrAdd );
         break;
     case vsp::ATTR_COLLECTION_DATA:
         attrAdd = NameValData( attrName );
         attrAdd.SetAttrAttach( ac_ptr->GetID() );
         attrAdd.AddAttributeCollection();
+        SetDirtyFlag( attrAdd.GetAttributeEventGroup() );
         ac_ptr->Add( attrAdd );
         break;
     case vsp::VEC3D_DATA:
         attrAdd = NameValData( attrName, attrDataVec3d, attrDesc );
         attrAdd.SetAttrAttach( ac_ptr->GetID() );
+        SetDirtyFlag( attrAdd.GetAttributeEventGroup() );
         ac_ptr->Add( attrAdd );
         break;
     case vsp::INT_MATRIX_DATA:
         attrAdd = NameValData( attrName, attrDataIntMat, attrDesc );
         attrAdd.SetAttrAttach( ac_ptr->GetID() );
+        SetDirtyFlag( attrAdd.GetAttributeEventGroup() );
         ac_ptr->Add( attrAdd );
         break;
     case vsp::DOUBLE_MATRIX_DATA:
         attrAdd = NameValData( attrName, attrDataDblMat, attrDesc );
         attrAdd.SetAttrAttach( ac_ptr->GetID() );
+        SetDirtyFlag( attrAdd.GetAttributeEventGroup() );
         ac_ptr->Add( attrAdd );
         break;
     }
+    if ( updateFlag )
+    {
+        Update();
+    }
 }
 
-void AttributeMgrSingleton::AddAttributeBool( const string &collID, const string &attributeName, int value )
+void AttributeMgrSingleton::AddAttributeBool( const string &collID, const string &attributeName, int value, bool updateFlag )
 {
     // Are all these if statements necessary?
     // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
     NameValData attrAdd = NameValData( attributeName, value, "" );
-    AddAttributeUtil( collID, attrAdd );
+    AddAttributeUtil( collID, attrAdd, updateFlag );
 }
 
-void AttributeMgrSingleton::AddAttributeInt( const string &collID, const string &attributeName, int value )
+void AttributeMgrSingleton::AddAttributeInt( const string &collID, const string &attributeName, int value, bool updateFlag )
 {
     // Are all these if statements necessary?
     // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
     NameValData attrAdd = NameValData( attributeName, value, "" );
-    AddAttributeUtil( collID, attrAdd );
+    AddAttributeUtil( collID, attrAdd, updateFlag );
 }
 
-void AttributeMgrSingleton::AddAttributeDouble( const string &collID, const string &attributeName, double value )
+void AttributeMgrSingleton::AddAttributeDouble( const string &collID, const string &attributeName, double value, bool updateFlag )
 {
     // Are all these if statements necessary?
     // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
     NameValData attrAdd = NameValData( attributeName, value, "" );
-    AddAttributeUtil( collID, attrAdd );
+    AddAttributeUtil( collID, attrAdd, updateFlag );
 }
 
-void AttributeMgrSingleton::AddAttributeString( const string &collID, const string &attributeName, const string &value )
+void AttributeMgrSingleton::AddAttributeString( const string &collID, const string &attributeName, const string &value, bool updateFlag )
 {
     // Are all these if statements necessary?
     // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
     NameValData attrAdd = NameValData( attributeName, value, "" );
-    AddAttributeUtil( collID, attrAdd );
+    AddAttributeUtil( collID, attrAdd, updateFlag );
 }
 
-void AttributeMgrSingleton::AddAttributeVec3d( const string &collID, const string &attributeName, const vec3d &value )
+void AttributeMgrSingleton::AddAttributeVec3d( const string &collID, const string &attributeName, const vec3d &value, bool updateFlag )
 {
     // Are all these if statements necessary?
     // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
     NameValData attrAdd = NameValData( attributeName, value, "" );
-    AddAttributeUtil( collID, attrAdd );
+    AddAttributeUtil( collID, attrAdd, updateFlag );
 }
 
-void AttributeMgrSingleton::AddAttributeIntMatrix( const string &collID, const string &attributeName, const vector< vector< int > > &value )
+void AttributeMgrSingleton::AddAttributeIntMatrix( const string &collID, const string &attributeName, const vector< vector< int > > &value, bool updateFlag )
 {
     // Are all these if statements necessary?
     // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
     NameValData attrAdd = NameValData( attributeName, value, "" );
-    AddAttributeUtil( collID, attrAdd );
+    AddAttributeUtil( collID, attrAdd, updateFlag );
 }
 
-void AttributeMgrSingleton::AddAttributeDoubleMatrix( const string &collID, const string &attributeName, const vector< vector< double > > &value )
+void AttributeMgrSingleton::AddAttributeDoubleMatrix( const string &collID, const string &attributeName, const vector< vector< double > > &value, bool updateFlag )
 {
     // Are all these if statements necessary?
     // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
     NameValData attrAdd = NameValData( attributeName, value, "" );
-    AddAttributeUtil( collID, attrAdd );
+    AddAttributeUtil( collID, attrAdd, updateFlag );
 }
 
-void AttributeMgrSingleton::AddAttributeGroup( const string &collID, const string &attributeName )
+void AttributeMgrSingleton::AddAttributeGroup( const string &collID, const string &attributeName, bool updateFlag )
 {
     // Are all these if statements necessary?
     // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
     NameValData attrAdd = NameValData( attributeName );
     attrAdd.AddAttributeCollection();
     AddAttributeUtil( collID, attrAdd, false );
+    if ( updateFlag )
+    {
+        Update();
+    }
 }
 
-void AttributeMgrSingleton::AddAttributeUtil( const string &collID, NameValData &attrAdd )
+void AttributeMgrSingleton::AddAttributeUtil( const string &collID, NameValData &attrAdd, bool updateFlag )
 {
     if ( m_AttrCollMap.count( collID ) == 1 )
     {
         attrAdd.SetAttrAttach( collID );
+        SetDirtyFlag( attrAdd.GetAttributeEventGroup() );
         m_AttrCollMap.at( collID )->Add( attrAdd );
+        if ( updateFlag )
+        {
+            Update();
+        }
     }
 }
 
-void AttributeMgrSingleton::SetAttributeName( const string &attrID, const string &name )
+void AttributeMgrSingleton::SetAttributeName( const string &attrID, const string &name, bool updateFlag )
 {
     NameValData* attr = GetAttributePtr( attrID );
 
@@ -803,85 +881,130 @@ void AttributeMgrSingleton::SetAttributeName( const string &attrID, const string
     if ( attr && coll )
     {
         coll->RenameAttr( attr->GetName(), name );
+        SetAttrDirtyFlag( attrID );
+        if ( updateFlag )
+        {
+            Update();
+        }
     }
 }
 
-void AttributeMgrSingleton::SetAttributeDoc( const string &attrID, const string &doc )
+void AttributeMgrSingleton::SetAttributeDoc( const string &attrID, const string &doc, bool updateFlag )
 {
     NameValData* attr = GetAttributePtr( attrID );
     if ( attr )
     {
         attr->SetDoc( doc );
+        SetAttrDirtyFlag( attrID );
+        if ( updateFlag )
+        {
+            Update();
+        }
     }
 }
 
-void AttributeMgrSingleton::SetAttributeBool( const string &attrID, int value )
+void AttributeMgrSingleton::SetAttributeBool( const string &attrID, int value, bool updateFlag )
 {
     NameValData* attr = GetAttributePtr( attrID );
 
     if ( attr )
     {
         attr->SetBoolData( { value } );
+        SetAttrDirtyFlag( attrID );
+        if ( updateFlag )
+        {
+            Update();
+        }
     }
 }
 
-void AttributeMgrSingleton::SetAttributeInt( const string &attrID, int value )
+void AttributeMgrSingleton::SetAttributeInt( const string &attrID, int value, bool updateFlag )
 {
     NameValData* attr = GetAttributePtr( attrID );
 
     if ( attr )
     {
         attr->SetIntData( { value } );
+        SetAttrDirtyFlag( attrID );
+        if ( updateFlag )
+        {
+            Update();
+        }
     }
 }
 
-void AttributeMgrSingleton::SetAttributeDouble( const string &attrID, double value )
+void AttributeMgrSingleton::SetAttributeDouble( const string &attrID, double value, bool updateFlag )
 {
     NameValData* attr = GetAttributePtr( attrID );
 
     if ( attr )
     {
         attr->SetDoubleData( { value } );
+        SetAttrDirtyFlag( attrID );
+        if ( updateFlag )
+        {
+            Update();
+        }
     }
 }
 
-void AttributeMgrSingleton::SetAttributeString( const string &attrID, const string &value )
+void AttributeMgrSingleton::SetAttributeString( const string &attrID, const string &value, bool updateFlag )
 {
     NameValData* attr = GetAttributePtr( attrID );
 
     if ( attr )
     {
         attr->SetStringData( { value } );
+        SetAttrDirtyFlag( attrID );
+        if ( updateFlag )
+        {
+            Update();
+        }
     }
 }
 
-void AttributeMgrSingleton::SetAttributeVec3d( const string &attrID, const vec3d &value )
+void AttributeMgrSingleton::SetAttributeVec3d( const string &attrID, const vec3d &value, bool updateFlag )
 {
     NameValData* attr = GetAttributePtr( attrID );
 
     if ( attr )
     {
         attr->SetVec3dData( { value } );
+        SetAttrDirtyFlag( attrID );
+        if ( updateFlag )
+        {
+            Update();
+        }
     }
 }
 
-void AttributeMgrSingleton::SetAttributeIntMatrix( const string &attrID, const vector< vector< int > > &value )
+void AttributeMgrSingleton::SetAttributeIntMatrix( const string &attrID, const vector< vector< int > > &value, bool updateFlag )
 {
     NameValData* attr = GetAttributePtr( attrID );
 
     if ( attr )
     {
         attr->SetIntMatData( value );
+        SetAttrDirtyFlag( attrID );
+        if ( updateFlag )
+        {
+            Update();
+        }
     }
 }
 
-void AttributeMgrSingleton::SetAttributeDoubleMatrix( const string &attrID, const vector< vector< double > > &value )
+void AttributeMgrSingleton::SetAttributeDoubleMatrix( const string &attrID, const vector< vector< double > > &value, bool updateFlag )
 {
     NameValData* attr = GetAttributePtr( attrID );
 
     if ( attr )
     {
         attr->SetDoubleMatData( value );
+        SetAttrDirtyFlag( attrID );
+        if ( updateFlag )
+        {
+            Update();
+        }
     }
 }
 
@@ -979,7 +1102,7 @@ vector < AttributeCollection* > AttributeMgrSingleton::GetAllCollectionPtrs( int
     return AttrColls;
 }
 
-int AttributeMgrSingleton::CopyAttributeUtil( const string &attr_id )
+int AttributeMgrSingleton::CopyAttributeUtil( const string &attr_id, bool updateFlag )
 {
     NameValData* nvd_ptr = GetAttributePtr( attr_id );
     if ( !nvd_ptr || nvd_ptr->IsProtected() )
@@ -990,19 +1113,28 @@ int AttributeMgrSingleton::CopyAttributeUtil( const string &attr_id )
     NameValData nvd;
     nvd.CopyFrom( nvd_ptr );
     m_AttrClipboard.push_back( nvd );
+    SetAttrDirtyFlag( nvd.GetID() );
+    if ( updateFlag )
+    {
+        Update();
+    }
     return 0;
 }
 
-void AttributeMgrSingleton::CutAttributeUtil( const string &attr_id )
+void AttributeMgrSingleton::CutAttributeUtil( const string &attr_id, bool updateFlag )
 {
-    int copy_error = CopyAttributeUtil( attr_id );
+    int copy_error = CopyAttributeUtil( attr_id, false );
     if ( !copy_error )
     {
-        DeleteAttribute( attr_id );
+        DeleteAttribute( attr_id, false );
+    }
+    if ( updateFlag )
+    {
+        Update();
     }
 }
 
-void AttributeMgrSingleton::PasteAttributeUtil( const string &coll_id )
+void AttributeMgrSingleton::PasteAttributeUtil( const string &coll_id, bool updateFlag )
 {
     AttributeCollection* ac_ptr = GetCollectionPtr( coll_id );
     if ( ac_ptr )
@@ -1016,24 +1148,30 @@ void AttributeMgrSingleton::PasteAttributeUtil( const string &coll_id )
             {
                 nvd.CopyFrom( &(nvd_ref) ,ac_ptr->GetAllAttrNames() );
                 nvd.SetAttrAttach( ac_ptr->GetID() );
+                string attrID = nvd.GetID();
                 ac_ptr->Add( nvd );
+                SetAttrDirtyFlag( attrID );
+                if ( updateFlag )
+                {
+                    Update();
+                }
             }
         }
         IDMgr.ResetRemapID( lastreset );
     }
 }
 
-int AttributeMgrSingleton::CopyAttribute( const string &attr_id )
+int AttributeMgrSingleton::CopyAttribute( const string &attr_id, bool updateFlag )
 {
-    return CopyAttributeUtil( attr_id );
+    return CopyAttributeUtil( attr_id, updateFlag );
 }
 
-void AttributeMgrSingleton::CutAttribute( const string &attr_id )
+void AttributeMgrSingleton::CutAttribute( const string &attr_id, bool updateFlag )
 {
-    CutAttributeUtil( attr_id );
+    CutAttributeUtil( attr_id, updateFlag );
 }
 
-void AttributeMgrSingleton::PasteAttribute( const string &obj_id )
+void AttributeMgrSingleton::PasteAttribute( const string &obj_id, bool updateFlag )
 {
     string coll_id = obj_id;
     AttributeCollection* ac = GetCollectionPtr( obj_id );
@@ -1042,7 +1180,7 @@ void AttributeMgrSingleton::PasteAttribute( const string &obj_id )
         ac = GetCollectionFromParentID( obj_id );
         coll_id = ac->GetID();
     }
-    PasteAttributeUtil( coll_id );
+    PasteAttributeUtil( coll_id, updateFlag );
 }
 
 // extend a vector of strings with another vector of strings (concatenate) with option of adding a common root to the extension vector
