@@ -11,6 +11,7 @@
 #include "VspUtil.h"
 // #include "AttributeManager.h"
 #include "ParmMgr.h"
+#include "VarPresetMgr.h"
 
 using std::map;
 using std::string;
@@ -72,11 +73,15 @@ string IDMgrSingleton::RemapID( const string & oldID, const string & suggestID, 
         void* ac = NULL;
         // NameValData* a = AttributeMgr.GetAttributePtr( oldID );
         // AttributeCollection* ac = AttributeMgr.GetCollectorPtr( oldID );
+        Setting *s = VarPresetMgr.FindSetting( oldID );
+        SettingGroup *sg = VarPresetMgr.FindSettingGroup( oldID );
 
         if( ( p == NULL ) &&
             ( pc == NULL ) &&
             ( a == NULL ) &&
             ( ac == NULL ) &&
+            ( s == NULL ) &&
+            ( sg == NULL ) &&
             size == -1 )
         {
             newID = oldID;                                  //  reuse oldID.
