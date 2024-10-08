@@ -9,7 +9,7 @@
 
 #include "IDMgr.h"
 #include "VspUtil.h"
-#include "AttributeManager.h"
+// #include "AttributeManager.h"
 #include "ParmMgr.h"
 
 using std::map;
@@ -68,10 +68,16 @@ string IDMgrSingleton::RemapID( const string & oldID, const string & suggestID, 
         // Lookup ID as Parm and ParmConatiner
         Parm* p = ParmMgr.FindParm( oldID );
         ParmContainer* pc = ParmMgr.FindParmContainer( oldID );
-        NameValData* a = AttributeMgr.GetAttributePtr( oldID );
-        AttributeCollection* ac = AttributeMgr.GetCollectionPtr( oldID );
+        void* a = NULL;
+        void* ac = NULL;
+        // NameValData* a = AttributeMgr.GetAttributePtr( oldID );
+        // AttributeCollection* ac = AttributeMgr.GetCollectorPtr( oldID );
 
-        if( ( p == NULL ) && ( pc == NULL ) && ( a == NULL ) && ( ac == NULL ) && size == -1 )
+        if( ( p == NULL ) &&
+            ( pc == NULL ) &&
+            ( a == NULL ) &&
+            ( ac == NULL ) &&
+            size == -1 )
         {
             newID = oldID;                                  //  reuse oldID.
         }
