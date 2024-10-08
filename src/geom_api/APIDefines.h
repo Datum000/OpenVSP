@@ -1009,9 +1009,9 @@ enum MESH_REASON { NO_REASON,	/*!< No reason determined. */
 */
 /*! Enum for ID length by vsp object type. */
 enum OBJ_ID_LENGTH { ID_LENGTH_ATTR = 8,	/*!< ID for Attributes are length 8 */
-                           ID_LENGTH_ATTRCOLL = 9,	/*!< ID for Attribute Collections are length 9 */
-                           ID_LENGTH_PARMCONTAINER = 10,	/*!< ID for Parm Containers are length 10 */
-                           ID_LENGTH_PARM = 11,	/*!< ID for Parms are length 11 */
+                     ID_LENGTH_ATTRCOLL = 9,	/*!< ID for Attribute Collections are length 9 */
+                     ID_LENGTH_PARMCONTAINER = 10,	/*!< ID for Parm Containers are length 10 */
+                     ID_LENGTH_PARM = 11,	/*!< ID for Parms are length 11 */
 };
 
 /*!
