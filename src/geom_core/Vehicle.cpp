@@ -1913,7 +1913,6 @@ xmlNodePtr Vehicle::EncodeXml( xmlNodePtr & node, int set )
     AdvLinkMgr.EncodeXml( node );
     VSPAEROMgr.EncodeXml( node );
     VarPresetMgr.EncodeXml( node );
-    OldVarPresetMgr.EncodeXml( node );
     m_CfdSettings.EncodeXml( node );
     m_ISectSettings.EncodeXml( node );
     m_CfdGridDensity.EncodeXml( node );
