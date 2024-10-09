@@ -2039,6 +2039,7 @@ xmlNodePtr Vehicle::DecodeXmlGeomsOnly( xmlNodePtr & node )
     AdvLinkMgr.DecodeXml( node );
     VarPresetMgr.DecodeXml( node );
     OldVarPresetMgr.DecodeXml( node );
+    VarPresetMgr.ConvertOldToNew();
     StructureMgr.DecodeXml( node );
     Background3DMgr.EncodeXml( node );
 
