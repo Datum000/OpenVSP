@@ -34,6 +34,7 @@
 #include "LinkMgr.h"
 #include "MeasureMgr.h"
 #include "MeshGeom.h"
+#include "ModeMgr.h"
 #include "ParasiteDragMgr.h"
 #include "ParmMgr.h"
 #include "PodGeom.h"
@@ -609,6 +610,7 @@ void Vehicle::Wype()
     AnalysisMgr.Renew();
     VarPresetMgr.Renew();
     OldVarPresetMgr.Renew();
+    ModeMgr.Renew();
     ParasiteDragMgr.Renew();
     VSPAEROMgr.Renew();
     MeasureMgr.Renew();
@@ -1957,6 +1959,7 @@ xmlNodePtr Vehicle::EncodeXml( xmlNodePtr & node, int set )
     AdvLinkMgr.EncodeXml( node );
     VSPAEROMgr.EncodeXml( node );
     VarPresetMgr.EncodeXml( node );
+    ModeMgr.EncodeXml( node );
     m_CfdSettings.EncodeXml( node );
     m_ISectSettings.EncodeXml( node );
     m_CfdGridDensity.EncodeXml( node );
@@ -2084,6 +2087,7 @@ xmlNodePtr Vehicle::DecodeXmlGeomsOnly( xmlNodePtr & node )
     VarPresetMgr.DecodeXml( node );
     OldVarPresetMgr.DecodeXml( node );
     VarPresetMgr.ConvertOldToNew();
+    ModeMgr.DecodeXml( node );
     StructureMgr.DecodeXml( node );
     Background3DMgr.EncodeXml( node );
 
