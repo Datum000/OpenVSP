@@ -1031,38 +1031,48 @@ AttributeCollection* AttributeMgrSingleton::GetCollectionFromParentID( const str
         return advlink_ptr->GetAttrCollection();
     }
 
-    if ( !AllUpper( id ) )
-    {
-        return nullptr;
-    }
-
-    // first, check if it's an attribute collection already, then return itself.
-    AttributeCollection* ac_ptr = AttributeMgr.GetCollectionPtr( id );
-    if ( ac_ptr )
-    {
-        return ac_ptr;
-    }
-
-    // next, check if it's an attribute that contains a collection (an attribute group)
-    NameValData* nvd_ptr = AttributeMgr.GetAttributePtr( id );
-    if ( nvd_ptr && nvd_ptr->GetType() == vsp::ATTR_COLLECTION_DATA )
-    {
-        return nvd_ptr->GetAttributeCollectionPtr( 0 );
-    }
-
-    // then, check if parmContainer-derived object, and return its attrcollection
-    ParmContainer* pc_ptr = ParmMgr.FindParmContainer( id );
-    if ( pc_ptr )
-    {
-        return pc_ptr->GetAttrCollection();
-    }
-
     // then, check parm and advlink, which aren't derived from ParmContainer
     Parm* parm_ptr = ParmMgr.FindParm( id );
     if ( parm_ptr )
     {
         return parm_ptr->GetAttrCollection();
     }
+
+    if ( !AllUpper( id ) )
+    {
+        return nullptr;
+    }
+
+    // first, check if it's an attribute that contains a collection (an attribute group)
+    if ( id.size() == vsp::ID_LENGTH_ATTR )
+    {
+        NameValData* nvd_ptr = AttributeMgr.GetAttributePtr( id );
+        if ( nvd_ptr && nvd_ptr->GetType() == vsp::ATTR_COLLECTION_DATA )
+        {
+            return nvd_ptr->GetAttributeCollectionPtr( 0 );
+        }
+    }
+
+    // next, check if it's an attribute collection already, then return itself.
+    if ( id.size() == vsp::ID_LENGTH_ATTRCOLL )
+    {
+        AttributeCollection* ac_ptr = AttributeMgr.GetCollectionPtr( id );
+        if ( ac_ptr )
+        {
+            return ac_ptr;
+        }
+    }
+
+    // then, check if parmContainer-derived object, and return its attrcollection
+    if ( id.size() == vsp::ID_LENGTH_PARMCONTAINER )
+    {
+        ParmContainer* pc_ptr = ParmMgr.FindParmContainer( id );
+        if ( pc_ptr )
+        {
+            return pc_ptr->GetAttrCollection();
+        }
+    }
+
     return nullptr;
 }
 
@@ -1254,45 +1264,52 @@ vector < string > AttributeMgrSingleton::GetCollParentVec( const vector < string
 string AttributeMgrSingleton::GetObjectParent( const string & id )
 {
     string parent_id = "NONE";
+
+    Parm* parm_ptr = ParmMgr.FindParm( id );
+    if ( parm_ptr )
+    {
+        parent_id = parm_ptr->GetContainerID();
+    }
+
     if ( !AllUpper( id ) )
     {
         return parent_id;
     }
-    //logic: id either is an attribute collection, a parmcontainer (geom,subsurf,link,probe,rstprobe,ruler, or protractor), or AdvLink/Geom
 
-    NameValData* nvd_ptr = GetAttributePtr( id );
-    AttributeCollection* ac_ptr = GetCollectionPtr( id );
-    Geom* geom_ptr = VehicleMgr.GetVehicle()->FindGeom( id );
-    Parm* parm_ptr = ParmMgr.FindParm( id );
-    ParmContainer* pc_ptr = ParmMgr.FindParmContainer( id );
-    SubSurface* ss_ptr = SubSurfaceMgr.GetSubSurf( id );
-    Link* link_ptr = dynamic_cast<Link*>(pc_ptr);
-    AdvLink* advlink_ptr = AdvLinkMgr.GetLink( AdvLinkMgr.GetLinkIndex( id ) );
-    Probe* probe_ptr = MeasureMgr.GetProbe( id );
-    RSTProbe* rst_ptr = MeasureMgr.GetRSTProbe( id );
-    Ruler* ruler_ptr = MeasureMgr.GetRuler( id );
-    Protractor* protractor_ptr = MeasureMgr.GetProtractor( id );
+    if ( id.size() == vsp::ID_LENGTH_ATTR )
+    {
+        NameValData* nvd_ptr = GetAttributePtr( id );
+        if ( nvd_ptr )
+        {
+            parent_id = nvd_ptr->GetAttachID();
+        }
+    }
 
-    if ( nvd_ptr )
+    if ( id.size() == vsp::ID_LENGTH_ATTRCOLL )
     {
-        parent_id = nvd_ptr->GetAttachID();
+        AttributeCollection* ac_ptr = GetCollectionPtr( id );
+        if ( ac_ptr )
+        {
+            parent_id = ac_ptr->GetAttachID();
+        }
     }
-    else if ( ac_ptr )
+
+    // parmcontainer type things with parents
+    if ( id.size() == vsp::ID_LENGTH_PARMCONTAINER )
     {
-        parent_id = ac_ptr->GetAttachID();
+        Geom* geom_ptr = VehicleMgr.GetVehicle()->FindGeom( id );
+        if ( geom_ptr )
+        {
+            parent_id = geom_ptr->GetParentID();
+        }
+
+        SubSurface* ss_ptr = SubSurfaceMgr.GetSubSurf( id );
+        if ( ss_ptr )
+        {
+            parent_id = ss_ptr->GetCompID();
+        }
     }
-    else if ( geom_ptr )
-    {
-        parent_id = geom_ptr->GetParentID();
-    }
-    else if (parm_ptr)
-    {
-        parent_id = parm_ptr->GetContainerID();
-    }
-    else if ( ss_ptr )
-    {
-        parent_id = ss_ptr->GetCompID();
-    }
+
     if ( parent_id.empty() )
     {
         parent_id = "NONE";
@@ -1320,28 +1337,37 @@ string AttributeMgrSingleton::GetName( const string & id, bool return_name_input
         return id;
     }
 
-    NameValData* nvd_ptr = AttributeMgr.GetAttributePtr( id );
-    if ( nvd_ptr )
+    if ( id.size() == vsp::ID_LENGTH_ATTR )
     {
-        return nvd_ptr->GetName();
+        NameValData* nvd_ptr = AttributeMgr.GetAttributePtr( id );
+        if ( nvd_ptr )
+        {
+            return nvd_ptr->GetName();
+        }
     }
 
-    AttributeCollection* ac_ptr = AttributeMgr.GetCollectionPtr( id );
-    if (ac_ptr)
+    if ( id.size() == vsp::ID_LENGTH_ATTRCOLL )
     {
-        return ac_ptr->GetName();
+        AttributeCollection* ac_ptr = AttributeMgr.GetCollectionPtr( id );
+        if (ac_ptr)
+        {
+            return ac_ptr->GetName();
+        }
     }
 
-    ParmContainer* pc_ptr = ParmMgr.FindParmContainer( id );
-    Link* link_ptr = dynamic_cast<Link*>(pc_ptr);
+    if ( id.size() == vsp::ID_LENGTH_PARMCONTAINER )
+    {
+        ParmContainer* pc_ptr = ParmMgr.FindParmContainer( id );
+        Link* link_ptr = dynamic_cast<Link*>(pc_ptr);
 
-    if ( link_ptr )
-    {
-        return link_ptr->GetName() + '_' + GetName( link_ptr->GetParmA() ) + "_" + GetName( link_ptr->GetParmB() );
-    }
-    else if ( pc_ptr )
-    {
-        return pc_ptr->GetName();
+        if ( link_ptr )
+        {
+            return link_ptr->GetName() + '_' + GetName( link_ptr->GetParmA() ) + "_" + GetName( link_ptr->GetParmB() );
+        }
+        else if ( pc_ptr )
+        {
+            return pc_ptr->GetName();
+        }
     }
 
     return "NONE";
@@ -1510,22 +1536,31 @@ int AttributeMgrSingleton::GetObjectType( const string & id )
         return vsp::ATTROBJ_PARM;
     }
 
-    NameValData* nvd_ptr = GetAttributePtr( id );
-    if ( nvd_ptr )
+    if ( id.size() == vsp::ID_LENGTH_ATTR )
     {
-        return vsp::ATTROBJ_ATTR;
+        NameValData* nvd_ptr = GetAttributePtr( id );
+        if ( nvd_ptr )
+        {
+            return vsp::ATTROBJ_ATTR;
+        }
     }
 
-    AttributeCollection* ac_ptr = GetCollectionPtr( id );
-    if ( ac_ptr )
+    if ( id.size() == vsp::ID_LENGTH_ATTRCOLL )
     {
-        return vsp::ATTROBJ_COLLECTION;
+        AttributeCollection* ac_ptr = GetCollectionPtr( id );
+        if ( ac_ptr )
+        {
+            return vsp::ATTROBJ_COLLECTION;
+        }
     }
 
-    ParmContainer* pc_ptr = ParmMgr.FindParmContainer( id );
-    if ( pc_ptr )
+    if ( id.size() == vsp::ID_LENGTH_PARMCONTAINER )
     {
-        return pc_ptr->GetParmContainerType();
+        ParmContainer* pc_ptr = ParmMgr.FindParmContainer( id );
+        if ( pc_ptr )
+        {
+            return pc_ptr->GetParmContainerType();
+        }
     }
 
     return vsp::ATTROBJ_FREE;
