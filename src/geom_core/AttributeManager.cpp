@@ -1010,12 +1010,6 @@ void AttributeMgrSingleton::SetAttributeDoubleMatrix( const string &attrID, cons
 
 AttributeCollection* AttributeMgrSingleton::GetCollectionPtr( string collID, bool only_populated_collections )
 {
-    //filter out incorrect id lengths or formatting
-    if ( collID.size() != vsp::ID_LENGTH_ATTRCOLL || !AllUpper( collID ) )
-    {
-        return nullptr;
-    }
-
     AttributeCollection* attrPtr = nullptr;
     if ( ( m_AttrCollMap.count( collID ) == 1 ) && ( collID.size() > 0 ) )
     {
@@ -1464,11 +1458,6 @@ vector < string > AttributeMgrSingleton::GetTreeVec( const string & id, const st
 
 NameValData* AttributeMgrSingleton::GetAttributePtr( const string &id )
 {
-    if ( !AllUpper( id ) || id.size() != vsp::ID_LENGTH_ATTR )
-    {
-        return nullptr;
-    }
-
     if ( m_AttrPtrMap.count( id ) )
     {
         return m_AttrPtrMap.at( id );

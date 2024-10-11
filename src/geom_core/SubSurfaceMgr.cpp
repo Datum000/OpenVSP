@@ -123,12 +123,6 @@ vector< SubSurface* > SubSurfaceMgrSingleton::GetSubSurfs()
 SubSurface* SubSurfaceMgrSingleton::GetSubSurf( const string& subsurf_id )
 {
     SubSurface* ret_ptr = NULL;
-
-    if ( subsurf_id.size() != vsp::ID_LENGTH_PARMCONTAINER || !( AttributeMgr.AllUpper( subsurf_id ) ) )
-    {
-        return ret_ptr;
-    }
-
     Vehicle* veh = VehicleMgr.GetVehicle();
     if( !veh )
     {

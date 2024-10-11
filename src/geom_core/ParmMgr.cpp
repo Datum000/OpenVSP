@@ -134,10 +134,6 @@ vector < Parm* > ParmMgrSingleton::GetAllParmPtrs()
 //==== Find Parm Container GivenID ====//
 ParmContainer* ParmMgrSingleton::FindParmContainer( const string & id )
 {
-    if ( id.size() != vsp::ID_LENGTH_PARMCONTAINER || !( AttributeMgr.AllUpper( id ) ) )
-    {
-        return NULL;
-    }
     unordered_map< string, ParmContainer* >::iterator iter;
 
     iter = m_ParmContainerMap.find( id );

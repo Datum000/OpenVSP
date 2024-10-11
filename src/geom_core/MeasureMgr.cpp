@@ -458,11 +458,6 @@ void MeasureMgrSingleton::HideAllProtractors()
 
 Protractor * MeasureMgrSingleton::GetProtractor( const string &id )
 {
-    if ( id.size() != vsp::ID_LENGTH_PARMCONTAINER || !( AttributeMgr.AllUpper( id ) ) )
-    {
-        return NULL;
-    }
-
     for( int i = 0; i < ( int )m_Protractors.size(); i++ )
     {
         if ( m_Protractors[i]->GetID() == id )
@@ -544,11 +539,6 @@ void MeasureMgrSingleton::HideAllRulers()
 
 Ruler * MeasureMgrSingleton::GetRuler( const string &id )
 {
-    if ( id.size() != vsp::ID_LENGTH_PARMCONTAINER || !( AttributeMgr.AllUpper( id ) ) )
-    {
-        return NULL;
-    }
-
     for( int i = 0; i < ( int )m_Rulers.size(); i++ )
     {
         if ( m_Rulers[i]->GetID() == id )
@@ -630,11 +620,6 @@ void MeasureMgrSingleton::HideAllProbes()
 
 Probe * MeasureMgrSingleton::GetProbe( const string &id )
 {
-    if ( id.size() != vsp::ID_LENGTH_PARMCONTAINER || !( AttributeMgr.AllUpper( id ) ) )
-    {
-        return NULL;
-    }
-
     for( int i = 0; i < ( int )m_Probes.size(); i++ )
     {
         if ( m_Probes[i]->GetID() == id )
@@ -716,11 +701,6 @@ void MeasureMgrSingleton::HideAllRSTProbes()
 
 RSTProbe * MeasureMgrSingleton::GetRSTProbe(const string &id )
 {
-    if ( id.size() != vsp::ID_LENGTH_PARMCONTAINER || !( AttributeMgr.AllUpper( id ) ) )
-    {
-        return NULL;
-    }
-
     for( int i = 0; i < ( int )m_RSTProbes.size(); i++ )
     {
         if (m_RSTProbes[i]->GetID() == id )
