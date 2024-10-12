@@ -59,6 +59,8 @@ public:
         return instance;
     }
 
+    bool NonRandomParmID( const string &id );
+
     bool AddParm( Parm* parm_ptr );
     void RemoveParm( Parm* parm_ptr );
     void AddParmContainer( ParmContainer* parm_container_ptr );

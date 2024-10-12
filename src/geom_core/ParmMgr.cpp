@@ -26,6 +26,20 @@ ParmMgrSingleton::ParmMgrSingleton()
     m_DirtyFlag = true;
 }
 
+//==== Bool Checker for Non-random ParmIDs ====//
+bool ParmMgrSingleton::NonRandomParmID( const string &id )
+{
+    // Check for special cases of non random ID's
+    if( id.compare( "" ) == 0 ||
+        id.compare( "NONE" ) == 0 ||
+        id.substr( 0, 5 ) == "User_" ||         // User parameters.
+        id.substr( 0, 1 ) == "_" )              // Built-in FEA materials.
+    {
+        return true;
+    }
+    return false;
+}
+
 //==== Add Parm To Map ====//
 bool ParmMgrSingleton::AddParm( Parm* p  )
 {

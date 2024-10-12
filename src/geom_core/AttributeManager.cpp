@@ -1032,10 +1032,13 @@ AttributeCollection* AttributeMgrSingleton::GetCollectionFromParentID( const str
     }
 
     // then, check parm and advlink, which aren't derived from ParmContainer
-    Parm* parm_ptr = ParmMgr.FindParm( id );
-    if ( parm_ptr )
+    if ( id.size() == vsp::ID_LENGTH_PARM || ParmMgr.NonRandomParmID( id ) )
     {
-        return parm_ptr->GetAttrCollection();
+        Parm* parm_ptr = ParmMgr.FindParm( id );
+        if ( parm_ptr )
+        {
+            return parm_ptr->GetAttrCollection();
+        }
     }
 
     if ( !AllUpper( id ) )
@@ -1265,10 +1268,13 @@ string AttributeMgrSingleton::GetObjectParent( const string & id )
 {
     string parent_id = "NONE";
 
-    Parm* parm_ptr = ParmMgr.FindParm( id );
-    if ( parm_ptr )
+    if ( id.size() == vsp::ID_LENGTH_PARM || ParmMgr.NonRandomParmID( id ) )
     {
-        parent_id = parm_ptr->GetContainerID();
+        Parm* parm_ptr = ParmMgr.FindParm( id );
+        if ( parm_ptr )
+        {
+            parent_id = parm_ptr->GetContainerID();
+        }
     }
 
     if ( !AllUpper( id ) )
@@ -1325,10 +1331,13 @@ string AttributeMgrSingleton::GetName( const string & id, bool return_name_input
         return advlink_ptr->GetName();
     }
 
-    Parm* parm_ptr = ParmMgr.FindParm( id );
-    if (parm_ptr)
+    if ( id.size() == vsp::ID_LENGTH_PARM || ParmMgr.NonRandomParmID( id ) )
     {
-        return parm_ptr->GetName();
+        Parm* parm_ptr = ParmMgr.FindParm( id );
+        if (parm_ptr)
+        {
+            return parm_ptr->GetName();
+        }
     }
 
     // make a bypass if the string input is NOT an id, returning the string as input (e.g., "Geoms" node in the id vector for tree construction)
@@ -1530,10 +1539,13 @@ int AttributeMgrSingleton::GetObjectType( const string & id )
         return vsp::ATTROBJ_ADVLINK;
     }
 
-    Parm* parm_ptr = ParmMgr.FindParm( id );
-    if (parm_ptr)
+    if ( id.size() == vsp::ID_LENGTH_PARM || ParmMgr.NonRandomParmID( id ) )
     {
-        return vsp::ATTROBJ_PARM;
+        Parm* parm_ptr = ParmMgr.FindParm( id );
+        if (parm_ptr)
+        {
+            return vsp::ATTROBJ_PARM;
+        }
     }
 
     if ( id.size() == vsp::ID_LENGTH_ATTR )
