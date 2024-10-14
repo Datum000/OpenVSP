@@ -101,7 +101,6 @@ STLOptionsScreen.cpp
 SubGLWindow.cpp
 SurfaceIntersectionScreen.cpp
 SVGOptionsScreen.cpp
-TextEditorWidget.cpp
 TreeColumnWidget.cpp
 CustomGeomExportScreen.cpp
 UserParmScreen.cpp
@@ -186,7 +185,6 @@ STLOptionsScreen.h
 SubGLWindow.h
 SurfaceIntersectionScreen.h
 SVGOptionsScreen.h
-TextEditorWidget.h
 TreeColumnWidget.h
 CustomGeomExportScreen.h
 UserParmScreen.h

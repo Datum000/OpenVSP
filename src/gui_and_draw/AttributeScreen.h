@@ -16,7 +16,6 @@
 #include "AttributeEditor.h"
 #include "ScreenMgr.h"
 #include "ResultsMgr.h"
-#include "TextEditorWidget.h"
 
 #include <FL/Fl.H>
 

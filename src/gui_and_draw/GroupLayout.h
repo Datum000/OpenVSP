@@ -23,7 +23,6 @@
 #include "GuiDevice.h"
 #include "SpreadSheetWidget.h"
 #include "TreeColumnWidget.h"
-#include "TextEditorWidget.h"
 
 #include <vector>
 #include <string>
