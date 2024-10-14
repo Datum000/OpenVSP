@@ -2217,12 +2217,6 @@ void StringInput::Update( const string & val )
     m_Input->value( m_String.c_str() );
 }
 
-//==== Set Max Chars ====//
-void StringInput::SetMaxChars( int len )
-{
-    m_Input->maximum_size( len );
-}
-
 //==== CallBack ====//
 void StringInput::DeviceCB( Fl_Widget* w )
 {

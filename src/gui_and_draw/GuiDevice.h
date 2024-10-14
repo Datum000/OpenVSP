@@ -822,8 +822,6 @@ public:
     virtual void Init( VspScreen* screen, Fl_Input* input );
     virtual void Update( const string & val );
 
-    void SetMaxChars( int len );
-
     virtual string GetString()
     {
         return m_String;
