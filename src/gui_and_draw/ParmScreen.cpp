@@ -258,13 +258,9 @@ void ParmScreen::GuiDeviceCallBack( GuiDevice* gui_device )
     m_ScreenMgr->SetUpdateFlag( true );
 }
 
-std::vector < std::string > ParmScreen::GetCollIDs()
+void ParmScreen::GetCollIDs( vector < string > &collIDVec )
 {
-    // if ( m_AttributeEditor.GetAttrCollPtr() )
-    // {
-    //     return { m_AttributeEditor.GetAttrCollID() };
-    // }
-    return { m_AttributeEditor.GetAttrCollID() };
+    collIDVec.push_back( m_AttributeEditor.GetAttrCollID() );
 }
 
 //void ParmScreen::update( Parm* p )

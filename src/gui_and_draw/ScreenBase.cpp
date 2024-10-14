@@ -401,9 +401,9 @@ void VehScreen::GuiDeviceCallBack( GuiDevice* device )
     m_ScreenMgr->SetUpdateFlag( true );
 };
 
-std::vector < std::string > VehScreen::GetCollIDs()
+void VehScreen::GetCollIDs( vector < string > &collIDVec )
 {
-    return { m_AttributeEditor.GetAttrCollID() };
+    collIDVec.push_back( m_AttributeEditor.GetAttrCollID() );
 }
 
 //=====================================================================//
@@ -1786,26 +1786,14 @@ void GeomScreen::CallBack( Fl_Widget *w )
     m_ScreenMgr->SetUpdateFlag( true );
 }
 
-std::vector < std::string > GeomScreen::GetCollIDs()
+void GeomScreen::GetCollIDs( vector < string > &collIDVec )
 {
-    // std::vector < AttributeCollection* > ac_vec;
-    std::vector < std::string > id_vec;
-
-    id_vec.push_back( m_AttributeEditor.GetAttrCollID() );
-    id_vec.push_back( m_SSLineAttrEditor.GetAttrCollID() );
-    id_vec.push_back( m_SSRecAttrEditor.GetAttrCollID() );
-    id_vec.push_back( m_SSEllAttrEditor.GetAttrCollID() );
-    id_vec.push_back( m_SSConAttrEditor.GetAttrCollID() );
-    id_vec.push_back( m_SSFLineAttrEditor.GetAttrCollID() );
-
-    // for ( int i = 0; i != ac_vec.size(); ++i )
-    // {
-    //     if ( ac_vec[i] )
-    //     {
-    //         id_vec.push_back( ac_vec[i]->GetID() );
-    //     }
-    // }
-    return id_vec;
+    collIDVec.push_back( m_AttributeEditor.GetAttrCollID() );
+    collIDVec.push_back( m_SSLineAttrEditor.GetAttrCollID() );
+    collIDVec.push_back( m_SSRecAttrEditor.GetAttrCollID() );
+    collIDVec.push_back( m_SSEllAttrEditor.GetAttrCollID() );
+    collIDVec.push_back( m_SSConAttrEditor.GetAttrCollID() );
+    collIDVec.push_back( m_SSFLineAttrEditor.GetAttrCollID() );
 }
 
 //=====================================================================//

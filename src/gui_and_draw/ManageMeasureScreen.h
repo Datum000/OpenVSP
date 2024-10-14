@@ -26,7 +26,7 @@ public:
 
     virtual void GuiDeviceCallBack( GuiDevice* device );
 
-    virtual std::vector < std::string > GetCollIDs();
+    virtual void GetCollIDs( vector < string > &collIDVec );
 
 
     static void Set( const vec3d &placement, const std::string &targetGeomId = "" );

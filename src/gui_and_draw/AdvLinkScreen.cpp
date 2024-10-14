@@ -937,14 +937,9 @@ void AdvLinkScreen::GuiDeviceCallBack( GuiDevice* gui_device )
     m_ScreenMgr->SetUpdateFlag( true );
 }
 
-std::vector < std::string > AdvLinkScreen::GetCollIDs()
+void AdvLinkScreen::GetCollIDs( vector < string > &collIDVec )
 {
-    // if ( m_AdvLinkAttrEditor.GetAttrCollPtr() )
-    // {
-    //     return { m_AdvLinkAttrEditor.GetAttrCollPtr()->GetID() };
-    // }
-    // return {};
-    return { m_AdvLinkAttrEditor.GetAttrCollID() };
+    collIDVec.push_back( m_AdvLinkAttrEditor.GetAttrCollID() );
 }
 
 void AdvLinkScreen::AddInput( const string & parmid, const string & name )

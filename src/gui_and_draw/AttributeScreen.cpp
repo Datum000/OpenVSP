@@ -365,25 +365,28 @@ void AttributeExplorer::GetEmptyColls()
     vector < VspScreen* > screen_vec = m_ScreenMgr->GetAllScreens();
 
     vector < VspScreen* > geom_screen_vec;
+
+    vector < string > coll_id_vec;
+
     for ( int i = 0; i != screen_vec.size(); ++i )
     {
         if ( screen_vec[i]->IsShown() )
         {
             if ( screen_vec[i]->GetScreenType() == vsp::VSP_ADV_LINK_SCREEN )
             {
-                AddEmptyCollID( static_cast< AdvLinkScreen* >( screen_vec[i] )->GetCollIDs() );
+                static_cast< AdvLinkScreen* >( screen_vec[i] )->GetCollIDs( coll_id_vec );
             }
             else if ( screen_vec[i]->GetScreenType() == vsp::VSP_MEASURE_SCREEN )
             {
-                AddEmptyCollID( static_cast< ManageMeasureScreen* >( screen_vec[i] )->GetCollIDs() );
+                static_cast< ManageMeasureScreen* >( screen_vec[i] )->GetCollIDs( coll_id_vec );
             }
             else if ( screen_vec[i]->GetScreenType() == vsp::VSP_PARM_LINK_SCREEN )
             {
-                AddEmptyCollID( static_cast< ParmLinkScreen* >( screen_vec[i] )->GetCollIDs() );
+                static_cast< ParmLinkScreen* >( screen_vec[i] )->GetCollIDs( coll_id_vec );
             }
             else if ( screen_vec[i]->GetScreenType() == vsp::VSP_PARM_SCREEN )
             {
-                AddEmptyCollID( static_cast< ParmScreen* >( screen_vec[i] )->GetCollIDs() );
+                static_cast< ParmScreen* >( screen_vec[i] )->GetCollIDs( coll_id_vec );
             }
             else if ( screen_vec[i]->GetScreenType() == vsp::VSP_MANAGE_GEOM_SCREEN )
             {
@@ -394,17 +397,19 @@ void AttributeExplorer::GetEmptyColls()
                     {
                         if ( geom_screen_vec[j]->GetScreenType() == vsp::VEH_GEOM_SCREEN )
                         {
-                            AddEmptyCollID( static_cast< VehScreen* >( geom_screen_vec[j] )->GetCollIDs() );
+                            static_cast< VehScreen* >( geom_screen_vec[j] )->GetCollIDs( coll_id_vec );
                         }
                         else
                         {
-                            AddEmptyCollID( static_cast< GeomScreen* >( geom_screen_vec[j] )->GetCollIDs() );
+                            static_cast< GeomScreen* >( geom_screen_vec[j] )->GetCollIDs( coll_id_vec );
                         }
                     }
                 }
             }
         }
     }
+
+    AddEmptyCollID( coll_id_vec );
 }
 
 void AttributeExplorer::UpdateAttrFields( GroupLayout* group )

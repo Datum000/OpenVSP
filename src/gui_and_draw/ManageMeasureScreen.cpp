@@ -1367,24 +1367,12 @@ void ManageMeasureScreen::GuiDeviceCallBack( GuiDevice* device )
     m_ScreenMgr->SetUpdateFlag( true );
 }
 
-std::vector < std::string > ManageMeasureScreen::GetCollIDs()
+void ManageMeasureScreen::GetCollIDs( vector < string > &collIDVec )
 {
-    // std::vector < AttributeCollection* > ac_vec;
-    std::vector < std::string > id_vec;
-
-    id_vec.push_back( m_RulerAttrEditor.GetAttrCollID() );
-    id_vec.push_back( m_ProbeAttrEditor.GetAttrCollID() );
-    id_vec.push_back( m_RSTAttrEditor.GetAttrCollID() );
-    id_vec.push_back( m_ProtAttrEditor.GetAttrCollID() );
-
-    // for ( int i = 0; i != ac_vec.size(); ++i )
-    // {
-    //     if ( ac_vec[i] )
-    //     {
-    //         id_vec.push_back( ac_vec[i]->GetID() );
-    //     }
-    // }
-    return id_vec;
+    collIDVec.push_back( m_RulerAttrEditor.GetAttrCollID() );
+    collIDVec.push_back( m_ProbeAttrEditor.GetAttrCollID() );
+    collIDVec.push_back( m_RSTAttrEditor.GetAttrCollID() );
+    collIDVec.push_back( m_ProtAttrEditor.GetAttrCollID() );
 }
 
 void ManageMeasureScreen::Set( const vec3d &placement, const std::string &targetGeomId )

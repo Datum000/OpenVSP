@@ -72,10 +72,7 @@ public:
     virtual bool IsShown();
     virtual void Hide();
     virtual bool Update();
-    virtual std::vector < std::string > GetCollIDs()
-    {
-        return {};
-    }
+    virtual void GetCollIDs( vector < string > &collIDVec ) {};
 
     ScreenMgr* GetScreenMgr()
     {
@@ -141,10 +138,7 @@ public:
         VspScreen::Update();
         return false;
     }
-    virtual std::vector < std::string > GetCollIDs()
-    {
-        return {};
-    }
+    virtual void GetCollIDs( vector < string > &collIDVec ) {};
 
     void HelpCallBack( Fl_Widget *w );
     static void staticHelpCB( Fl_Widget *w, void* data )
@@ -176,10 +170,7 @@ public:
         return false;
     }
 
-    virtual std::vector < std::string > GetCollIDs()
-    {
-        return {};
-    }
+    virtual void GetCollIDs( vector < string > &collIDVec ) {};
 
     virtual Fl_Group* AddTab( const string& title );
     virtual Fl_Group* AddTab( const string& title, int indx );
@@ -223,7 +214,7 @@ public:
     }
     virtual void GuiDeviceCallBack( GuiDevice* device );
 
-    virtual std::vector < std::string > GetCollIDs();
+    virtual void GetCollIDs( vector < string > &collIDVec );
 
     //=====Attribute Editor Tab=====//
     GroupLayout m_AttributeLayout;
@@ -249,7 +240,7 @@ public:
 
     virtual void UpdateMaterialNames();
 
-    virtual std::vector < std::string > GetCollIDs();
+    virtual void GetCollIDs( vector < string > &collIDVec );
 
     //==== Group Layouts ====//
     GroupLayout m_GenLayout;

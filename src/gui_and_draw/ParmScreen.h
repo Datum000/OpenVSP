@@ -35,7 +35,7 @@ public:
 
     void GuiDeviceCallBack( GuiDevice* gui_device );
 
-    virtual std::vector < std::string > GetCollIDs();
+    virtual void GetCollIDs( vector < string > &collIDVec );
 
 protected:
 
