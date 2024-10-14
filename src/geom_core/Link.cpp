@@ -96,6 +96,8 @@ xmlNodePtr Link::EncodeXml( xmlNodePtr & node )
         XmlUtil::AddIntNode( link_node, "ScaleFlag", m_ScaleFlag );
         XmlUtil::AddIntNode( link_node, "LowerLimitFlag", m_LowerLimitFlag );
         XmlUtil::AddIntNode( link_node, "UpperLimitFlag", m_UpperLimitFlag );
+
+        m_AttrCollection.EncodeXml( link_node );
     }
 
     return link_node;
