@@ -527,6 +527,41 @@ void ScriptMgrSingleton::RegisterEnums( asIScriptEngine* se )
     r = se->RegisterEnumValue( "ATTACH_ROT_TYPE", "ATTACH_ROT_NUM_TYPES", ATTACH_ROT_NUM_TYPES );
     assert( r >= 0 );
 
+    r = se->RegisterEnum( "ATTRIBUTABLE_TYPE" );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_PARM", ATTROBJ_PARM );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_GEOM", ATTROBJ_GEOM );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_VEH", ATTROBJ_VEH );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_SUBSURF", ATTROBJ_SUBSURF );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_PROBE", ATTROBJ_PROBE );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_RSTPROBE", ATTROBJ_RSTPROBE );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_RULER", ATTROBJ_RULER );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_PROTRACTOR", ATTROBJ_PROTRACTOR );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_LINK", ATTROBJ_LINK );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_ADVLINK", ATTROBJ_ADVLINK );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_ATTR", ATTROBJ_ATTR );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_COLLECTION", ATTROBJ_COLLECTION );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_FREE", ATTROBJ_FREE );
+    assert( r >= 0 );
+
+    r = se->RegisterEnum( "ATTRIBUTE_EVENT_GROUP" );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTE_EVENT_GROUP", "ATTR_GROUP_NONE", ATTR_GROUP_NONE );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "ATTRIBUTE_EVENT_GROUP", "ATTR_GROUP_WATERMARK", ATTR_GROUP_WATERMARK );
+    assert( r >= 0 );
 
     r = se->RegisterEnum( "BOR_MODE" );
     assert( r >= 0 );
@@ -1667,6 +1702,16 @@ void ScriptMgrSingleton::RegisterEnums( asIScriptEngine* se )
     r = se->RegisterEnumValue( "MASS_UNIT", "NUM_MASS_UNIT", NUM_MASS_UNIT );
     assert( r >= 0 );
 
+    r = se->RegisterEnum( "OBJ_ID_LENGTH" );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "OBJ_ID_LENGTH", "ID_LENGTH_ATTR", ID_LENGTH_ATTR );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "OBJ_ID_LENGTH", "ID_LENGTH_ATTRCOLL", ID_LENGTH_ATTRCOLL );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "OBJ_ID_LENGTH", "ID_LENGTH_PARMCONTAINER", ID_LENGTH_PARMCONTAINER );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "OBJ_ID_LENGTH", "ID_LENGTH_PARM", ID_LENGTH_PARM );
+    assert( r >= 0 );
 
     r = se->RegisterEnum( "PARM_TYPE" );
     assert( r >= 0 );
