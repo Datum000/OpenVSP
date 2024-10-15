@@ -81,15 +81,14 @@ public:
 
     CScriptArray* GetProxyVec3dArray();
     CScriptArray* GetProxyStringArray();
-    CScriptArray* GetProxyBoolArray();
     CScriptArray* GetProxyIntArray();
     CScriptArray* GetProxyDoubleArray();
-    CScriptArray* GetProxyStrMatArray();
     CScriptArray* GetProxyIntMatArray();
     CScriptArray* GetProxyDoubleMatArray();
 
     template < class T > static void FillASArray( vector < T > & in, CScriptArray* out );
     template < class T > static void FillSTLVector( CScriptArray* in, vector < T > & out );
+    template < class T > static void FillSTLMatrix( CScriptArray* in, vector < vector < T > > & out );
 
     //==== Common Types =====//
     asITypeInfo* m_BoolArrayType;
@@ -185,61 +184,28 @@ private:
     CScriptArray* GetVec3dAnalysisInput( const string & analysis, const string & name, int index );
 
     //==== Attribute Calls ====//
-    std::string SummarizeAttributes();
-    std::string SummarizeAttributesAsTree();
-
     CScriptArray* FindAllAttributes();
     CScriptArray* FindAttributedObjects();
 
-    CScriptArray* FindAttributesByName( const std::string search_str );
-    std::string FindAttributeByName( const std::string search_str, int index );
-    std::string FindAttributeInCollection( const std::string obj_id, const std::string search_str, int index );
-    CScriptArray* FindAttributeNamesInCollection( const std::string collID );
-    CScriptArray* FindAttributesInCollection( const std::string collID );
+    CScriptArray* FindAttributesByName( const string & search_str );
+    CScriptArray* FindAttributeNamesInCollection( const string & collID );
+    CScriptArray* FindAttributesInCollection( const string & collID );
 
-    int GetObjectType( const std::string id );
-    std::string GetObjectTypeName( const std::string id );
-    std::string GetObjectName( const std::string id );
-    std::string GetObjectParent( const string id );
+    CScriptArray* GetAttributeBoolVal( const string & attrID );
+    CScriptArray* GetAttributeIntVal( const string & attrID );
+    CScriptArray* GetAttributeDoubleVal( const string & attrID );
+    CScriptArray* GetAttributeStringVal( const string & attrID );
+    CScriptArray* GetAttributeVec3dVal( const string & attrID );
+    CScriptArray* GetAttributeIntMatrixVal( const string & attrID );
+    CScriptArray* GetAttributeDoubleMatrixVal( const string & attrID );
 
-    std::string GetChildCollection( const std::string id );
+    void SetAttributeVec3d( const string & attrID, CScriptArray* vec3dVector );
+    void SetAttributeIntMatrix( const string & attrID, CScriptArray* intMatrix );
+    void SetAttributeDoubleMatrix( const string & attrID, CScriptArray* dblMatrix );
 
-    std::string GetAttributeID(const std::string collID, const std::string attributeName);
-    std::string GetAttributeDoc(const std::string attrID);
-
-    int GetAttributeType(const std::string attrID);
-    std::string GetAttributeTypeName(const std::string attrID);
-
-    CScriptArray* GetAttributeBoolVal(const std::string attrID);
-    CScriptArray* GetAttributeIntVal(const std::string attrID);
-    CScriptArray* GetAttributeDoubleVal(const std::string attrID);
-    CScriptArray* GetAttributeStringVal(const std::string attrID);
-    CScriptArray* GetAttributeVec3dVal(const std::string attrID);
-    CScriptArray* GetAttributeIntMatrixVal( const std::string attrID );
-    CScriptArray* GetAttributeDoubleMatrixVal( const std::string attrID );
-
-    void SetAttributeDoc(const std::string attrID, std::string doc);
-    void SetAttributeBool(const std::string attrID, bool value );
-    void SetAttributeInt(const std::string attrID, int value );
-    void SetAttributeDouble(const std::string attrID, double value );
-    void SetAttributeString(const std::string attrID, const std::string value );
-    void SetAttributeVec3d(const std::string attrID, const vec3d value );
-    void SetAttributeIntMatrix(const std::string attrID, const std::vector< std::vector< int > > value );
-    void SetAttributeDoubleMatrix(const std::string attrID, const std::vector< std::vector< double > > value );
-
-    void DeleteAttribute(const std::string attrID);
-
-    void AddAttributeBool(const std::string collID, std::string attributeName, bool value );
-    void AddAttributeInt(const std::string collID, std::string attributeName, int value);
-    void AddAttributeDouble(const std::string collID, std::string attributeName, double value);
-    void AddAttributeString(const std::string collID, std::string attributeName, std::string value);
-    void AddAttributeVec3d(const std::string collID, std::string attributeName, vec3d);
-    void AddAttributeIntMatrix(const std::string collID, std::string attributeName, std::vector< std::vector< int > > value );
-    void AddAttributeDoubleMatrix(const std::string collID, std::string attributeName, std::vector< std::vector< double > > value );
-    void AddAttributeGroup(const std::string collID, std::string attributeName);
-
-    int CopyAttribute(const std::string attrID);
-    void PasteAttribute(const std::string objID);
+    void AddAttributeVec3d( const string & attrID, const string & attributeName, CScriptArray* vec3dVector );
+    void AddAttributeIntMatrix( const string & collID, const string & attributeName, CScriptArray* intMatrix );
+    void AddAttributeDoubleMatrix( const string & collID, const string & attributeName, CScriptArray* dblMatrix );
 
     CScriptArray* GetAllResultsNames();
     CScriptArray* GetAllDataNames( const string & results_id );

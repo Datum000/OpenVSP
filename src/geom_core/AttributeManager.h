@@ -95,7 +95,7 @@ public:
     void SetAttributeInt( const string &attrID, int value, bool updateFlag = true );
     void SetAttributeDouble( const string &attrID, double value, bool updateFlag = true );
     void SetAttributeString( const string &attrID, const string &value, bool updateFlag = true );
-    void SetAttributeVec3d( const string &attrID, const vec3d &value, bool updateFlag = true );
+    void SetAttributeVec3d( const string &attrID, const vector< vec3d > &value, bool updateFlag = true );
     void SetAttributeIntMatrix( const string &attrID, const vector< vector< int > > &value, bool updateFlag = true );
     void SetAttributeDoubleMatrix( const string &attrID, const vector< vector< double > > &value, bool updateFlag = true );
 
@@ -106,7 +106,7 @@ public:
     void AddAttributeInt( const string &collID, const string &attributeName, int value, bool updateFlag = true );
     void AddAttributeDouble( const string &collID, const string &attributeName, double value, bool updateFlag = true );
     void AddAttributeString( const string &collID, const string &attributeName, const string &value, bool updateFlag = true );
-    void AddAttributeVec3d( const string &collID, const string &attributeName, const vec3d &value, bool updateFlag = true );
+    void AddAttributeVec3d( const string &collID, const string &attributeName, const vector < vec3d > &value, bool updateFlag = true );
     void AddAttributeIntMatrix( const string &collID, const string &attributeName, const vector< vector< int > > &value, bool updateFlag = true );
     void AddAttributeDoubleMatrix( const string &collID, const string &attributeName, const vector< vector< double > > &value, bool updateFlag = true );
     void AddAttributeGroup( const string &collID, const string &attributeName, bool updateFlag = true );

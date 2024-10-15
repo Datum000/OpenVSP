@@ -1372,222 +1372,222 @@ void PrintAnalysisDocs( const string & analysis_name )
 //===============       Attributes Functions         ===================//
 //===================================================================//
 
-std::string SummarizeAttributes()
+string SummarizeAttributes()
 {
     return AttributeMgr.SummarizeAttributes();
 }
 
-std::string SummarizeAttributesAsTree()
+string SummarizeAttributesAsTree()
 {
     return AttributeMgr.SummarizeAttributesAsTree();
 }
 
-std::vector < std::string > FindAllAttributes()
+vector < string > FindAllAttributes()
 {
     return AttributeMgr.FindAllAttributes();
 }
 
-std::vector < std::string > FindAttributesByName( const std::string search_str )
+vector < string > FindAttributesByName( const string & search_str )
 {
     return AttributeMgr.FindAttributesByName( search_str );
 }
 
-std::string FindAttributeByName( const std::string search_str, int index )
+string FindAttributeByName( const string & search_str, int index )
 {
     return AttributeMgr.FindAttributeByName( search_str, index );
 }
 
-std::string FindAttributeInCollection( const std::string obj_id, const std::string search_str, int index )
+string FindAttributeInCollection( const string & obj_id, const string & search_str, int index )
 {
     return AttributeMgr.FindAttributeInCollection( obj_id, search_str, index );
 }
 
-std::vector< std::string > FindAttributedObjects()
+vector< string > FindAttributedObjects()
 {
     return AttributeMgr.FindAttributedObjects();
 }
 
-int GetObjectType( const std::string id )
+int GetObjectType( const string & id )
 {
     return AttributeMgr.GetObjectType( id );
 }
 
-std::string GetObjectTypeName( const std::string id )
+string GetObjectTypeName( const string & id )
 {
     return AttributeMgr.GetObjectTypeName( id );
 }
 
-std::string GetObjectName( const std::string id )
+string GetObjectName( const string & id )
 {
     return AttributeMgr.GetObjectName( id );
 }
 
-std::string GetObjectParent( const std::string id )
+string GetObjectParent( const string & id )
 {
     return AttributeMgr.GetObjectParent( id );
 }
 
-std::string GetChildCollection( const std::string id )
+string GetChildCollection( const string & id )
 {
     return AttributeMgr.GetChildCollection( id );
 }
 
-std::vector< std::string > FindAttributesInCollection( const std::string collID )
+vector< string > FindAttributesInCollection( const string & collID )
 {
     return AttributeMgr.FindAttributesInCollection( collID );
 }
 
-std::vector< std::string > FindAttributeNamesInCollection( const std::string collID )
+vector< string > FindAttributeNamesInCollection( const string & collID )
 {
     return AttributeMgr.FindAttributeNamesInCollection( collID );
 }
 
-std::string GetAttributeID( const std::string collID, const std::string attributeName )
+string GetAttributeID( const string & collID, const string & attributeName )
 {
     return AttributeMgr.GetAttributeID( collID, attributeName );
 }
 
-std::string GetAttributeDoc( const std::string attrID )
+string GetAttributeDoc( const string & attrID )
 {
     return AttributeMgr.GetAttributeDoc( attrID );
 }
 
-int GetAttributeType( const std::string attrID )
+int GetAttributeType( const string & attrID )
 {
     return AttributeMgr.GetAttributeType( attrID );
 }
 
-std::string GetAttributeTypeName( const std::string attrID )
+string GetAttributeTypeName( const string & attrID )
 {
     return AttributeMgr.GetAttributeTypeName( attrID );
 }
 
-std::vector< int > GetAttributeBoolVal( const std::string attrID )
+vector< int > GetAttributeBoolVal( const string & attrID )
 {
     return AttributeMgr.GetAttributeBoolVal( attrID );
 }
 
-std::vector< int > GetAttributeIntVal( const std::string attrID )
+vector< int > GetAttributeIntVal( const string & attrID )
 {
     return AttributeMgr.GetAttributeIntVal( attrID );
 }
 
-std::vector< double > GetAttributeDoubleVal( const std::string attrID )
+vector< double > GetAttributeDoubleVal( const string & attrID )
 {
     return AttributeMgr.GetAttributeDoubleVal( attrID );
 }
 
-std::vector< std::string > GetAttributeStringVal( const std::string attrID )
+vector< string > GetAttributeStringVal( const string & attrID )
 {
     return AttributeMgr.GetAttributeStringVal( attrID );
 }
 
-std::vector< vec3d > GetAttributeVec3dVal( const std::string attrID )
+vector< vec3d > GetAttributeVec3dVal( const string & attrID )
 {
     return AttributeMgr.GetAttributeVec3dVal( attrID );
 }
 
-std::vector< std::vector < int > > GetAttributeIntMatrixVal( const std::string attrID )
+vector< vector < int > > GetAttributeIntMatrixVal( const string & attrID )
 {
     return AttributeMgr.GetAttributeIntMatrixVal( attrID );
 }
 
-std::vector< std::vector < double > > GetAttributeDoubleMatrixVal( const std::string attrID )
+vector< vector < double > > GetAttributeDoubleMatrixVal( const string & attrID )
 {
     return AttributeMgr.GetAttributeDoubleMatrixVal( attrID );
 }
 
-void SetAttributeDoc( const std::string attrID, std::string doc )
+void SetAttributeDoc( const string & attrID, const string & doc )
 {
     AttributeMgr.SetAttributeDoc( attrID, doc );
 }
 
-void SetAttributeBool( const std::string attrID, bool value )
+void SetAttributeBool( const string & attrID, bool value )
 {
     AttributeMgr.SetAttributeBool( attrID, value );
 }
 
-void SetAttributeInt( const std::string attrID, int value )
+void SetAttributeInt( const string & attrID, int value )
 {
     AttributeMgr.SetAttributeInt( attrID, value );
 }
 
-void SetAttributeDouble( const std::string attrID, double value )
+void SetAttributeDouble( const string & attrID, double value )
 {
     AttributeMgr.SetAttributeDouble( attrID, value );
 }
 
-void SetAttributeString( const std::string attrID, const std::string value )
+void SetAttributeString( const string & attrID, const string & value )
 {
     AttributeMgr.SetAttributeString( attrID, value );
 }
 
-void SetAttributeVec3d( const std::string attrID, const vec3d value )
+void SetAttributeVec3d( const string & attrID, const vector < vec3d > value )
 {
     AttributeMgr.SetAttributeVec3d( attrID, value );
 }
 
-void SetAttributeIntMatrix( const std::string attrID, const std::vector< std::vector< int > > value )
+void SetAttributeIntMatrix( const string & attrID, const vector< vector< int > > value )
 {
     AttributeMgr.SetAttributeIntMatrix( attrID, value );
 }
 
-void SetAttributeDoubleMatrix( const std::string attrID, const std::vector< std::vector< double > > value )
+void SetAttributeDoubleMatrix( const string & attrID, const vector< vector< double > > value )
 {
     AttributeMgr.SetAttributeDoubleMatrix( attrID, value );
 }
 
-void DeleteAttribute( const std::string attrID )
+void DeleteAttribute( const string & attrID )
 {
     AttributeMgr.DeleteAttribute( attrID );
 }
 
-void AddAttributeBool( const std::string collID, std::string attributeName, bool value )
+void AddAttributeBool( const string & collID, const string & attributeName, bool value )
 {
     AttributeMgr.AddAttributeBool( collID, attributeName, value );
 }
 
-void AddAttributeInt( const std::string collID, std::string attributeName, int value )
+void AddAttributeInt( const string & collID, const string & attributeName, int value )
 {
     AttributeMgr.AddAttributeInt( collID, attributeName, value );
 }
 
-void AddAttributeDouble( const std::string collID, std::string attributeName, double value)
+void AddAttributeDouble( const string & collID, const string & attributeName, double value)
 {
     AttributeMgr.AddAttributeDouble( collID, attributeName, value );
 }
 
-void AddAttributeString( const std::string collID, std::string attributeName, std::string value )
+void AddAttributeString( const string & collID, const string & attributeName, const string & value )
 {
     AttributeMgr.AddAttributeString( collID, attributeName, value );
 }
 
-void AddAttributeVec3d( const std::string collID, std::string attributeName, vec3d value )
+void AddAttributeVec3d( const string & collID, const string & attributeName, vector < vec3d > value )
 {
     AttributeMgr.AddAttributeVec3d( collID, attributeName, value );
 }
 
-void AddAttributeIntMatrix( const std::string collID, std::string attributeName, std::vector < std::vector < int > > value )
+void AddAttributeIntMatrix( const string & collID, const string & attributeName, vector < vector < int > > value )
 {
     AttributeMgr.AddAttributeIntMatrix( collID, attributeName, value );
 }
 
-void AddAttributeDoubleMatrix( const std::string collID, std::string attributeName, std::vector < std::vector < double > > value )
+void AddAttributeDoubleMatrix( const string & collID, const string & attributeName, vector < vector < double > > value )
 {
     AttributeMgr.AddAttributeDoubleMatrix( collID, attributeName, value );
 }
 
-void AddAttributeGroup( const std::string collID, std::string attributeName )
+void AddAttributeGroup( const string & collID, const string & attributeName )
 {
     AttributeMgr.AddAttributeGroup( collID, attributeName );
 }
 
-int CopyAttribute( const std::string attrID )
+int CopyAttribute( const string & attrID )
 {
     return AttributeMgr.CopyAttribute( attrID );
 }
 
-void PasteAttribute( const std::string objID )
+void PasteAttribute( const string & objID )
 {
     AttributeMgr.PasteAttribute( objID );
 }

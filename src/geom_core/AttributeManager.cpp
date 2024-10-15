@@ -816,7 +816,7 @@ void AttributeMgrSingleton::AddAttributeString( const string &collID, const stri
     AddAttributeUtil( collID, attrAdd, updateFlag );
 }
 
-void AttributeMgrSingleton::AddAttributeVec3d( const string &collID, const string &attributeName, const vec3d &value, bool updateFlag )
+void AttributeMgrSingleton::AddAttributeVec3d( const string &collID, const string &attributeName, const vector < vec3d > &value, bool updateFlag )
 {
     // Are all these if statements necessary?
     // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
@@ -963,13 +963,13 @@ void AttributeMgrSingleton::SetAttributeString( const string &attrID, const stri
     }
 }
 
-void AttributeMgrSingleton::SetAttributeVec3d( const string &attrID, const vec3d &value, bool updateFlag )
+void AttributeMgrSingleton::SetAttributeVec3d( const string &attrID, const vector < vec3d > &value, bool updateFlag )
 {
     NameValData* attr = GetAttributePtr( attrID );
 
     if ( attr )
     {
-        attr->SetVec3dData( { value } );
+        attr->SetVec3dData( value );
         SetAttrDirtyFlag( attrID );
         if ( updateFlag )
         {

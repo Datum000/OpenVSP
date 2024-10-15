@@ -2144,7 +2144,7 @@ extern void PrintAnalysisDocs( const std::string & analysis_name );
     \return Tab-delimited summary of all Attributes in vehicle
 */
 
-std::string SummarizeAttributes();
+string SummarizeAttributes();
 
 /*!
     \ingroup Attributes
@@ -2169,7 +2169,7 @@ std::string SummarizeAttributes();
     \return Plain-text attribute tree of vehicle
 */
 
-std::string SummarizeAttributesAsTree();
+string SummarizeAttributesAsTree();
 
 /*!
     \ingroup Attributes
@@ -2195,7 +2195,7 @@ std::string SummarizeAttributesAsTree();
     \return Vector of All Attribute IDs
 */
 
-extern std::vector < std::string > FindAllAttributes();
+extern vector < string > FindAllAttributes();
 
 
 
@@ -2224,7 +2224,7 @@ extern std::vector < std::string > FindAllAttributes();
     \param [in] search_str string for filtering attributes in model
 */
 
-extern std::vector < std::string > FindAttributesByName( const std::string search_str );
+extern vector < string > FindAttributesByName( const string & search_str );
 
 /*!
     \ingroup Attributes
@@ -2251,7 +2251,7 @@ extern std::vector < std::string > FindAttributesByName( const std::string searc
     \param [in] index int for indexing which of the vector of found attributes to select
 */
 
-extern std::string FindAttributeByName( const std::string search_str, int index );
+extern string FindAttributeByName( const string & search_str, int index );
 
 /*!
     \ingroup Attributes
@@ -2281,7 +2281,7 @@ extern std::string FindAttributeByName( const std::string search_str, int index 
     \param [in] index int for indexing which of the vector of found attributes to select
 */
 
-extern std::string FindAttributeInCollection( const std::string obj_id, const std::string search_str, int index );
+extern string FindAttributeInCollection( const string & obj_id, const string & search_str, int index );
 
 /*!
     \ingroup Attributes
@@ -2358,7 +2358,7 @@ extern std::string FindAttributeInCollection( const std::string obj_id, const st
     \return Array of IDs of entities in OpenVSP that contain populated attribute collections
 */
 
-extern std::vector< std::string > FindAttributedObjects();
+extern vector< string > FindAttributedObjects();
 
 /*!
     \ingroup Attributes
@@ -2386,7 +2386,7 @@ extern std::vector< std::string > FindAttributedObjects();
     \param [in] attachID string ID of an OpenVSP object
 */
 
-extern int GetObjectType(const std::string attachID);
+extern int GetObjectType(const string & attachID);
 
 /*!
     \ingroup Attributes
@@ -2414,7 +2414,7 @@ extern int GetObjectType(const std::string attachID);
     \param [in] attachID string ID of an OpenVSP object
 */
 
-extern std::string GetObjectTypeName(const std::string attachID);
+extern string GetObjectTypeName(const string & attachID);
 
 /*!
     \ingroup Attributes
@@ -2442,7 +2442,7 @@ extern std::string GetObjectTypeName(const std::string attachID);
     \param [in] attachID string ID of an OpenVSP object
 */
 
-extern std::string GetObjectName(const std::string attachID);
+extern string GetObjectName(const string & attachID);
 
 
 /*!
@@ -2483,7 +2483,7 @@ extern std::string GetObjectName(const std::string attachID);
     \return string ID of object parent
 */
 
-extern std::string GetObjectParent( const std::string id );
+extern string GetObjectParent( const string & id );
 
 /*!
     \ingroup Attributes
@@ -2513,7 +2513,7 @@ extern std::string GetObjectParent( const std::string id );
     \param [in] attachID string ID of an OpenVSP object
 */
 
-extern std::string GetChildCollection(const std::string attachID );
+extern string GetChildCollection(const string & attachID );
 
 /*!
     \ingroup Attributes
@@ -2592,7 +2592,7 @@ extern std::string GetChildCollection(const std::string attachID );
     \param [in] collID string ID of an attribute collection
 */
 
-extern std::vector< std::string > FindAttributesInCollection(const std::string collID );
+extern vector< string > FindAttributesInCollection(const string & collID );
 
 /*!
     \ingroup Attributes
@@ -2671,7 +2671,7 @@ extern std::vector< std::string > FindAttributesInCollection(const std::string c
     \param [in] collID string ID of an attribute collection
 */
 
-extern std::vector< std::string > FindAttributeNamesInCollection(const std::string collID );
+extern vector< string > FindAttributeNamesInCollection(const string & collID );
 
 /*!
     \ingroup Attributes
@@ -2705,7 +2705,7 @@ extern std::vector< std::string > FindAttributeNamesInCollection(const std::stri
     \param [in] attributeName name of an attribute in that collection
 */
 
-extern std::string GetAttributeID(const std::string collID, const std::string attributeName);
+extern string GetAttributeID(const string & collID, const string & attributeName);
 
 /*!
     \ingroup Attributes
@@ -2733,7 +2733,7 @@ extern std::string GetAttributeID(const std::string collID, const std::string at
     \param [in] attrID string ID of attribute
 */
 
-extern std::string GetAttributeDoc(const std::string attrID);
+extern string GetAttributeDoc(const string & attrID);
 
 /*!
     \ingroup Attributes
@@ -2770,7 +2770,7 @@ extern std::string GetAttributeDoc(const std::string attrID);
     \param [in] attrID string ID of attribute
 */
 
-extern int GetAttributeType( const std::string attrID );
+extern int GetAttributeType( const string & attrID );
 
 /*!
     \ingroup Attributes
@@ -2797,7 +2797,7 @@ extern int GetAttributeType( const std::string attrID );
     \param [in] attrID string ID of attribute
 */
 
-extern std::string GetAttributeTypeName(const std::string attrID);
+extern string GetAttributeTypeName(const string & attrID);
 
 /*!
     \ingroup Attributes
@@ -2824,7 +2824,7 @@ extern std::string GetAttributeTypeName(const std::string attrID);
     \param [in] attrID string ID of attribute
 */
 
-extern std::vector< int > GetAttributeBoolVal(const std::string attrID);
+extern vector< int > GetAttributeBoolVal(const string & attrID);
 
 /*!
     \ingroup Attributes
@@ -2851,7 +2851,7 @@ extern std::vector< int > GetAttributeBoolVal(const std::string attrID);
     \param [in] attrID string ID of attribute
 */
 
-extern std::vector< int > GetAttributeIntVal(const std::string attrID);
+extern vector< int > GetAttributeIntVal(const string & attrID);
 
 /*!
     \ingroup Attributes
@@ -2878,7 +2878,7 @@ extern std::vector< int > GetAttributeIntVal(const std::string attrID);
     \param [in] attrID string ID of attribute
 */
 
-extern std::vector< double > GetAttributeDoubleVal(const std::string attrID);
+extern vector< double > GetAttributeDoubleVal(const string & attrID);
 
 /*!
     \ingroup Attributes
@@ -2905,7 +2905,7 @@ extern std::vector< double > GetAttributeDoubleVal(const std::string attrID);
     \param [in] attrID string ID of attribute
 */
 
-extern std::vector< std::string > GetAttributeStringVal(const std::string attrID);
+extern vector< string > GetAttributeStringVal(const string & attrID);
 
 /*!
     \ingroup Attributes
@@ -2932,7 +2932,7 @@ extern std::vector< std::string > GetAttributeStringVal(const std::string attrID
     \param [in] attrID string ID of attribute
 */
 
-extern std::vector< vec3d > GetAttributeVec3dVal(const std::string attrID);
+extern vector< vec3d > GetAttributeVec3dVal(const string & attrID);
 
 /*!
     \ingroup Attributes
@@ -2959,7 +2959,7 @@ extern std::vector< vec3d > GetAttributeVec3dVal(const std::string attrID);
     \param [in] attrID string ID of attribute
 */
 
-extern std::vector< std::vector < int > > GetAttributeIntMatrixVal(const std::string attrID);
+extern vector< vector < int > > GetAttributeIntMatrixVal(const string & attrID);
 
 /*!
     \ingroup Attributes
@@ -2986,7 +2986,7 @@ extern std::vector< std::vector < int > > GetAttributeIntMatrixVal(const std::st
     \param [in] attrID string ID of attribute
 */
 
-extern std::vector< std::vector < double > > GetAttributeDoubleMatrixVal(const std::string attrID);
+extern vector< vector < double > > GetAttributeDoubleMatrixVal(const string & attrID);
 
 /*!
     \ingroup Attributes
@@ -3014,7 +3014,7 @@ extern std::vector< std::vector < double > > GetAttributeDoubleMatrixVal(const s
     \param [in] doc string of documentation for attribute
 */
 
-extern void SetAttributeDoc( const std::string attrID, std::string doc );
+extern void SetAttributeDoc( const string & attrID, const string & doc );
 
 /*!
     \ingroup Attributes
@@ -3042,7 +3042,7 @@ extern void SetAttributeDoc( const std::string attrID, std::string doc );
     \param [in] value boolean value for attribute
 */
 
-extern void SetAttributeBool( const std::string attrID, bool value );
+extern void SetAttributeBool( const string & attrID, bool value );
 
 /*!
     \ingroup Attributes
@@ -3070,7 +3070,7 @@ extern void SetAttributeBool( const std::string attrID, bool value );
     \param [in] value int value for attribute
 */
 
-extern void SetAttributeInt( const std::string attrID, int value );
+extern void SetAttributeInt( const string & attrID, int value );
 
 /*!
     \ingroup Attributes
@@ -3098,7 +3098,7 @@ extern void SetAttributeInt( const std::string attrID, int value );
     \param [in] value double value for attribute
 */
 
-extern void SetAttributeDouble( const std::string attrID, double value );
+extern void SetAttributeDouble( const string & attrID, double value );
 
 /*!
     \ingroup Attributes
@@ -3126,7 +3126,7 @@ extern void SetAttributeDouble( const std::string attrID, double value );
     \param [in] value string value for attribute
 */
 
-extern void SetAttributeString( const std::string attrID, const std::string value );
+extern void SetAttributeString( const string & attrID, const string & value );
 
 /*!
     \ingroup Attributes
@@ -3144,7 +3144,7 @@ extern void SetAttributeString( const std::string attrID, const std::string valu
     #Get first attribute in vehicle as an example
     AttrID = vsp.FindAllAttributes()[0]
     Vec3dVal = vsp.vec3d( 0.5, 0.75, -0.4 )
-    SetAttributeVec3d( AttrID, Vec3dVal )
+    SetAttributeVec3d( AttrID, [Vec3dVal] )
     #==== Write Some Fake Test Results =====//
     # not implemented
 
@@ -3154,7 +3154,7 @@ extern void SetAttributeString( const std::string attrID, const std::string valu
     \param [in] value vec3d value for attribute
 */
 
-extern void SetAttributeVec3d( const std::string attrID, const vec3d value );
+extern void SetAttributeVec3d( const string & attrID, const vector < vec3d > value );
 
 /*!
     \ingroup Attributes
@@ -3182,7 +3182,7 @@ extern void SetAttributeVec3d( const std::string attrID, const vec3d value );
     \param [in] value int matrix value for attribute
 */
 
-extern void SetAttributeIntMatrix( const std::string attrID, const std::vector< std::vector< int > > value );
+extern void SetAttributeIntMatrix( const string & attrID, const vector< vector< int > > value );
 
 /*!
     \ingroup Attributes
@@ -3210,7 +3210,7 @@ extern void SetAttributeIntMatrix( const std::string attrID, const std::vector< 
     \param [in] value double matrix value for attribute
 */
 
-extern void SetAttributeDoubleMatrix( const std::string attrID, const std::vector< std::vector< double > > value );
+extern void SetAttributeDoubleMatrix( const string & attrID, const vector< vector< double > > value );
 
 /*!
     \ingroup Attributes
@@ -3236,7 +3236,7 @@ extern void SetAttributeDoubleMatrix( const std::string attrID, const std::vecto
     \param [in] attrID string of attribute ID
 */
 
-extern void DeleteAttribute( const std::string attrID );
+extern void DeleteAttribute( const string & attrID );
 
 /*!
     \ingroup Attributes
@@ -3266,7 +3266,7 @@ extern void DeleteAttribute( const std::string attrID );
     \param [in] value boolean value of new attribute
 */
 
-extern void AddAttributeBool( const std::string collID, std::string attributeName, bool value );
+extern void AddAttributeBool( const string & collID, const string & attributeName, bool value );
 
 /*!
     \ingroup Attributes
@@ -3296,7 +3296,7 @@ extern void AddAttributeBool( const std::string collID, std::string attributeNam
     \param [in] value integer value of new attribute
 */
 
-extern void AddAttributeInt( const std::string collID, const std::string attributeName, const int value );
+extern void AddAttributeInt( const string & collID, const string & attributeName, const int value );
 
 /*!
     \ingroup Attributes
@@ -3326,7 +3326,7 @@ extern void AddAttributeInt( const std::string collID, const std::string attribu
     \param [in] value double value of new attribute
 */
 
-extern void AddAttributeDouble( const std::string collID, const std::string attributeName, const double value);
+extern void AddAttributeDouble( const string & collID, const string & attributeName, const double value);
 
 /*!
     \ingroup Attributes
@@ -3356,7 +3356,7 @@ extern void AddAttributeDouble( const std::string collID, const std::string attr
     \param [in] value string value of new attribute
 */
 
-extern void AddAttributeString( const std::string collID, const std::string attributeName, const std::string value );
+extern void AddAttributeString( const string & collID, const string & attributeName, const string & value );
 
 /*!
     \ingroup Attributes
@@ -3376,7 +3376,7 @@ extern void AddAttributeString( const std::string collID, const std::string attr
     CollID = vsp.GetChildCollection( VehID )
     AttrName = 'Example_Vec3D_Attr'
     Vec3dValue = vsp.vec3d( 0.5, 0.75, -0.4 )
-    vsp.AddAttributeVec3d( CollID, AttrName, Vec3dValue )
+    vsp.AddAttributeVec3d( CollID, AttrName, [Vec3dValue] )
     #==== Write Some Fake Test Results =====//
     # not implemented
 
@@ -3387,7 +3387,7 @@ extern void AddAttributeString( const std::string collID, const std::string attr
     \param [in] value Vec3d value of new attribute
 */
 
-extern void AddAttributeVec3d( const std::string collID, const std::string attributeName, const vec3d value );
+extern void AddAttributeVec3d( const string & collID, const string & attributeName, const vector < vec3d > value );
 
 /*!
     \ingroup Attributes
@@ -3418,7 +3418,7 @@ extern void AddAttributeVec3d( const std::string collID, const std::string attri
     \param [in] value int matrix value of new attribute
 */
 
-extern void AddAttributeIntMatrix( const std::string collID, const std::string attributeName, const std::vector < std::vector < int > > value );
+extern void AddAttributeIntMatrix( const string & collID, const string & attributeName, const vector < vector < int > > value );
 
 /*!
     \ingroup Attributes
@@ -3449,7 +3449,7 @@ extern void AddAttributeIntMatrix( const std::string collID, const std::string a
     \param [in] value Double matrix value of new attribute
 */
 
-extern void AddAttributeDoubleMatrix( const std::string collID, const std::string attributeName, const std::vector < std::vector < double > > value );
+extern void AddAttributeDoubleMatrix( const string & collID, const string & attributeName, const vector < vector < double > > value );
 
 /*!
     \ingroup Attributes
@@ -3477,7 +3477,7 @@ extern void AddAttributeDoubleMatrix( const std::string collID, const std::strin
     \param [in] attributeName string name of new attribute group
 */
 
-extern void AddAttributeGroup( const std::string collID, const std::string attributeName );
+extern void AddAttributeGroup( const string & collID, const string & attributeName );
 
 /*!
     \ingroup Attributes
@@ -3502,7 +3502,7 @@ extern void AddAttributeGroup( const std::string collID, const std::string attri
     \param [in] attrID string ID of attribute to be copied
 */
 
-extern int CopyAttribute( const std::string attrID );
+extern int CopyAttribute( const string & attrID );
 
 /*!
     \ingroup Attributes
@@ -3529,7 +3529,7 @@ extern int CopyAttribute( const std::string attrID );
     \param [in] objID string ID of destination for pasting attribute into
 */
 
-extern void PasteAttribute( const std::string objID );
+extern void PasteAttribute( const string & objID );
 
 //======================== Results ================================//
 /*!
