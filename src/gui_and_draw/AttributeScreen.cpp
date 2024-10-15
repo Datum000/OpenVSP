@@ -364,46 +364,24 @@ void AttributeExplorer::GetEmptyColls()
 {
     vector < VspScreen* > screen_vec = m_ScreenMgr->GetAllScreens();
 
-    vector < VspScreen* > geom_screen_vec;
-
     vector < string > coll_id_vec;
 
     for ( int i = 0; i != screen_vec.size(); ++i )
     {
         if ( screen_vec[i]->IsShown() )
         {
-            if ( screen_vec[i]->GetScreenType() == vsp::VSP_ADV_LINK_SCREEN )
+            screen_vec[i]->GetCollIDs( coll_id_vec );
+        }
+
+        if ( screen_vec[i]->GetScreenType() == vsp::VSP_MANAGE_GEOM_SCREEN )
+        {
+            vector < VspScreen* > geom_screen_vec = static_cast< ManageGeomScreen* >( screen_vec[i] )->GetGeomScreenVec();
+
+            for ( int j = 0; j != geom_screen_vec.size(); ++j )
             {
-                static_cast< AdvLinkScreen* >( screen_vec[i] )->GetCollIDs( coll_id_vec );
-            }
-            else if ( screen_vec[i]->GetScreenType() == vsp::VSP_MEASURE_SCREEN )
-            {
-                static_cast< ManageMeasureScreen* >( screen_vec[i] )->GetCollIDs( coll_id_vec );
-            }
-            else if ( screen_vec[i]->GetScreenType() == vsp::VSP_PARM_LINK_SCREEN )
-            {
-                static_cast< ParmLinkScreen* >( screen_vec[i] )->GetCollIDs( coll_id_vec );
-            }
-            else if ( screen_vec[i]->GetScreenType() == vsp::VSP_PARM_SCREEN )
-            {
-                static_cast< ParmScreen* >( screen_vec[i] )->GetCollIDs( coll_id_vec );
-            }
-            else if ( screen_vec[i]->GetScreenType() == vsp::VSP_MANAGE_GEOM_SCREEN )
-            {
-                geom_screen_vec = static_cast< ManageGeomScreen* >(screen_vec[i])->GetGeomScreenVec();
-                for ( int j = 0; j != geom_screen_vec.size(); ++j )
+                if ( geom_screen_vec[j]->IsShown() )
                 {
-                    if ( geom_screen_vec[j]->IsShown() )
-                    {
-                        if ( geom_screen_vec[j]->GetScreenType() == vsp::VEH_GEOM_SCREEN )
-                        {
-                            static_cast< VehScreen* >( geom_screen_vec[j] )->GetCollIDs( coll_id_vec );
-                        }
-                        else
-                        {
-                            static_cast< GeomScreen* >( geom_screen_vec[j] )->GetCollIDs( coll_id_vec );
-                        }
-                    }
+                    geom_screen_vec[j]->GetCollIDs( coll_id_vec );
                 }
             }
         }
