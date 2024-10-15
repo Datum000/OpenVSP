@@ -1998,6 +1998,10 @@ xmlNodePtr Vehicle::DecodeXmlGeomsOnly( xmlNodePtr & node )
     xmlNodePtr vehicle_node = XmlUtil::GetNode( node, "Vehicle", 0 );
     if ( vehicle_node )
     {
+        // Get Vehicle-level attributes
+        xmlNodePtr child_node = XmlUtil::GetNode( vehicle_node, "ParmContainer", 0 );
+        GetAttrCollection()->DecodeXml( child_node, true );
+
         // Decode label information.
         MeasureMgr.DecodeXml( vehicle_node );
 
@@ -2113,9 +2117,6 @@ int Vehicle::ReadXMLFile( const string & file_name )
     //==== Decode Vehicle from document ====//
     DecodeXml( root );
 
-    //==== Add Default Vehicle Attributes ====//
-    AddDefaultAttributes();
-
     //===== Free Doc =====//
     xmlFreeDoc( doc );
 
@@ -2177,15 +2178,6 @@ int Vehicle::ReadXMLFileGeomsOnly( const string & file_name )
 
     //==== Decode Vehicle from document ====//
 
-    // get vehicle level attributes imported
-    xmlNodePtr vehicle_node = XmlUtil::GetNode( root, "Vehicle", 0 );
-    if ( vehicle_node )
-    {
-        // Get Vehicle-level attributes
-        xmlNodePtr child_node = XmlUtil::GetNode( vehicle_node, "ParmContainer", 0 );
-        GetAttrCollection()->DecodeXml( child_node, true );
-    }
-    // get the rest of the XML decoded
     DecodeXmlGeomsOnly( root );
 
     //===== Free Doc =====//
