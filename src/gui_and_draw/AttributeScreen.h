@@ -39,12 +39,88 @@ public:
     void SetTreeAutoSelectID( const string & id );
     void AttributeAdd();
     void AttributeModify( GuiDevice* gui_device, Fl_Widget* w );
-    void ResizeColVec3d( vector < vec3d > *v3dPtr, const int row_delta = 0, const vec3d &new_vec = {0., 0., 0.} );
-    void ResizeIntMat( vector < vector < int > > *matPtr, const pair < int, int > row_col_delta = { 0, 0 }, const int &new_val = 0 );
-    void ResizeDoubleMat( vector < vector < double > > *matPtr, const pair < int, int > row_col_delta = { 0, 0 }, const double &new_val = 0. );
 
-    pair < int, int > GetIntMatSize( vector < vector < int > > *matPtr );
-    pair < int, int > GetDoubleMatSize( vector < vector < double > > *matPtr );
+    template < class T >
+    void ResizeVector( vector < T > *vecPtr, const int delta, T const &new_val )
+    {
+        if ( delta > 0 )
+        {
+            // if adding rows, push back blanks
+            for ( int i = 0; i!= delta; ++i )
+            {
+                vecPtr->push_back( new_val );
+            }
+        }
+        else if ( delta < 0 )
+        {
+            // if deleting, pop from back
+            for ( int i = 0; i!= delta; --i )
+            {
+                // ensure deletion only happens if 2 or more rows exist
+                if ( vecPtr->size() > 1 )
+                {
+                    vecPtr->pop_back();
+                }
+            }
+        }
+    }
+
+    template < class T >
+    void ResizeMat( vector < vector < T > > *matPtr, const pair < int, int > row_col_delta, T const & new_val )
+    {
+        int n_row = 0;
+        int n_col = 0;
+
+        // if there are any rows, get column size from first row's size
+        if ( matPtr->size() )
+        {
+            n_row = matPtr->size();
+            n_col = matPtr[0].size();
+        }
+
+        // modify existing rows
+        for ( int i = 0; i != n_row; ++i )
+        {
+            vector < T > * rowPtr = &(matPtr->at(i));
+            ResizeVector( rowPtr, row_col_delta.second, new_val );
+        }
+
+        if ( row_col_delta.first > 0 )
+        {
+            // if adding rows, push back blanks
+            for ( int i = 0; i!= row_col_delta.first; ++i )
+            {
+                vector < T > new_row( n_col + row_col_delta.second, new_val );
+                matPtr->push_back( new_row );
+            }
+        }
+        else if ( row_col_delta.first < 0 )
+        {
+            // if deleting, pop from back
+            for ( int i = 0; i!= row_col_delta.first; --i )
+            {
+                // ensure deletion only happens if 2 or more rows exist
+                if ( matPtr->size() > 1 )
+                {
+                    matPtr->pop_back();
+                }
+            }
+        }
+    }
+
+    template < class T >
+    pair < int, int > GetMatSize( vector < vector < T > > *matPtr )
+    {
+        int n_row = matPtr->size();
+        int n_col = 0;
+
+        // if there are any rows, get column size from first row's size
+        if ( n_row )
+        {
+            n_col = matPtr->at(0).size();
+        }
+        return { n_row, n_col };
+    }
 
     virtual void CallBack( Fl_Widget *w );
 

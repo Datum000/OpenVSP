@@ -655,270 +655,67 @@ void AttributeExplorer::AttributeModify( GuiDevice* gui_device, Fl_Widget *w )
         else if ( gui_device == &m_AttrVec3dRowAdd && attrType == vsp::VEC3D_DATA )
         {
             vector < vec3d > * attrVec3dPtr = &attr_ptr->GetVec3dData();
-            ResizeColVec3d( attrVec3dPtr, 1 );
+            ResizeVector( attrVec3dPtr, 1, vec3d(0.,0.,0.) );
         }
 
         else if ( gui_device == &m_AttrVec3dRowDel && attrType == vsp::VEC3D_DATA )
         {
             vector < vec3d > * attrVec3dPtr = &attr_ptr->GetVec3dData();
-            ResizeColVec3d( attrVec3dPtr, -1 );
+            ResizeVector( attrVec3dPtr, -1, vec3d(0.,0.,0.) );
         }
 
         //int matrix resizing
         else if ( gui_device == &m_AttrImatRowAdd && attrType == vsp::INT_MATRIX_DATA )
         {
             vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
-            ResizeIntMat( attrImatPtr, {1, 0} );
+            ResizeMat( attrImatPtr, {1, 0}, 0 );
         }
 
         else if ( gui_device == &m_AttrImatRowDel && attrType == vsp::INT_MATRIX_DATA )
         {
             vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
-            ResizeIntMat( attrImatPtr, {-1, 0} );
+            ResizeMat( attrImatPtr, {-1, 0}, 0 );
         }
 
         else if ( gui_device == &m_AttrImatColAdd && attrType == vsp::INT_MATRIX_DATA )
         {
             vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
-            ResizeIntMat( attrImatPtr, {0, 1} );
+            ResizeMat( attrImatPtr, {0, 1}, 0 );
         }
 
         else if ( gui_device == &m_AttrImatColDel && attrType == vsp::INT_MATRIX_DATA )
         {
             vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
-            ResizeIntMat( attrImatPtr, {0, -1} );
+            ResizeMat( attrImatPtr, {0, -1}, 0 );
         }
 
         //double matrix resizing
         else if ( gui_device == &m_AttrDmatRowAdd && attrType == vsp::DOUBLE_MATRIX_DATA )
         {
             vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
-            ResizeDoubleMat( attrDmatPtr, {1, 0} );
+            ResizeMat( attrDmatPtr, {1, 0}, 0. );
         }
 
         else if ( gui_device == &m_AttrDmatRowDel && attrType == vsp::DOUBLE_MATRIX_DATA )
         {
             vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
-            ResizeDoubleMat( attrDmatPtr, {-1, 0} );
+            ResizeMat( attrDmatPtr, {-1, 0}, 0. );
         }
 
         else if ( gui_device == &m_AttrDmatColAdd && attrType == vsp::DOUBLE_MATRIX_DATA )
         {
             vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
-            ResizeDoubleMat( attrDmatPtr, {0, 1} );
+            ResizeMat( attrDmatPtr, {0, 1}, 0. );
         }
 
         else if ( gui_device == &m_AttrDmatColDel && attrType == vsp::DOUBLE_MATRIX_DATA )
         {
             vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
-            ResizeDoubleMat( attrDmatPtr, {0, -1} );
+            ResizeMat( attrDmatPtr, {0, -1}, 0. );
         }
 
         AttributeMgr.SetAttrDirtyFlag( attr_ptr->GetID() );
     }
-}
-
-void AttributeExplorer::ResizeColVec3d( vector < vec3d > *v3dPtr, const int row_delta, const vec3d &new_vec )
-{
-    int n_row = v3dPtr->size();
-
-    int row_add = 0;
-    int row_del = 0;
-
-    if ( row_delta > 0 )
-    {
-        row_add = row_delta;
-    }
-    else if ( row_delta < 0 )
-    {
-        row_del = row_delta;
-    }
-
-    // push back rows of new vals if adding
-    for ( int i = 0; i!= row_add; ++i )
-    {
-        v3dPtr->push_back( new_vec );
-    }
-
-    // delete rows of old vals from end of matrix
-    for ( int i = 0; i!= row_del; --i )
-    {
-        // prohibit less than 1 size in either dimension
-        if ( v3dPtr->size() > 1 )
-        {
-            v3dPtr->pop_back();
-        }
-    }
-}
-
-// add/delete rows/cols of a matrix of ints. Prevents reduction to 0-size in any dimension
-void AttributeExplorer::ResizeIntMat( vector < vector < int > > *matPtr, const pair < int, int > row_col_delta, const int &new_val )
-{
-    int n_row = matPtr->size();
-    int n_col = 0;
-
-    // initialize 1st-row adding variables to 0
-    int row_min_add = 0;
-    int col_min_add = 0;
-
-    // if there are any rows, get column size from first row's size
-    if ( n_row )
-    {
-        n_col = matPtr[0].size();
-    }
-
-    // add 1st row or column if missing
-    if ( n_row < 1 )
-    {
-        row_min_add = 1;
-    }
-    if ( n_col < 1 )
-    {
-        col_min_add = 1;
-    }
-
-    const int col_set = n_col + row_col_delta.second;
-
-    const int row_del = min( { row_col_delta.first , 0 } );
-    const int col_del = min( { row_col_delta.second , 0 } );
-
-    const int row_add = max( { row_col_delta.first , 0 } ) + row_min_add;
-    const int col_add = max( { row_col_delta.second , 0 } ) + col_min_add;
-
-    // modify cols of all existing rows
-    for ( int i = 0; i != n_row; ++i )
-    {
-        // for all new columns to add, push back the new val
-        for ( int j = 0; j != col_add ; ++j )
-        {
-            matPtr->at(i).push_back( new_val );
-        }
-
-        // for all column deletions, delete from end of vector
-        for ( int j = 0; j != col_del ; --j )
-        {
-            // prohibit less than 1 size in either dimension
-            if ( matPtr->at(i).size() > 1 )
-            {
-                matPtr->at(i).pop_back();
-            }
-        }
-    }
-
-    // push back rows of new vals if adding
-    for ( int i = 0; i!= row_add; ++i )
-    {
-        vector < int > new_row( col_set, new_val );
-        matPtr->push_back( new_row );
-    }
-
-    // delete rows of old vals from end of matrix
-    for ( int i = 0; i!= row_del; --i )
-    {
-        // prohibit less than 1 size in either dimension
-        if ( matPtr->size() > 1 )
-        {
-            matPtr->pop_back();
-        }
-    }
-}
-
-// add/delete rows/cols of a matrix of doubles. Prevents reduction to 0-size in any dimension
-void AttributeExplorer::ResizeDoubleMat( vector < vector < double > > *matPtr, const pair < int, int > row_col_delta, const double &new_val )
-{
-    int n_row = matPtr->size();
-    int n_col = 0;
-
-    // initialize 1st-row adding variables to 0
-    int row_min_add = 0;
-    int col_min_add = 0;
-
-    // if there are any rows, get column size from first row's size
-    if ( n_row )
-    {
-        n_col = matPtr[0].size();
-    }
-
-    // add 1st row or column if missing
-    if ( n_row < 1 )
-    {
-        row_min_add = 1;
-    }
-    if ( n_col < 1 )
-    {
-        col_min_add = 1;
-    }
-
-    const int col_set = n_col + row_col_delta.second;
-
-    const int row_del = min( { row_col_delta.first , 0 } );
-    const int col_del = min( { row_col_delta.second , 0 } );
-
-    const int row_add = max( { row_col_delta.first , 0 } ) + row_min_add;
-    const int col_add = max( { row_col_delta.second , 0 } ) + col_min_add;
-
-    // modify cols of all existing rows
-    for ( int i = 0; i != n_row; ++i )
-    {
-        // for all new columns to add, push back the new val
-        for ( int j = 0; j != col_add ; ++j )
-        {
-            matPtr->at(i).push_back( new_val );
-        }
-
-        // for all column deletions, delete from end of vector
-        for ( int j = 0; j != col_del ; --j )
-        {
-            // prohibit less than 1 size in either dimension
-            if ( matPtr->at(i).size() > 1 )
-            {
-                matPtr->at(i).pop_back();
-            }
-        }
-    }
-
-    // push back rows of new vals if adding
-    for ( int i = 0; i!= row_add; ++i )
-    {
-        vector < double > new_row( col_set, new_val );
-        matPtr->push_back( new_row );
-    }
-
-    // delete rows of old vals from end of matrix
-    for ( int i = 0; i!= row_del; --i )
-    {
-        // prohibit less than 1 size in either dimension
-        if ( matPtr->size() > 1 )
-        {
-            matPtr->pop_back();
-        }
-    }
-}
-
-pair < int, int > AttributeExplorer::GetDoubleMatSize( vector < vector < double > > *matPtr )
-{
-    int n_row = matPtr->size();
-    int n_col = 0;
-
-    // if there are any rows, get column size from first row's size
-    if ( n_row )
-    {
-        n_col = matPtr->at(0).size();
-    }
-    return { n_row, n_col };
-}
-
-pair < int, int > AttributeExplorer::GetIntMatSize( vector < vector < int > > *matPtr )
-{
-    int n_row = matPtr->size();
-    int n_col = 0;
-
-    // if there are any rows, get column size from first row's size
-    if ( n_row )
-    {
-        n_col = matPtr->at(0).size();
-    }
-    return { n_row, n_col };
 }
 
 void AttributeExplorer::AttrTypeDispGroup( int attr_type, GroupLayout * group )
@@ -942,11 +739,11 @@ void AttributeExplorer::AttrTypeDispGroup( int attr_type, GroupLayout * group )
 
         if ( attr_ptr->GetType() == vsp::INT_MATRIX_DATA )
         {
-            row_col_size = GetIntMatSize( &(attr_ptr->GetIntMatData()) );
+            row_col_size = GetMatSize( &(attr_ptr->GetIntMatData()) );
         }
         else if ( attr_ptr->GetType() == vsp::DOUBLE_MATRIX_DATA )
         {
-            row_col_size = GetDoubleMatSize( &(attr_ptr->GetDoubleMatData()) );
+            row_col_size = GetMatSize( &(attr_ptr->GetDoubleMatData()) );
         }
         if ( row_col_size.first && row_col_size.second )
         {
