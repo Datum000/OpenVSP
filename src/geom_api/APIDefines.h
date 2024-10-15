@@ -108,10 +108,7 @@ enum ATTRIBUTABLE_TYPE { ATTROBJ_PARM = 0,	/*!< Parm */
                          ATTROBJ_GEOM,	/*!< Geom */
                          ATTROBJ_VEH,	/*!< Vehicle */
                          ATTROBJ_SUBSURF,	/*!< SubSurf */
-                         ATTROBJ_PROBE,	/*!< Measure */
-                         ATTROBJ_RSTPROBE,	/*!< RST Probe Measure */
-                         ATTROBJ_RULER,	/*!< Ruler Measure */
-                         ATTROBJ_PROTRACTOR,	/*!< Protractor Measure */
+                         ATTROBJ_MEASURE,	/*!< Measure */
                          ATTROBJ_LINK,	/*!< Link */
                          ATTROBJ_ADVLINK,	/*!< Adv Link */
                          ATTROBJ_ATTR,	/*!< Attribute  */

@@ -537,13 +537,7 @@ void ScriptMgrSingleton::RegisterEnums( asIScriptEngine* se )
     assert( r >= 0 );
     r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_SUBSURF", ATTROBJ_SUBSURF );
     assert( r >= 0 );
-    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_PROBE", ATTROBJ_PROBE );
-    assert( r >= 0 );
-    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_RSTPROBE", ATTROBJ_RSTPROBE );
-    assert( r >= 0 );
-    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_RULER", ATTROBJ_RULER );
-    assert( r >= 0 );
-    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_PROTRACTOR", ATTROBJ_PROTRACTOR );
+    r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_MEASURE", ATTROBJ_MEASURE );
     assert( r >= 0 );
     r = se->RegisterEnumValue( "ATTRIBUTABLE_TYPE", "ATTROBJ_LINK", ATTROBJ_LINK );
     assert( r >= 0 );

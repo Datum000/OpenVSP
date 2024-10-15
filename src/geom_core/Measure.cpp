@@ -20,7 +20,7 @@
 
 Probe::Probe() : ParmContainer()
 {
-    m_ParmContainer_Type = vsp::ATTROBJ_PROBE;
+    m_ParmContainer_Type = vsp::ATTROBJ_MEASURE;
     m_AttrCollection.SetCollAttach( m_ID, m_ParmContainer_Type );
 
     m_Stage = STAGE_ZERO;
@@ -207,7 +207,7 @@ void Probe::SetLenFromPlacement( const vec3d &placement )
 
 RSTProbe::RSTProbe() : ParmContainer()
 {
-    m_ParmContainer_Type = vsp::ATTROBJ_RSTPROBE;
+    m_ParmContainer_Type = vsp::ATTROBJ_MEASURE;
     m_AttrCollection.SetCollAttach( m_ID, m_ParmContainer_Type );
 
     m_Stage = STAGE_ZERO;
@@ -394,7 +394,7 @@ void RSTProbe::SetLenFromPlacement(const vec3d &placement )
 
 Ruler::Ruler() : ParmContainer()
 {
-    m_ParmContainer_Type = vsp::ATTROBJ_RULER;
+    m_ParmContainer_Type = vsp::ATTROBJ_MEASURE;
     m_AttrCollection.SetCollAttach( m_ID, m_ParmContainer_Type );
 
     m_Stage = STAGE_ZERO;
@@ -618,7 +618,7 @@ xmlNodePtr Ruler::DecodeXml( xmlNodePtr & node )
 
 Protractor::Protractor() : ParmContainer()
 {
-    m_ParmContainer_Type = vsp::ATTROBJ_PROTRACTOR;
+    m_ParmContainer_Type = vsp::ATTROBJ_MEASURE;
     m_AttrCollection.SetCollAttach( m_ID, m_ParmContainer_Type );
 
     m_Stage = STAGE_ZERO;

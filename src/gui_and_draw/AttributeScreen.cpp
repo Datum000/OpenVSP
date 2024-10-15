@@ -75,10 +75,7 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_ObjTypeSearchChoice.AddItem( "Geom", vsp::ATTROBJ_GEOM );
     m_ObjTypeSearchChoice.AddItem( "Vehicle", vsp::ATTROBJ_VEH );
     m_ObjTypeSearchChoice.AddItem( "Subsurf", vsp::ATTROBJ_SUBSURF );
-    m_ObjTypeSearchChoice.AddItem( "Probe", vsp::ATTROBJ_PROBE );
-    m_ObjTypeSearchChoice.AddItem( "RST Probe", vsp::ATTROBJ_RSTPROBE );
-    m_ObjTypeSearchChoice.AddItem( "Ruler", vsp::ATTROBJ_RULER );
-    m_ObjTypeSearchChoice.AddItem( "Protractor", vsp::ATTROBJ_PROTRACTOR );
+    m_ObjTypeSearchChoice.AddItem( "Measure", vsp::ATTROBJ_MEASURE );
     m_ObjTypeSearchChoice.AddItem( "Link", vsp::ATTROBJ_LINK );
     m_ObjTypeSearchChoice.AddItem( "AdvLink", vsp::ATTROBJ_ADVLINK );
     m_ObjTypeSearchChoice.AddItem( "Attribute Groups", vsp::ATTROBJ_ATTR );

@@ -1492,14 +1492,8 @@ string AttributeMgrSingleton::GetObjectTypeName( const string & id )
             return string( "Vehicle" );
         case vsp::ATTROBJ_SUBSURF:
             return string( "SubSurface" );
-        case vsp::ATTROBJ_PROBE:
-            return string( "Probe" );
-        case vsp::ATTROBJ_RSTPROBE:
-            return string( "RSTProbe" );
-        case vsp::ATTROBJ_RULER:
-            return string( "Ruler" );
-        case vsp::ATTROBJ_PROTRACTOR:
-            return string( "Protractor" );
+        case vsp::ATTROBJ_MEASURE:
+            return string( "Measure" );
         case vsp::ATTROBJ_LINK:
             return string( "Link" );
         case vsp::ATTROBJ_ADVLINK:
@@ -1759,33 +1753,15 @@ vector< vector< vector< string > > > AttributeMgrSingleton::GetAttrTreeVec( cons
                     }
                 }
             }
-            else if ( attachType == vsp::ATTROBJ_PROBE
-                || attachType == vsp::ATTROBJ_RSTPROBE
-                || attachType == vsp::ATTROBJ_RULER
-                || attachType == vsp::ATTROBJ_PROTRACTOR )
+            else if ( attachType == vsp::ATTROBJ_MEASURE )
             {
                 if ( !check_root_id || CheckTreeVecID( attachID, root_id ) || special_parmission )
                 {
                     vecbranch.insert( vecbranch.begin() , attachID );
-                    string measure_string;
-                    switch ( attachType )
-                    {
-                        case vsp::ATTROBJ_PROBE:
-                            measure_string = "Probes";
-                            break;
-                        case vsp::ATTROBJ_RSTPROBE:
-                            measure_string = "RSTProbes";
-                            break;
-                        case vsp::ATTROBJ_RULER:
-                            measure_string = "Rulers";
-                            break;
-                        case vsp::ATTROBJ_PROTRACTOR:
-                            measure_string = "Protractors";
-                            break;
-                    }
+
                     if ( !check_root_id )
                     {
-                        vecbranch = ExtendStringVector( { "Measures", measure_string }, vecbranch );
+                        vecbranch = ExtendStringVector( { "Measures" }, vecbranch );
                     }
 
                     branch_id_vectors = TransposeExtendStringVector( vecbranch, nvd_ids );
