@@ -1402,6 +1402,16 @@ string FindAttributeInCollection( const string & obj_id, const string & search_s
     return AttributeMgr.FindAttributeInCollection( obj_id, search_str, index );
 }
 
+vector< string > FindAttributeNamesInCollection( const string & collID )
+{
+    return AttributeMgr.FindAttributeNamesInCollection( collID );
+}
+
+vector< string > FindAttributesInCollection( const string & collID )
+{
+    return AttributeMgr.FindAttributesInCollection( collID );
+}
+
 vector< string > FindAttributedObjects()
 {
     return AttributeMgr.FindAttributedObjects();
@@ -1430,16 +1440,6 @@ string GetObjectParent( const string & id )
 string GetChildCollection( const string & id )
 {
     return AttributeMgr.GetChildCollection( id );
-}
-
-vector< string > FindAttributesInCollection( const string & collID )
-{
-    return AttributeMgr.FindAttributesInCollection( collID );
-}
-
-vector< string > FindAttributeNamesInCollection( const string & collID )
-{
-    return AttributeMgr.FindAttributeNamesInCollection( collID );
 }
 
 string GetAttributeID( const string & collID, const string & attributeName )
@@ -1495,6 +1495,11 @@ vector< vector < int > > GetAttributeIntMatrixVal( const string & attrID )
 vector< vector < double > > GetAttributeDoubleMatrixVal( const string & attrID )
 {
     return AttributeMgr.GetAttributeDoubleMatrixVal( attrID );
+}
+
+void SetAttributeName( const string &attrID, const string &name )
+{
+    return AttributeMgr.SetAttributeName( attrID, name );
 }
 
 void SetAttributeDoc( const string & attrID, const string & doc )
@@ -1585,6 +1590,11 @@ void AddAttributeGroup( const string & collID, const string & attributeName )
 int CopyAttribute( const string & attrID )
 {
     return AttributeMgr.CopyAttribute( attrID );
+}
+
+void CutAttribute( const string & attrID )
+{
+    return AttributeMgr.CutAttribute( attrID );
 }
 
 void PasteAttribute( const string & objID )

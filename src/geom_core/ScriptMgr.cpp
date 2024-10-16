@@ -3284,75 +3284,187 @@ void ScriptMgrSingleton::RegisterAPI( asIScriptEngine* se )
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<string>@+ FindAllAttributes()", asMETHOD(ScriptMgrSingleton, FindAllAttributes ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "string SummarizeAttributes()", asFUNCTION( vsp::SummarizeAttributes ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<string>@+ FindAttributesByName( const string & in search_str )", asMETHOD(ScriptMgrSingleton, FindAttributesByName ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "string SummarizeAttributesAsTree()", asFUNCTION( vsp::SummarizeAttributesAsTree ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<string>@+ FindAttributedObjects()", asMETHOD(ScriptMgrSingleton, FindAttributedObjects ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "array<string>@+ FindAllAttributes()", asMETHOD( ScriptMgrSingleton, FindAllAttributes ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<string>@+ FindAttributesInCollection( const string & in collID )", asMETHOD(ScriptMgrSingleton, FindAttributesInCollection), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "array<string>@+ FindAttributesByName( const string & in search_str )", asMETHOD( ScriptMgrSingleton, FindAttributesByName ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<string>@+ FindAttributeNamesInCollection( const string & in collID )", asMETHOD(ScriptMgrSingleton, FindAttributeNamesInCollection), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "string FindAttributeByName( const string & in search_str, int index )", asFUNCTION( vsp::FindAttributeByName ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<bool>@+ GetAttributeBoolVal( const string & in attrID )", asMETHOD(ScriptMgrSingleton, GetAttributeBoolVal), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "string FindAttributeInCollection( const string & in coll_id, const string & in search_str, int index )", asFUNCTION( vsp::FindAttributeInCollection ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<int>@+ GetAttributeIntVal( const string & in attrID )", asMETHOD(ScriptMgrSingleton, GetAttributeIntVal), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "array<string>@+ FindAttributeNamesInCollection( const string & in collID )", asMETHOD( ScriptMgrSingleton, FindAttributeNamesInCollection ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<double>@+ GetAttributeDoubleVal( const string & in attrID )", asMETHOD(ScriptMgrSingleton, GetAttributeDoubleVal), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "array<string>@+ FindAttributesInCollection( const string & in collID )", asMETHOD( ScriptMgrSingleton, FindAttributesInCollection ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<string>@+ GetAttributeStringVal( const string & in attrID )", asMETHOD(ScriptMgrSingleton, GetAttributeStringVal), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "array<string>@+ FindAttributedObjects()", asMETHOD( ScriptMgrSingleton, FindAttributedObjects ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<vec3d>@+ GetAttributeVec3dVal( const string & in attrID )", asMETHOD(ScriptMgrSingleton, GetAttributeVec3dVal), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "int GetObjectType( const string & in id )", asFUNCTION( vsp::GetObjectType ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<array<int>@>@+ GetAttributeIntMatrixVal( const string & in attrID )", asMETHOD(ScriptMgrSingleton, GetAttributeIntMatrixVal), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "string GetObjectTypeName( const string & in id )", asFUNCTION( vsp::GetObjectTypeName ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "array<array<double>@>@+ GetAttributeDoubleMatrixVal( const string & in attrID )", asMETHOD(ScriptMgrSingleton, GetAttributeDoubleMatrixVal), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "string GetObjectName( const string & in attachID )", asFUNCTION( vsp::GetObjectName ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "void SetAttributeVec3d( const string & in attrID, array<vec3d>@+ value )", asMETHOD(ScriptMgrSingleton, SetAttributeVec3d), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "string GetObjectParent( const string & in id )", asFUNCTION( vsp::GetObjectParent ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "void SetAttributeIntMatrix( const string & in attrID, array<array<int>@>@+ value )", asMETHOD(ScriptMgrSingleton, SetAttributeIntMatrix), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "string GetChildCollection( const string & in attachID )", asFUNCTION( vsp::GetChildCollection ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "void SetAttributeDoubleMatrix( const string & in attrID, array<array<double>@>@+ value )", asMETHOD(ScriptMgrSingleton, SetAttributeDoubleMatrix), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "string GetAttributeID( const string & in collID, const string & in attributeName )", asFUNCTION( vsp::GetAttributeID ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "void AddAttributeVec3d( const string & in attrID, const string & in attributeName, array<vec3d>@+ value )", asMETHOD(ScriptMgrSingleton, AddAttributeVec3d), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "string GetAttributeDoc( const string & in attrID )", asFUNCTION( vsp::GetAttributeDoc ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "void AddAttributeIntMatrix( const string & in collID, const string & in attributeName, array<array<int>@>@+ value)", asMETHOD(ScriptMgrSingleton, AddAttributeIntMatrix), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "int GetAttributeType( const string & in attrID )", asFUNCTION( vsp::GetAttributeType ), asCALL_CDECL );
     assert( r >= 0 );
 
 
-    r = se->RegisterGlobalFunction( "void AddAttributeDoubleMatrix( const string & in collID, const string & in attributeName, array<array<double>@>@+ value)", asMETHOD(ScriptMgrSingleton, AddAttributeDoubleMatrix), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    r = se->RegisterGlobalFunction( "string GetAttributeTypeName( const string & in attrID )", asFUNCTION( vsp::GetAttributeTypeName ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "array<bool>@+ GetAttributeBoolVal( const string & in attrID )", asMETHOD( ScriptMgrSingleton, GetAttributeBoolVal ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "array<int>@+ GetAttributeIntVal( const string & in attrID )", asMETHOD( ScriptMgrSingleton, GetAttributeIntVal ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "array<double>@+ GetAttributeDoubleVal( const string & in attrID )", asMETHOD( ScriptMgrSingleton, GetAttributeDoubleVal ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "array<string>@+ GetAttributeStringVal( const string & in attrID )", asMETHOD( ScriptMgrSingleton, GetAttributeStringVal ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "array<vec3d>@+ GetAttributeVec3dVal( const string & in attrID )", asMETHOD( ScriptMgrSingleton, GetAttributeVec3dVal ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "array<array<int>@>@+ GetAttributeIntMatrixVal( const string & in attrID )", asMETHOD( ScriptMgrSingleton, GetAttributeIntMatrixVal ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "array<array<double>@>@+ GetAttributeDoubleMatrixVal( const string & in attrID )", asMETHOD( ScriptMgrSingleton, GetAttributeDoubleMatrixVal ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void SetAttributeName( const string & in attrID, const string & in name )", asFUNCTION( vsp::SetAttributeName ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void SetAttributeDoc( const string & in attrID, const string & in doc )", asFUNCTION( vsp::SetAttributeDoc ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void SetAttributeBool( const string & in attrID, int value )", asFUNCTION( vsp::SetAttributeBool ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void SetAttributeInt( const string & in attrID, int value )", asFUNCTION( vsp::SetAttributeInt ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void SetAttributeDouble( const string & in attrID, double value )", asFUNCTION( vsp::SetAttributeDouble ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void SetAttributeString( const string & in attrID, const string & in value )", asFUNCTION( vsp::SetAttributeString ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void SetAttributeVec3d( const string & in attrID, array<vec3d>@+ value )", asMETHOD( ScriptMgrSingleton, SetAttributeVec3d ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void SetAttributeIntMatrix( const string & in attrID, array<array<int>@>@+ value )", asMETHOD( ScriptMgrSingleton, SetAttributeIntMatrix ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void SetAttributeDoubleMatrix( const string & in attrID, array<array<double>@>@+ value )", asMETHOD( ScriptMgrSingleton, SetAttributeDoubleMatrix ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void DeleteAttribute( const string & in attrID )", asFUNCTION( vsp::DeleteAttribute ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void AddAttributeBool( const string & in collID, const string & in attributeName, int value )", asFUNCTION( vsp::AddAttributeBool ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void AddAttributeInt( const string & in collID, const string & in attributeName, int value )", asFUNCTION( vsp::AddAttributeInt ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void AddAttributeDouble( const string & in collID, const string & in attributeName, double value )", asFUNCTION( vsp::AddAttributeDouble ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void AddAttributeString( const string & in collID, const string & in attributeName, const string & in value )", asFUNCTION( vsp::AddAttributeString ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void AddAttributeVec3d( const string & in attrID, const string & in attributeName, array<vec3d>@+ value )", asMETHOD( ScriptMgrSingleton, AddAttributeVec3d ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void AddAttributeIntMatrix( const string & in collID, const string & in attributeName, array<array<int>@>@+ value)", asMETHOD( ScriptMgrSingleton, AddAttributeIntMatrix ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void AddAttributeDoubleMatrix( const string & in collID, const string & in attributeName, array<array<double>@>@+ value)", asMETHOD( ScriptMgrSingleton, AddAttributeDoubleMatrix ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void AddAttributeGroup( const string & in collID, const string & in attributeName )", asFUNCTION( vsp::AddAttributeGroup ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "int CopyAttribute( const string & in attr_id )", asFUNCTION( vsp::CopyAttribute ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void CutAttribute( const string & in attr_id )", asFUNCTION( vsp::CutAttribute ), asCALL_CDECL );
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "void PasteAttribute( const string & in coll_id )", asFUNCTION( vsp::PasteAttribute ), asCALL_CDECL );
     assert( r >= 0 );
 
 
@@ -4954,7 +5066,16 @@ void ScriptMgrSingleton::FillSTLMatrix( CScriptArray* in, vector < vector < T > 
     {
         CScriptArray* row = ( CScriptArray* ) ( in->At( i ) );
 
-        FillSTLVector( row, out[i] );
+        // CScriptArray* saferow = static_cast< CScriptArray* > ( in->At( i ) ); //void pointer/?? = old skool c. Universal typeless pointer- dynamic pointer CAN'T interpret this thingy.
+
+        //static cast *can* at least compile but ehhhhh it won't 
+        //dynamic cast incompatible with voidptr
+        // in[i];
+
+        if ( row )
+        {
+            FillSTLVector( row, out[i] );
+        }
     }
 }
 

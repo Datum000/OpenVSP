@@ -2287,6 +2287,164 @@ extern string FindAttributeInCollection( const string & obj_id, const string & s
     \ingroup Attributes
 */
 /*!
+    Return a list of all attribute Names within an attribute collection
+    \forcpponly
+    \code{.cpp}
+    //==== Write Some Fake Test Results =====//
+    // not implemented
+    \endcode
+    \endforcpponly
+    \beginPythonOnly
+    \code{.py}
+    # Example code to list all attributes in vehicle
+    attach_ids = vsp.FindAttributedObjects();
+    for id in attach_ids:
+        coll_id = vsp.GetChildCollection(id)
+
+        attach_name = vsp.GetObjectName(id)
+
+        # FindAttributeNamesInCollection used here, to search through the Names in a single collection!
+        attr_names = vsp.FindAttributeNamesInCollection(coll_id)
+
+        attr_ids = vsp.FindAttributesInCollection(coll_id)
+
+        print(f'\nAttribute Collection Name : {attach_name}\n')
+
+        for aname, aid in zip(attr_names, attr_ids):
+
+            atype = vsp.GetAttributeType( aid )
+            atypename = vsp.GetAttributeTypeName( aid )
+
+            #IMPORTANT: need to get ParentID twice to get to the VSP object. 1st will only get the ID of the Attribute Collection.
+            #once at the OpenVSP object level, parent IDs are trivial.
+
+            attribute_collection_id = vsp.GetObjectParent( coll_id ) #parent of an attribute is an Attribute Collection object
+            attribute_collection_parent_id = vsp.GetObjectParent( attribute_collection_id ) #then get that Collection object's parent ID to get the OpenVSP object that contains it!
+
+            # Structure:
+            # OpenVSP object -> Attribute Collection -> Attributes
+            # e.g. Geom->Parm->Attribute Collection -> Attributes
+
+            # aid = vsp.GetAttributeID( coll_id, aname ) #get the ID of this attribute for self-awareness
+
+            aname_same = vsp.GetObjectName( aid ) # get attributeAttachName of the attributes'ID will get you the same attribute name again
+
+            if atype == vsp.BOOL_DATA:
+                data = vsp.GetAttributeBoolVal( aid )
+            elif atype == vsp.INT_DATA:
+                data = vsp.GetAttributeIntVal( aid )
+            elif atype == vsp.DOUBLE_DATA:
+                data = vsp.GetAttributeDoubleVal( aid )
+            elif atype == vsp.STRING_DATA:
+                data = vsp.GetAttributeStringVal( aid )
+            elif atype == vsp.DOUBLE_MATRIX_DATA:
+                data = vsp.GetAttributeDoubleMatrixVal( aid )
+            elif atype == vsp.INT_MATRIX_DATA:
+                data = vsp.GetAttributeIntMatrixVal( aid )
+            elif atype == vsp.ATTR_COLLECTION_DATA:
+                data = '[Attribute Group]'
+            else:
+                data = '[no data extracted]'
+
+            doc = vsp.GetAttributeDoc( aid )
+
+            attribute_report = f'  Attribute Name : {aname}\n    Attribute Type : {atypename}\n    Attribute Data : {data}\n    Attribute Desc : {doc}'
+
+            print( attribute_report )
+    #==== Write Some Fake Test Results =====//
+    # not implemented
+
+    \endcode
+    \endPythonOnly
+    \return Array of result names
+    \param [in] collID string ID of an attribute collection
+*/
+
+extern vector< string > FindAttributeNamesInCollection(const string & collID );
+
+/*!
+    \ingroup Attributes
+*/
+/*!
+    Get all attribute IDs within a single AttributeCollection, referenced by collID
+    \forcpponly
+    \code{.cpp}
+    //==== Write Some Fake Test Results =====//
+    // not implemented
+    \endcode
+    \endforcpponly
+    \beginPythonOnly
+    \code{.py}
+    # Example code to list all attributes in vehicle
+    attach_ids = vsp.FindAttributedObjects();
+    for id in attach_ids:
+        coll_id = vsp.GetChildCollection(id)
+
+        attach_name = vsp.GetObjectName(id)
+
+        attr_names = vsp.FindAttributeNamesInCollection(coll_id)
+
+        # FindAttributesInCollection used here, to search through the IDs in a single collection!
+        attr_ids = vsp.FindAttributesInCollection(coll_id)
+
+        print(f'\nAttribute Collection Name : {attach_name}\n')
+
+        for aname, aid in zip(attr_names, attr_ids):
+
+            atype = vsp.GetAttributeType( aid )
+            atypename = vsp.GetAttributeTypeName( aid )
+
+            #IMPORTANT: need to get ParentID twice to get to the VSP object. 1st will only get the ID of the Attribute Collection.
+            #once at the OpenVSP object level, parent IDs are trivial.
+
+            attribute_collection_id = vsp.GetObjectParent( coll_id ) #parent of an attribute is an Attribute Collection object
+            attribute_collection_parent_id = vsp.GetObjectParent( attribute_collection_id ) #then get that Collection object's parent ID to get the OpenVSP object that contains it!
+
+            # Structure:
+            # OpenVSP object -> Attribute Collection -> Attributes
+            # e.g. Geom->Parm->Attribute Collection -> Attributes
+
+            # aid = vsp.GetAttributeID( coll_id, aname ) #get the ID of this attribute for self-awareness
+
+            aname_same = vsp.GetObjectName( aid ) # get attributeAttachName of the attributes'ID will get you the same attribute name again
+
+            if atype == vsp.BOOL_DATA:
+                data = vsp.GetAttributeBoolVal( aid )
+            elif atype == vsp.INT_DATA:
+                data = vsp.GetAttributeIntVal( aid )
+            elif atype == vsp.DOUBLE_DATA:
+                data = vsp.GetAttributeDoubleVal( aid )
+            elif atype == vsp.STRING_DATA:
+                data = vsp.GetAttributeStringVal( aid )
+            elif atype == vsp.DOUBLE_MATRIX_DATA:
+                data = vsp.GetAttributeDoubleMatrixVal( aid )
+            elif atype == vsp.INT_MATRIX_DATA:
+                data = vsp.GetAttributeIntMatrixVal( aid )
+            elif atype == vsp.ATTR_COLLECTION_DATA:
+                data = '[Attribute Group]'
+            else:
+                data = '[no data extracted]'
+
+            doc = vsp.GetAttributeDoc( aid )
+
+            attribute_report = f'  Attribute Name : {aname}\n    Attribute Type : {atypename}\n    Attribute Data : {data}\n    Attribute Desc : {doc}'
+
+            print( attribute_report )
+    #==== Write Some Fake Test Results =====//
+    # not implemented
+
+    \endcode
+    \endPythonOnly
+    \return Vector of attribute IDs in an attribute collection.
+    \param [in] collID string ID of an attribute collection
+*/
+
+extern vector< string > FindAttributesInCollection(const string & collID );
+
+/*!
+    \ingroup Attributes
+*/
+/*!
     Get array of IDs of all OpenVSP entities that have populated attributeCollections
     Includes attributeGroups
     \forcpponly
@@ -2514,164 +2672,6 @@ extern string GetObjectParent( const string & id );
 */
 
 extern string GetChildCollection(const string & attachID );
-
-/*!
-    \ingroup Attributes
-*/
-/*!
-    Get all attribute IDs within a single AttributeCollection, referenced by collID
-    \forcpponly
-    \code{.cpp}
-    //==== Write Some Fake Test Results =====//
-    // not implemented
-    \endcode
-    \endforcpponly
-    \beginPythonOnly
-    \code{.py}
-    # Example code to list all attributes in vehicle
-    attach_ids = vsp.FindAttributedObjects();
-    for id in attach_ids:
-        coll_id = vsp.GetChildCollection(id)
-
-        attach_name = vsp.GetObjectName(id)
-
-        attr_names = vsp.FindAttributeNamesInCollection(coll_id)
-
-        # FindAttributesInCollection used here, to search through the IDs in a single collection!
-        attr_ids = vsp.FindAttributesInCollection(coll_id)
-
-        print(f'\nAttribute Collection Name : {attach_name}\n')
-
-        for aname, aid in zip(attr_names, attr_ids):
-
-            atype = vsp.GetAttributeType( aid )
-            atypename = vsp.GetAttributeTypeName( aid )
-
-            #IMPORTANT: need to get ParentID twice to get to the VSP object. 1st will only get the ID of the Attribute Collection.
-            #once at the OpenVSP object level, parent IDs are trivial.
-
-            attribute_collection_id = vsp.GetObjectParent( coll_id ) #parent of an attribute is an Attribute Collection object
-            attribute_collection_parent_id = vsp.GetObjectParent( attribute_collection_id ) #then get that Collection object's parent ID to get the OpenVSP object that contains it!
-
-            # Structure:
-            # OpenVSP object -> Attribute Collection -> Attributes
-            # e.g. Geom->Parm->Attribute Collection -> Attributes
-
-            # aid = vsp.GetAttributeID( coll_id, aname ) #get the ID of this attribute for self-awareness
-
-            aname_same = vsp.GetObjectName( aid ) # get attributeAttachName of the attributes'ID will get you the same attribute name again
-
-            if atype == vsp.BOOL_DATA:
-                data = vsp.GetAttributeBoolVal( aid )
-            elif atype == vsp.INT_DATA:
-                data = vsp.GetAttributeIntVal( aid )
-            elif atype == vsp.DOUBLE_DATA:
-                data = vsp.GetAttributeDoubleVal( aid )
-            elif atype == vsp.STRING_DATA:
-                data = vsp.GetAttributeStringVal( aid )
-            elif atype == vsp.DOUBLE_MATRIX_DATA:
-                data = vsp.GetAttributeDoubleMatrixVal( aid )
-            elif atype == vsp.INT_MATRIX_DATA:
-                data = vsp.GetAttributeIntMatrixVal( aid )
-            elif atype == vsp.ATTR_COLLECTION_DATA:
-                data = '[Attribute Group]'
-            else:
-                data = '[no data extracted]'
-
-            doc = vsp.GetAttributeDoc( aid )
-
-            attribute_report = f'  Attribute Name : {aname}\n    Attribute Type : {atypename}\n    Attribute Data : {data}\n    Attribute Desc : {doc}'
-
-            print( attribute_report )
-    #==== Write Some Fake Test Results =====//
-    # not implemented
-
-    \endcode
-    \endPythonOnly
-    \return Vector of attribute IDs in an attribute collection.
-    \param [in] collID string ID of an attribute collection
-*/
-
-extern vector< string > FindAttributesInCollection(const string & collID );
-
-/*!
-    \ingroup Attributes
-*/
-/*!
-    Return a list of all attribute Names within an attribute collection
-    \forcpponly
-    \code{.cpp}
-    //==== Write Some Fake Test Results =====//
-    // not implemented
-    \endcode
-    \endforcpponly
-    \beginPythonOnly
-    \code{.py}
-    # Example code to list all attributes in vehicle
-    attach_ids = vsp.FindAttributedObjects();
-    for id in attach_ids:
-        coll_id = vsp.GetChildCollection(id)
-
-        attach_name = vsp.GetObjectName(id)
-
-        # FindAttributeNamesInCollection used here, to search through the Names in a single collection!
-        attr_names = vsp.FindAttributeNamesInCollection(coll_id)
-
-        attr_ids = vsp.FindAttributesInCollection(coll_id)
-
-        print(f'\nAttribute Collection Name : {attach_name}\n')
-
-        for aname, aid in zip(attr_names, attr_ids):
-
-            atype = vsp.GetAttributeType( aid )
-            atypename = vsp.GetAttributeTypeName( aid )
-
-            #IMPORTANT: need to get ParentID twice to get to the VSP object. 1st will only get the ID of the Attribute Collection.
-            #once at the OpenVSP object level, parent IDs are trivial.
-
-            attribute_collection_id = vsp.GetObjectParent( coll_id ) #parent of an attribute is an Attribute Collection object
-            attribute_collection_parent_id = vsp.GetObjectParent( attribute_collection_id ) #then get that Collection object's parent ID to get the OpenVSP object that contains it!
-
-            # Structure:
-            # OpenVSP object -> Attribute Collection -> Attributes
-            # e.g. Geom->Parm->Attribute Collection -> Attributes
-
-            # aid = vsp.GetAttributeID( coll_id, aname ) #get the ID of this attribute for self-awareness
-
-            aname_same = vsp.GetObjectName( aid ) # get attributeAttachName of the attributes'ID will get you the same attribute name again
-
-            if atype == vsp.BOOL_DATA:
-                data = vsp.GetAttributeBoolVal( aid )
-            elif atype == vsp.INT_DATA:
-                data = vsp.GetAttributeIntVal( aid )
-            elif atype == vsp.DOUBLE_DATA:
-                data = vsp.GetAttributeDoubleVal( aid )
-            elif atype == vsp.STRING_DATA:
-                data = vsp.GetAttributeStringVal( aid )
-            elif atype == vsp.DOUBLE_MATRIX_DATA:
-                data = vsp.GetAttributeDoubleMatrixVal( aid )
-            elif atype == vsp.INT_MATRIX_DATA:
-                data = vsp.GetAttributeIntMatrixVal( aid )
-            elif atype == vsp.ATTR_COLLECTION_DATA:
-                data = '[Attribute Group]'
-            else:
-                data = '[no data extracted]'
-
-            doc = vsp.GetAttributeDoc( aid )
-
-            attribute_report = f'  Attribute Name : {aname}\n    Attribute Type : {atypename}\n    Attribute Data : {data}\n    Attribute Desc : {doc}'
-
-            print( attribute_report )
-    #==== Write Some Fake Test Results =====//
-    # not implemented
-
-    \endcode
-    \endPythonOnly
-    \return Array of result names
-    \param [in] collID string ID of an attribute collection
-*/
-
-extern vector< string > FindAttributeNamesInCollection(const string & collID );
 
 /*!
     \ingroup Attributes
@@ -2992,6 +2992,34 @@ extern vector< vector < double > > GetAttributeDoubleMatrixVal(const string & at
     \ingroup Attributes
 */
 /*!
+    Set the name of an Attribute by ID
+    \forcpponly
+    \code{.cpp}
+    //==== Write Some Fake Test Results =====//
+    // not implemented
+    \endcode
+    \endforcpponly
+    \beginPythonOnly
+    \code{.py}
+    #Get first attribute in vehicle as an example
+    AttrID = vsp.FindAllAttributes()[0]
+    NameString = 'NewName_Example'
+    SetAttributeName( AttrID, NameString )
+    #==== Write Some Fake Test Results =====//
+    # not implemented
+
+    \endcode
+    \endPythonOnly
+    \param [in] attrID string of attribute ID
+    \param [in] doc string of documentation for attribute
+*/
+
+extern void SetAttributeName( const string & attrID, const string & name );
+
+/*!
+    \ingroup Attributes
+*/
+/*!
     Set the docstring of an Attribute by ID
     \forcpponly
     \code{.cpp}
@@ -3013,6 +3041,7 @@ extern vector< vector < double > > GetAttributeDoubleMatrixVal(const string & at
     \param [in] attrID string of attribute ID
     \param [in] doc string of documentation for attribute
 */
+
 
 extern void SetAttributeDoc( const string & attrID, const string & doc );
 
@@ -3503,6 +3532,31 @@ extern void AddAttributeGroup( const string & collID, const string & attributeNa
 */
 
 extern int CopyAttribute( const string & attrID );
+
+/*!
+    \ingroup Attributes
+*/
+/*!
+    Cut an attribute from its collection to the clipboard by attributeID
+    \forcpponly
+    \code{.cpp}
+    //==== Write Some Fake Test Results =====//
+    // not implemented
+    \endcode
+    \endforcpponly
+    \beginPythonOnly
+    \code{.py}
+    #Get first attribute in vehicle as an example
+    AttrID = vsp.FindAllAttributes()[0]
+    vsp.CutAttribute( AttrID )
+    #==== Write Some Fake Test Results =====//
+    # not implemented
+    \endcode
+    \endPythonOnly
+    \param [in] attrID string ID of attribute to be copied
+*/
+
+extern void CutAttribute( const string & attrID );
 
 /*!
     \ingroup Attributes

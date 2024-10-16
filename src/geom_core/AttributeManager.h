@@ -113,11 +113,11 @@ public:
     void AddAttributeUtil( const string &collID, NameValData &attrAdd, bool updateFlag = true );
 
     int CopyAttribute( const string &attr_id, bool updateFlag = true );
-    void CutAttribute( const string &obj_id, bool updateFlag = true );
+    void CutAttribute( const string &attr_id, bool updateFlag = true );
     void PasteAttribute( const string &obj_id, bool updateFlag = true );
 
     int CopyAttributeUtil( const string &attr_id, bool updateFlag = true );
-    void CutAttributeUtil( const string &obj_id, bool updateFlag = true );
+    void CutAttributeUtil( const string &attr_id, bool updateFlag = true );
     void PasteAttributeUtil( const string &obj_id, bool updateFlag = true );
 
     //tree things
