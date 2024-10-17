@@ -494,6 +494,8 @@ public:
     BoolParm m_STLMultiSolid;
     BoolParm m_STLExportPropMainSurf;
 
+    BoolParm m_UseModeCompGeomFlag;
+
     BoolParm m_exportCompGeomCsvFile;
     BoolParm m_exportDegenGeomCsvFile;
     BoolParm m_exportDegenGeomMFile;
