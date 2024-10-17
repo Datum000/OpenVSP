@@ -4822,8 +4822,15 @@ void Vehicle::resetExportFileNames()
     }
 }
 
-string Vehicle::CompGeom( int set, int degenset, int halfFlag, int intSubsFlag, bool hideset, bool suppressdisks )
+string Vehicle::CompGeom( int set, int degenset, int halfFlag, int intSubsFlag, bool hideset, bool suppressdisks, bool useMode, const string &modeID )
 {
+    if ( useMode )
+    {
+        Mode *m = ModeMgr.GetMode( modeID );
+        m->ApplySettings();
+        set = m->m_NormalSet();
+        degenset = m->m_DegenSet();
+    }
 
     string id = AddMeshGeom( set, degenset, suppressdisks );
     if ( id.compare( "NONE" ) == 0 )
@@ -4858,9 +4865,9 @@ string Vehicle::CompGeom( int set, int degenset, int halfFlag, int intSubsFlag, 
     return id;
 }
 
-string Vehicle::CompGeomAndFlatten( int set, int halfFlag, int intSubsFlag, int degenset, bool hideset, bool suppressdisks )
+string Vehicle::CompGeomAndFlatten( int set, int halfFlag, int intSubsFlag, int degenset, bool hideset, bool suppressdisks, bool useMode, const string &modeID )
 {
-    string id = CompGeom( set, degenset, halfFlag, intSubsFlag, hideset, suppressdisks );
+    string id = CompGeom( set, degenset, halfFlag, intSubsFlag, hideset, suppressdisks, useMode, modeID );
     Geom* geom = FindGeom( id );
     if ( !geom )
     {
