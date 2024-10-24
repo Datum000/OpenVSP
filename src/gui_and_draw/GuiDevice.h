@@ -495,6 +495,8 @@ public:
     virtual void Init( VspScreen* screen, Fl_Button* button );
     virtual void DeviceCB( Fl_Widget* w );
     virtual void SetColor( Fl_Color c );
+    void SetLabel( const char* label );
+    void SetShortcut( int s, bool append_label = false );
     virtual void SetLabelColor( Fl_Color c );
     virtual Fl_Button* GetFlButton();
 

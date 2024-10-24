@@ -38,6 +38,7 @@ public:
 
     void SetTreeAutoSelectID( const string & id );
     void AttributeAdd();
+    void AttributeAdd( int attrAddType );
     void AttributeModify( GuiDevice* gui_device, Fl_Widget* w );
 
     template < class T >
@@ -149,7 +150,7 @@ protected:
     GroupLayout m_AttrDetailLayout;
 
     TriggerButton m_AttrAddTrigger;
-    TriggerButton m_AttrDelTrigger;
+    TriggerButton m_AttrAddGroupTrigger;
     Choice m_AttrTypeChoice;
 
     StringInput m_AttrNameIn;
@@ -188,7 +189,9 @@ protected:
     TriggerButton m_AttrImatColDel;
 
     BoolParm* m_AttrBoolParmPtr;
+    StringOutput m_AttrToggleLabel;
     ToggleButton m_AttrDataToggleIn;
+    StringOutput m_AttrToggleField;
 
     StringInput m_InlineDataIn;
 
@@ -198,6 +201,7 @@ protected:
     TriggerButton m_CopyButton;
     TriggerButton m_PasteButton;
     TriggerButton m_CutButton;
+    TriggerButton m_DelButton;
 
     GroupLayout* m_CurAttrGroup;
 

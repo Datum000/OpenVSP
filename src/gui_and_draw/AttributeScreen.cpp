@@ -118,30 +118,32 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
 
     m_TreeGroupLayout.SetY( m_TreeGroupLayout.GetY() + editor_ht );
 
-    int w_btn_tree = m_TreeGroupLayout.GetW() / 3;
+    int w_btn_tree = m_TreeGroupLayout.GetW() / 4;
     m_TreeGroupLayout.AddButton( m_CopyButton, "Copy" );
     m_TreeGroupLayout.AddButton( m_PasteButton, "Paste" );
     m_TreeGroupLayout.AddButton( m_CutButton, "Cut" );
+    m_TreeGroupLayout.AddButton( m_DelButton, "Delete" );
     m_CopyButton.SetWidth( w_btn_tree );
     m_CutButton.SetWidth( w_btn_tree );
     m_PasteButton.SetWidth( w_btn_tree );
+    m_DelButton.SetWidth( w_btn_tree );
 
     m_CutButton.SetX( m_TreeGroupLayout.GetStartX() + w_btn_tree );
     m_PasteButton.SetX( m_TreeGroupLayout.GetStartX() + 2 * w_btn_tree );
+    m_DelButton.SetX( m_TreeGroupLayout.GetStartX() + 3 * w_btn_tree );
 
-    m_CopyButton.GetFlButton()->shortcut( FL_CTRL + 'c' );
-    m_PasteButton.GetFlButton()->shortcut( FL_CTRL + 'v' );
-    m_CutButton.GetFlButton()->shortcut( FL_CTRL + 'x' );
+    m_CopyButton.SetShortcut( FL_COMMAND + 'c' , true );
+    m_PasteButton.SetShortcut( FL_COMMAND + 'v' , true );
+    m_CutButton.SetShortcut( FL_COMMAND + 'x' , true );
+    m_DelButton.SetShortcut( FL_Delete , true );
 
-    // name data entry box
-    m_CommonEntryLayout.AddYGap();
-
-    m_CommonEntryLayout.AddDividerBox( "Add/Delete Attributes" );
+    m_CommonEntryLayout.AddYGap(); //necessary to line up top of section
+    m_CommonEntryLayout.AddDividerBox( "Add Attributes" );
 
     m_CommonEntryLayout.SetSameLineFlag( true );
 
     m_CommonEntryLayout.SetChoiceButtonWidth( 0 );
-    int w_btn = m_CommonEntryLayout.GetW() / 3;
+    int w_btn = m_CommonEntryLayout.GetW() / 2;
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::BOOL_DATA , capitalize ) , vsp::BOOL_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::INT_DATA, capitalize ), vsp::INT_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::DOUBLE_DATA, capitalize ), vsp::DOUBLE_DATA );
@@ -149,23 +151,19 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::VEC3D_DATA, capitalize ), vsp::VEC3D_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::INT_MATRIX_DATA, capitalize ), vsp::INT_MATRIX_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::DOUBLE_MATRIX_DATA, capitalize ), vsp::DOUBLE_MATRIX_DATA );
-    m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::ATTR_COLLECTION_DATA, capitalize ), vsp::ATTR_COLLECTION_DATA );
 
     m_CommonEntryLayout.AddChoice( m_AttrTypeChoice, "Type" );
     m_CommonEntryLayout.AddButton( m_AttrAddTrigger, "Add" );
-    m_CommonEntryLayout.AddButton( m_AttrDelTrigger, "Delete" );
 
     m_AttrTypeChoice.SetWidth( w_btn );
     m_AttrAddTrigger.SetWidth( w_btn );
-    m_AttrDelTrigger.SetWidth( w_btn );
 
     m_AttrAddTrigger.SetX( m_CommonEntryLayout.GetStartX() + w_btn );
-    m_AttrDelTrigger.SetX( m_CommonEntryLayout.GetStartX() + 2 * w_btn );
 
     m_CommonEntryLayout.ForceNewLine();
-    m_CommonEntryLayout.ForceNewLine();
-
     m_CommonEntryLayout.SetSameLineFlag( false );
+
+    m_CommonEntryLayout.AddButton( m_AttrAddGroupTrigger, "Add Group" );
 
     m_CommonEntryLayout.AddYGap();
     m_DataLabel = m_CommonEntryLayout.AddDividerBox( "Attribute Data Entry" );
@@ -178,7 +176,26 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
 
     // create subgroup for toggling which label is shown in this screen (and to provide for future use of cell-data GUI for matrices/vectors)
     m_CommonEntryLayout.AddSubGroupLayout( m_ToggleEntryLayout, m_CommonEntryLayout.GetW(), m_CommonEntryLayout.GetRemainY() );
-    m_ToggleEntryLayout.AddButton( m_AttrDataToggleIn, "Bool Value" );
+
+    int toggle_label_width = m_ToggleEntryLayout.GetButtonWidth();
+    int toggle_btn_width = m_ToggleEntryLayout.GetStdHeight();
+
+    m_ToggleEntryLayout.SetSameLineFlag( true );
+
+    m_ToggleEntryLayout.AddOutput( m_AttrToggleLabel, "Value" );
+    m_ToggleEntryLayout.AddButton( m_AttrDataToggleIn, "" );
+    m_ToggleEntryLayout.SetButtonWidth( 0 );
+    m_ToggleEntryLayout.AddOutput( m_AttrToggleField, "" );
+
+    m_AttrToggleLabel.SetWidth( toggle_label_width );
+    m_AttrDataToggleIn.SetWidth( toggle_btn_width );
+    m_AttrToggleField.SetWidth( m_ToggleEntryLayout.GetW() - toggle_label_width - toggle_btn_width );
+
+    m_AttrDataToggleIn.SetX( m_CommonEntryLayout.GetStartX() + toggle_label_width );
+    m_AttrToggleField.SetX( m_CommonEntryLayout.GetStartX() + toggle_label_width + toggle_btn_width );
+    m_ToggleEntryLayout.SetSameLineFlag( false );
+    m_ToggleEntryLayout.ForceNewLine();
+
     m_ToggleEntryLayout.AddResizeBox(); //sacrificial resizable component, prevents the rest of the layout from squishing
 
     m_CommonEntryLayout.AddSubGroupLayout( m_InlineEntryLayout, m_CommonEntryLayout.GetW(), m_CommonEntryLayout.GetRemainY() );
@@ -302,6 +319,14 @@ bool AttributeExplorer::Update()
     // Update the Attribute GUI's pointer to the appropriate AttributeData object
     m_CaseSensitiveButton.Update( m_CaseSensParmPtr->GetID() );
     m_AttrDataToggleIn.Update( m_AttrBoolParmPtr->GetID() );
+    if ( m_AttrBoolParmPtr->Get() )
+    {
+        m_AttrToggleField.Update( "True" );
+    }
+    else
+    {
+        m_AttrToggleField.Update( "False" );
+    }
     m_AttrTreeWidget.SetSearchTerms( m_AttrTypeSearchChoice.GetVal(), m_ObjTypeSearchChoice.GetVal(), m_AttrSearchIn.GetString(), m_CaseSensParmPtr->Get() );
     m_AttrTreeWidget.Update();
     SetAttrData();
@@ -496,18 +521,24 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
 
     if ( ac_group_ptr )
     {
+        m_AttrAddTrigger.Activate();
+        m_AttrAddGroupTrigger.Activate();
         m_PasteButton.Activate();
         header_str += " : ";
         header_str += AttributeMgr.GetName( ac_group_ptr->GetAttachID() );
     }
     else if ( ac_ptr )
     {
+        m_AttrAddTrigger.Activate();
+        m_AttrAddGroupTrigger.Activate();
         m_PasteButton.Activate();
         header_str += " : ";
         header_str += AttributeMgr.GetName( ac_ptr->GetAttachID() );
     }
     else
     {
+        m_AttrAddTrigger.Deactivate();
+        m_AttrAddGroupTrigger.Deactivate();
         m_PasteButton.Deactivate();
     }
 
@@ -527,7 +558,7 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
 
         m_AttrNameIn.Deactivate();
         m_AttrDescIn.Deactivate();
-        m_AttrDelTrigger.Deactivate();
+        m_DelButton.Deactivate();
         m_AttrVec3dRowAdd.Deactivate();
         m_AttrVec3dRowDel.Deactivate();
         m_AttrDmatRowAdd.Deactivate();
@@ -543,7 +574,7 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
     {
         m_AttrNameIn.Activate();
         m_AttrDescIn.Activate();
-        m_AttrDelTrigger.Activate();
+        m_DelButton.Activate();
         m_AttrVec3dRowAdd.Activate();
         m_AttrVec3dRowDel.Activate();
         m_AttrDmatRowAdd.Activate();
@@ -564,18 +595,23 @@ void AttributeExplorer::SetTreeAutoSelectID( const string & id )
 
 void AttributeExplorer::AttributeAdd()
 {
+    AttributeAdd( m_AttrTypeChoice.GetVal() );
+}
+
+void AttributeExplorer::AttributeAdd( int attrAddType )
+{
     AttributeCollection* ac_ptr = AttributeMgr.GetCollectionPtr( m_CollID );
     AttributeCollection* ac_group_ptr = AttributeMgr.GetCollectionPtr( m_GroupID );
 
     string new_id;
     if ( ac_group_ptr )
     {
-        AttributeMgr.GuiAddAttribute( ac_group_ptr, m_AttrTypeChoice.GetVal() );
+        AttributeMgr.GuiAddAttribute( ac_group_ptr, attrAddType );
         new_id = ac_group_ptr->GetLastAddedID();
     }
     else if ( ac_ptr )
     {
-        AttributeMgr.GuiAddAttribute( ac_ptr, m_AttrTypeChoice.GetVal() );
+        AttributeMgr.GuiAddAttribute( ac_ptr, attrAddType );
         new_id = ac_ptr->GetLastAddedID();
     }
     m_AttrTreeWidget.SetAutoSelectID( new_id );
@@ -783,7 +819,11 @@ void AttributeExplorer::GuiDeviceCallBack( GuiDevice* gui_device )
     {
         AttributeAdd();
     }
-    else if ( gui_device == &m_AttrDelTrigger )
+    else if ( gui_device == &m_AttrAddGroupTrigger )
+    {
+        AttributeAdd( vsp::ATTR_COLLECTION_DATA );
+    }
+    else if ( gui_device == &m_DelButton )
     {
         AttributeMgr.DeleteAttribute( m_AttrID );
         m_AttrID.clear();

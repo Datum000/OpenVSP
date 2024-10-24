@@ -48,8 +48,8 @@ void AttributeTree::Init( ScreenMgr* mgr, GroupLayout * layout, Fl_Group* group,
     m_AttrTree->sortorder( FL_TREE_SORT_ASCENDING );
 
     m_ColWidths[0] = 120;
-    m_ColWidths[1] = 40;
-    m_ColWidths[2] = 80;
+    m_ColWidths[1] = 120;
+    m_ColWidths[2] = 40;
     m_ColWidths[3] = 0;
 
     m_AttrTree->column_widths( m_ColWidths );            // set column widths array
@@ -111,7 +111,7 @@ void AttributeTree::UpdateTree()
         m_AttrTree->clear();   //GUI element
     }
 
-    string header_row = "AttrTree\tType\tData";
+    string header_row = "AttrTree\tData\tType";
     root = m_AttrTree->AddRow( header_row.c_str() );
 
     root->labelbgcolor( FL_WHITE );
@@ -182,7 +182,7 @@ void AttributeTree::UpdateTree()
 
                     if ( nvd )
                     {
-                        row_str += '\t' + nvd->GetTypeName( nvd->GetType(), true , true ) + '\t' + nvd->GetAsString( true );
+                        row_str += '\t' + nvd->GetAsString( true ) + '\t' + nvd->GetTypeName( nvd->GetType(), true , true );
                     }
                     else
                     {

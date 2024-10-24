@@ -1654,6 +1654,29 @@ void TriggerButton::SetColor( Fl_Color c )
     }
 }
 
+void TriggerButton::SetLabel( const char* label )
+{
+    if ( m_Button )
+    {
+        m_Button->copy_label( label );
+    }
+}
+
+void TriggerButton::SetShortcut( int s, bool append_label )
+{
+    if ( m_Button )
+    {
+        m_Button->shortcut( s );
+        if ( append_label )
+        {
+            string label = m_Button->label();
+            string chars = fl_shortcut_label( s );
+            label += " (" + chars + ")";
+            SetLabel( label.c_str() );
+        }
+    }
+}
+
 void TriggerButton::SetLabelColor( Fl_Color c )
 {
     if ( m_Button )
