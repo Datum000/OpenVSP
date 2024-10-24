@@ -154,8 +154,6 @@ protected:
 
     AttributeTree m_AttrTreeWidget;
 
-    TriggerButton m_AttributeExpandTrigger;
-
     GroupLayout m_AttrCommonGroup;
     GroupLayout m_AttrStrGroup;
     GroupLayout m_AttrToggleGroup;

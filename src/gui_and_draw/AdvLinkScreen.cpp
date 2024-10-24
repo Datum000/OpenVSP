@@ -217,7 +217,7 @@ AdvLinkScreen::AdvLinkScreen( ScreenMgr* mgr ) : BasicScreen( mgr, 829, 645+175,
     m_BigGroup.SetSameLineFlag( false );
 
     //==== Code Editor ====//
-    m_CodeEditor = m_BigGroup.AddFlTextEditor( 250 );
+    m_CodeEditor = m_BigGroup.AddFlTextEditor( 280 );
 
     m_CodeBuffer = new Fl_Text_Buffer;
     m_CodeEditor->buffer( m_CodeBuffer );
@@ -229,7 +229,6 @@ AdvLinkScreen::AdvLinkScreen( ScreenMgr* mgr ) : BasicScreen( mgr, 829, 645+175,
     m_CodeBuffer->text( "" );
 
     //==== Attributes GUI ====//
-    m_BigGroup.AddDividerBox( "Attributes" );
     m_AdvLinkAttrEditor.Init( mgr, &m_BigGroup, m_FLTK_Window, this, staticScreenCB, true, m_BigGroup.GetY(), 100 );
 }
 

@@ -128,7 +128,6 @@ void AttributeTree::UpdateTree()
     vector < vector < string > > tree_id_vecs = tree_id_coll_vecs[0];
     vector < vector < string > > tree_coll_vecs = tree_id_coll_vecs[1];
 
-    vector < vector < int > > tree_id_count_vecs;
     vector < string > id_vec;
 
     int counter;
@@ -141,41 +140,6 @@ void AttributeTree::UpdateTree()
         "Measures",
         "Links",
     };
-
-    for ( int i = 0; i != tree_id_vecs.size(); ++i )
-    {
-        counter = 0;
-        last_id = "";
-        id = "";
-        bool unique_name_flag;
-
-        vector < int > count_vec;
-        // iterate through each id or name
-        for ( int j = 0; j != tree_id_vecs[ i ].size(); ++j )
-        {
-            id = tree_id_vecs[ i ][ j ];
-
-            unique_name_flag = false;
-            for ( int k = 0; k != unique_names.size(); ++k )
-            {
-                if ( unique_names[ k ].compare( id ) == 0 )
-                {
-                    unique_name_flag = true;
-                }
-            }
-            if ( AttributeMgr.AllUpper( id ) || unique_name_flag )
-            {
-                counter = 0;
-            }
-            else
-            {
-                counter ++;
-            }
-
-            count_vec.push_back( counter );
-        }
-        tree_id_count_vecs.push_back( count_vec );
-    }
 
     if ( m_AttrTree )
     {
@@ -550,6 +514,7 @@ void AttributeEditor::Init( ScreenMgr* mgr, GroupLayout * layout, Fl_Group* grou
     m_ScreenMgr = mgr;
 
     // ==== build layout ==== //
+    layout->AddDividerBox( "Attributes (Double Click For Explorer)" );
     layout->AddSubGroupLayout( m_AttrCommonGroup, layout->GetW(), layout->GetRemainY() );
 
     if ( mod_start )
@@ -557,14 +522,7 @@ void AttributeEditor::Init( ScreenMgr* mgr, GroupLayout * layout, Fl_Group* grou
         m_AttrCommonGroup.SetY( start_y );
     }
 
-    m_AttrCommonGroup.AddDividerBox( "Attribute List" );
     m_AttrTreeWidget.Init( mgr, layout, group, screen, cb, true, m_AttrCommonGroup.GetY(), browser_h );
-
-    m_AttrCommonGroup.SetY( browser_h + m_AttrCommonGroup.GetY() - 15 );
-    m_AttrCommonGroup.AddButton( m_AttributeExpandTrigger, "Open Attribute Explorer" );
-    m_AttrCommonGroup.Show();
-
-    // m_AttrCollID.clear();
 }
 
 void AttributeEditor::Show()
@@ -600,12 +558,6 @@ void AttributeEditor::DeviceCB( Fl_Widget* w )
 
 void AttributeEditor::GuiDeviceCallBack( GuiDevice* gui_device )
 {
-    if ( gui_device == &m_AttributeExpandTrigger )
-    {
-        string id = m_AttrTreeWidget.GetSelectedID();
-        static_cast< AttributeExplorer* >( m_ScreenMgr->GetScreen( vsp::VSP_ATTRIBUTE_EXPLORER_SCREEN ) )->SetTreeAutoSelectID( id );
-        m_ScreenMgr->ShowScreen( vsp::VSP_ATTRIBUTE_EXPLORER_SCREEN );
-    }
     m_ScreenMgr->SetUpdateFlag( true );
 }
 

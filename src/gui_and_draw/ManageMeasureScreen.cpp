@@ -131,9 +131,8 @@ ManageMeasureScreen::ManageMeasureScreen( ScreenMgr * mgr ) : TabScreen( mgr, 30
     m_RulerLayout.AddOutput( m_DistanceOutput, "Distance", "%6.5g" );
 
     m_RulerLayout.AddYGap();
-    m_RulerLayout.AddDividerBox( "Attributes ");
 
-    m_RulerAttrEditor.Init( mgr, &m_RulerLayout, ruler_group, this, staticScreenCB, true, m_RulerLayout.GetY(), 100 );
+    m_RulerAttrEditor.Init( mgr, &m_RulerLayout, ruler_group, this, staticScreenCB, true, m_RulerLayout.GetY(), 130 );
 
     /* Probe Layout  ***********************************************/
 
@@ -237,9 +236,8 @@ ManageMeasureScreen::ManageMeasureScreen( ScreenMgr * mgr ) : TabScreen( mgr, 30
     m_ProbeLayout.AddOutput( m_KgOutput, "K Gaussian", "%6.5g" );
 
     m_ProbeLayout.AddYGap();
-    m_ProbeLayout.AddDividerBox( "Attributes ");
 
-    m_ProbeAttrEditor.Init( mgr, &m_ProbeLayout, probe_group, this, staticScreenCB, true, m_ProbeLayout.GetY(), 100 );
+    m_ProbeAttrEditor.Init( mgr, &m_ProbeLayout, probe_group, this, staticScreenCB, true, m_ProbeLayout.GetY(), 130 );
 
     /* RSTprobe Layout  ***********************************************/
 
@@ -345,9 +343,8 @@ ManageMeasureScreen::ManageMeasureScreen( ScreenMgr * mgr ) : TabScreen( mgr, 30
     m_RSTProbeLayout.AddOutput( m_RSTZOutput, "Z", "%6.5g" );
 
     m_RSTProbeLayout.AddYGap();
-    m_RSTProbeLayout.AddDividerBox( "Attributes ");
 
-    m_RSTAttrEditor.Init( mgr, &m_RSTProbeLayout, RSTprobe_group, this, staticScreenCB, true, m_RSTProbeLayout.GetY(), 100 );
+    m_RSTAttrEditor.Init( mgr, &m_RSTProbeLayout, RSTprobe_group, this, staticScreenCB, true, m_RSTProbeLayout.GetY(), 130 );
 
     /* Protractor Layout  ***********************************************/
 
@@ -454,9 +451,8 @@ ManageMeasureScreen::ManageMeasureScreen( ScreenMgr * mgr ) : TabScreen( mgr, 30
     m_ProtractorLayout.AddOutput( m_ThetaOutput, "Theta", "%6.5g" );
 
     m_ProtractorLayout.AddYGap();
-    m_ProtractorLayout.AddDividerBox( "Attributes ");
 
-    m_ProtAttrEditor.Init( mgr, &m_ProtractorLayout, protractor_group, this, staticScreenCB, true, m_ProtractorLayout.GetY(), 100 );
+    m_ProtAttrEditor.Init( mgr, &m_ProtractorLayout, protractor_group, this, staticScreenCB, true, m_ProtractorLayout.GetY(), 130 );
 
     ruler_tab->show();
 }
