@@ -295,7 +295,7 @@ void VspGlWindow::update()
 
                     if ( wm )
                     {
-                        display->getViewport()->showWatermark( wm_ac->FindPtr( "VSP::Flag", 0 )->GetBool( 0 ) );
+                        display->getViewport()->showWatermark( wm_ac->FindPtr( "VSP::Show", 0 )->GetBool( 0 ) );
 
                         wm->setText( wm_ac->FindPtr("VSP::Text", 0)->GetString(0) );
 

@@ -505,19 +505,19 @@ void Vehicle::AddDefaultAttributes()
 
     vector < NameValData > wm_data;
     wm_data.push_back( NameValData( "VSP::Text",
-                                      string("Example Watermark"),
+                                      string("UNCLASSIFIED"),
                                       "Single line of text to be displayed as watermark" ) );
 
-    wm_data.push_back( NameValData( "VSP::Flag",
+    wm_data.push_back( NameValData( "VSP::Show",
                                       false,
-                                      "False for no watermark, True for watermark" ) );
+                                      "Toggle for Watermark Display" ) );
 
     wm_data.push_back( NameValData( "VSP::TextScale",
                                     2.0,
                                     "Scale factor for watermark text" ) );
 
     wm_data.push_back( NameValData( "VSP::TextColor",
-                                    vec3d( 0, 0, 0 ),
+                                    vec3d( 1, 1, 1 ),
                                     "RGB color to use for watermark text\n(Values range from 0.0->1.0)" ) );
 
     wm_data.push_back( NameValData( "VSP::EdgeColor",
@@ -525,7 +525,7 @@ void Vehicle::AddDefaultAttributes()
                                 "RGB Color to use for watermark box\n(Values range from 0.0->1.0)" ) );
 
     wm_data.push_back( NameValData( "VSP::FillColor",
-                                vec3d( 1, 1, 1 ),
+                                vec3d( 0.01, 0.5, 0.32 ),
                                 "RGB Color to use for watermark fill\n(Values range from 0.0->1.0)" ) );
 
     wm_data.push_back( NameValData( "VSP::TextAlpha",
@@ -533,7 +533,7 @@ void Vehicle::AddDefaultAttributes()
                                     "Alpha for watermark text" ) );
 
     wm_data.push_back( NameValData( "VSP::FillAlpha",
-                                    0.0,
+                                    1.0,
                                     "Alpha for watermark fill" ) );
 
     wm_data.push_back( NameValData( "VSP::EdgeAlpha",
