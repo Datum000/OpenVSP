@@ -507,7 +507,10 @@ void ComputeDegenGeom( int set, int file_export_types )
         veh->setExportDegenGeomCsvFile( true );
     }
 
-    veh->CreateDegenGeom( set );
+    bool useMode = false;
+    string modeID;
+
+    veh->CreateDegenGeom( set, useMode, modeID );
     veh->WriteDegenGeomFile();
     ErrorMgr.NoError();
 }

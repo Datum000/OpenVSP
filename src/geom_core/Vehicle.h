@@ -266,7 +266,7 @@ public:
     string PSliceAndFlatten( int set, int numSlices, const vec3d &norm, bool autoBoundsFlag, double start, double end, bool measureduct, bool useMode, const string &modeID );
 
     //==== Degenerate Geometry ====//
-    void CreateDegenGeom( int set );
+    void CreateDegenGeom( int set, bool useMode, const string &modeID );
     vector< DegenGeom > GetDegenGeomVec()    { return m_DegenGeomVec; }
     string WriteDegenGeomFile();
     void ClearDegenGeom()   { m_DegenGeomVec.clear(); }
@@ -500,6 +500,7 @@ public:
 
     BoolParm m_UseModeCompGeomFlag;
     BoolParm m_UseModeExportFlag;
+    BoolParm m_UseModeDegenGeomFlag;
 
     BoolParm m_exportCompGeomCsvFile;
     BoolParm m_exportDegenGeomCsvFile;
