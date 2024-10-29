@@ -652,6 +652,50 @@ vector< string > AttributeMgrSingleton::GetAttributeStringVal( const string &att
     return attr_value;
 }
 
+vector < double > AttributeMgrSingleton::GetAttributeParmVal( const string &attrID )
+{
+    vector< string > p_ids;
+    vector< double > p_vals;
+
+    Parm* p;
+
+    NameValData* attribute_data = nullptr;
+    attribute_data = GetAttributePtr( attrID );
+    if ( attribute_data )
+    {
+        p_ids = attribute_data->GetParmIDData();
+    }
+
+    for ( int i = 0; i != p_ids.size(); ++i )
+    {
+        p = ParmMgr.FindParm( p_ids[i] );
+        p_vals.push_back( ( p ) ? p->Get() : double(0.) );
+    }
+    return p_vals;
+}
+
+vector < string > AttributeMgrSingleton::GetAttributeParmName( const string &attrID )
+{
+    vector< string > p_ids;
+    vector< string > p_names;
+
+    Parm* p;
+
+    NameValData* attribute_data = nullptr;
+    attribute_data = GetAttributePtr( attrID );
+    if ( attribute_data )
+    {
+        p_ids = attribute_data->GetParmIDData();
+    }
+
+    for ( int i = 0; i != p_ids.size(); ++i )
+    {
+        p = ParmMgr.FindParm( p_ids[i] );
+        p_names.push_back( ( p ) ? p->GetName() : string("NONE") );
+    }
+    return p_names;
+}
+
 vector< vec3d > AttributeMgrSingleton::GetAttributeVec3dVal( const string &attrID )
 {
     vector< vec3d > attr_value;
@@ -748,6 +792,13 @@ void AttributeMgrSingleton::GuiAddAttribute( AttributeCollection* ac_ptr, const 
         break;
     case vsp::STRING_DATA:
         attrAdd = NameValData( attrName, attrDataString, attrDesc );
+        attrAdd.SetAttrAttach( ac_ptr->GetID() );
+        SetDirtyFlag( attrAdd.GetAttributeEventGroup() );
+        ac_ptr->Add( attrAdd );
+        break;
+    case vsp::PARM_REFERENCE_DATA:
+        attrAdd = NameValData( attrName );
+        attrAdd.SetType( vsp::PARM_REFERENCE_DATA );
         attrAdd.SetAttrAttach( ac_ptr->GetID() );
         SetDirtyFlag( attrAdd.GetAttributeEventGroup() );
         ac_ptr->Add( attrAdd );
@@ -955,6 +1006,21 @@ void AttributeMgrSingleton::SetAttributeString( const string &attrID, const stri
     if ( attr )
     {
         attr->SetStringData( { value } );
+        SetAttrDirtyFlag( attrID );
+        if ( updateFlag )
+        {
+            Update();
+        }
+    }
+}
+
+void AttributeMgrSingleton::SetAttributeParmID( const string &attrID, const string &value, bool updateFlag )
+{
+    NameValData* attr = GetAttributePtr( attrID );
+
+    if ( attr )
+    {
+        attr->SetParmIDData( { value } );
         SetAttrDirtyFlag( attrID );
         if ( updateFlag )
         {

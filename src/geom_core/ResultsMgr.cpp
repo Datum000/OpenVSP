@@ -18,6 +18,7 @@
 #include "StlHelper.h"
 
 #include "IDMgr.h"
+#include "ParmMgr.h"
 #include "AttributeManager.h"
 
 //==== Default Results Data ====//
@@ -184,6 +185,10 @@ string NameValData::GetTypeName( int type, bool capitalize, bool short_name )
             string_long = "string";
             string_mini = "str";
             break;
+        case vsp::PARM_REFERENCE_DATA:
+            string_long = "parm";
+            string_mini = "parm";
+            break;
         case vsp::VEC3D_DATA:
             string_long = "vec3d";
             string_mini = "vec3d";
@@ -290,6 +295,15 @@ string NameValData::GetString( int i ) const
     if ( i >= 0 && i < ( int )m_StringData.size() )
     {
         return m_StringData[i];
+    }
+    return string();
+}
+
+string NameValData::GetParmID( int i ) const
+{
+    if ( i >= 0 && i < ( int )m_ParmIDData.size() )
+    {
+        return m_ParmIDData[i];
     }
     return string();
 }
@@ -424,6 +438,10 @@ void NameValData::EncodeXml( xmlNodePtr & node )
     {
         XmlUtil::SetStringProp( dnode, "StrData", GetString( 0 ) );
     }
+    else if ( m_Type == vsp::PARM_REFERENCE_DATA )
+    {
+        XmlUtil::SetStringProp( dnode, "ParmIDData", GetParmID( 0 ) );
+    }
     else if ( m_Type == vsp::VEC3D_DATA )
     {
         XmlUtil::AddVectorVec3dNode( dnode, "Vec3dData", GetVec3dData() );
@@ -538,6 +556,11 @@ void NameValData::DecodeXml( xmlNodePtr & node, vector < string > name_vector )
         {
             string stringData = XmlUtil::FindStringProp( node, "StrData", default_str );
             m_StringData.push_back( stringData );
+        }
+        else if ( m_Type == vsp::PARM_REFERENCE_DATA )
+        {
+            string parmIDData = XmlUtil::FindStringProp( node, "ParmIDData", default_str );
+            m_ParmIDData.push_back( parmIDData );
         }
         else if ( m_Type == vsp::VEC3D_DATA )
         {
@@ -655,6 +678,24 @@ string NameValData::GetAsString( bool inline_data_flag )
             for ( unsigned int i = 0; i < m_StringData.size(); i++ )
             {
                 outstring.append( m_StringData[i] + " " );
+            }
+            break;
+        case vsp::PARM_REFERENCE_DATA:
+            if ( m_ParmIDData.empty() )
+            {
+                outstring.append( string(" - ") );
+            }
+            for ( unsigned int i = 0; i < m_ParmIDData.size(); i++ )
+            {
+                Parm* p = ParmMgr.FindParm( m_ParmIDData[i] );
+                if ( p )
+                {
+                    outstring.append( to_string( p->Get() ) );
+                }
+                else
+                {
+                    outstring.append( string(" - ") );
+                }
             }
             break;
         case vsp::VEC3D_DATA:

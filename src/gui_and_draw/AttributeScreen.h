@@ -171,6 +171,7 @@ protected:
     GroupLayout m_ToggleEntryLayout;
     GroupLayout m_InlineEntryLayout;
     GroupLayout m_StringEntryLayout;
+    GroupLayout m_ParmRefEntryLayout;
     GroupLayout m_Vec3dEntryLayout;
     GroupLayout m_IntMatEntryLayout;
     GroupLayout m_DblMatEntryLayout;
@@ -194,6 +195,10 @@ protected:
     StringOutput m_AttrToggleField;
 
     StringInput m_InlineDataIn;
+
+    ParmPicker m_AttrParmPicker;
+    StringInput m_AttrParmIDInput;
+    SliderAdjRangeInput m_AttrParmSlider;
 
     VspTextEditor* m_DataText;
     Fl_Text_Buffer* m_DataBuffer;

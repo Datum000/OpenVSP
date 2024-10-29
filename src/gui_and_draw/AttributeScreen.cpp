@@ -65,6 +65,7 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::INT_DATA, capitalize ), vsp::INT_DATA );
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::DOUBLE_DATA, capitalize ), vsp::DOUBLE_DATA );
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::STRING_DATA, capitalize ), vsp::STRING_DATA );
+    m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::PARM_REFERENCE_DATA, capitalize ), vsp::PARM_REFERENCE_DATA );
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::VEC3D_DATA, capitalize ), vsp::VEC3D_DATA );
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::INT_MATRIX_DATA, capitalize ), vsp::INT_MATRIX_DATA );
     m_AttrTypeSearchChoice.AddItem( NameValData::GetTypeName( vsp::DOUBLE_MATRIX_DATA, capitalize ), vsp::DOUBLE_MATRIX_DATA );
@@ -148,6 +149,7 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::INT_DATA, capitalize ), vsp::INT_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::DOUBLE_DATA, capitalize ), vsp::DOUBLE_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::STRING_DATA, capitalize ), vsp::STRING_DATA );
+    m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::PARM_REFERENCE_DATA, capitalize ), vsp::PARM_REFERENCE_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::VEC3D_DATA, capitalize ), vsp::VEC3D_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::INT_MATRIX_DATA, capitalize ), vsp::INT_MATRIX_DATA );
     m_AttrTypeChoice.AddItem( NameValData::GetTypeName( vsp::DOUBLE_MATRIX_DATA, capitalize ), vsp::DOUBLE_MATRIX_DATA );
@@ -222,6 +224,20 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_DataText->add_key_binding( FL_KP_Enter, FL_SHIFT , Fl_Text_Editor::kf_enter );
     m_DataText->add_key_binding( FL_KP_Enter, FL_CTRL , Fl_Text_Editor::kf_enter );
     m_DataBuffer->text( "" );
+
+    // add parm reference layout
+    m_CommonEntryLayout.AddSubGroupLayout( m_ParmRefEntryLayout, m_CommonEntryLayout.GetW(), m_CommonEntryLayout.GetRemainY() );
+    m_ParmRefEntryLayout.AddParmPicker( m_AttrParmPicker );
+    m_ParmRefEntryLayout.SetButtonWidth( m_ParmRefEntryLayout.GetW()/3 );
+    m_ParmRefEntryLayout.AddInput( m_AttrParmIDInput, "Parm ID" );
+    m_ParmRefEntryLayout.SetButtonWidth( m_ParmRefEntryLayout.GetW()/2 );
+    m_ParmRefEntryLayout.AddSlider( m_AttrParmSlider, "AUTO_UPDATE", 10., "%6.5f" );
+
+    // enable parm dropping methods
+    ( (Vsp_Group*) m_ParmRefEntryLayout.GetGroup() )->SetAllowDrop( true );
+    m_ParmRefEntryLayout.GetGroup()->callback( staticScreenCB, this );
+
+    m_ParmRefEntryLayout.AddResizeBox(); //sacrificial resizable component, prevents the rest of the layout from squishing
 
 
     // add vec3d layout
@@ -312,8 +328,12 @@ AttributeExplorer::~AttributeExplorer()
 
 bool AttributeExplorer::Update()
 {
+
     // populate Tree with empty branch IDs
     GetEmptyColls();
+
+    //==== Update Parm Picker ====//
+    m_AttrParmPicker.Update();
 
     // Assign current Attribute AttachID, AttachType, AttributeName, and AttributeDataPtr
     // Update the Attribute GUI's pointer to the appropriate AttributeData object
@@ -344,6 +364,9 @@ bool AttributeExplorer::Update()
             break;
         case vsp::STRING_DATA:
             group_choice = &m_StringEntryLayout;
+            break;
+        case vsp::PARM_REFERENCE_DATA:
+            group_choice = &m_ParmRefEntryLayout;
             break;
         case vsp::INT_DATA:
             group_choice = &m_InlineEntryLayout;
@@ -423,6 +446,10 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
     string attrDataStr = "";
     string attrDescStr = "";
 
+    string attrParmIDStr = "";
+    string attrParmNameStr = "";
+    string attrParmValStr = "";
+
     string attrBufferText = "";
     string attrInlineText = "";
 
@@ -445,6 +472,8 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
         attrDataInt = attr_ptr->GetInt( 0 );
         attrDataDbl = attr_ptr->GetDouble( 0 );
         attrDataStr = attr_ptr->GetString( 0 );
+
+
 
         attrDescStr = attr_ptr->GetDoc();
 
@@ -489,6 +518,22 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
             break;
         case vsp::STRING_DATA:
             attrBufferText = attrDataStr;
+            break;
+        case vsp::PARM_REFERENCE_DATA:
+            {
+                attrParmIDStr = attr_ptr->GetParmID( 0 );
+                Parm* p = ParmMgr.FindParm( attr_ptr->GetParmID( 0 ) );
+                attrParmNameStr = string("");
+                if ( p )
+                {
+                    string pc_name = p->GetContainer()->GetName();
+                    string grp_name = p->GetGroupName();
+                    string p_name = p->GetName();
+                    attrParmNameStr = pc_name + " | " + grp_name + " | " + p_name;
+                }
+                m_AttrParmPicker.SetParmChoice( attr_ptr->GetParmID( 0 ) );
+                m_AttrParmPicker.Update();
+            }
             break;
         case vsp::INT_DATA:
             attrInlineText = to_string( attrDataInt );
@@ -535,6 +580,7 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
         header_str += " : ";
         header_str += AttributeMgr.GetName( ac_ptr->GetAttachID() );
     }
+
     else
     {
         m_AttrAddTrigger.Deactivate();
@@ -545,6 +591,9 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
     m_AttrNameIn.Update( name_str );
     m_DataBuffer->text( attrBufferText.c_str() );
     m_InlineDataIn.Update( attrInlineText.c_str() );
+
+    m_AttrParmSlider.Update( attrParmIDStr );
+    m_AttrParmIDInput.Update( attrParmIDStr );
 
     m_AttrDescIn.Update( attrDescStr.c_str() );
     SetTitle(header_str);
@@ -559,6 +608,8 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
         m_AttrNameIn.Deactivate();
         m_AttrDescIn.Deactivate();
         m_DelButton.Deactivate();
+
+        m_AttrParmPicker.Deactivate();
         m_AttrVec3dRowAdd.Deactivate();
         m_AttrVec3dRowDel.Deactivate();
         m_AttrDmatRowAdd.Deactivate();
@@ -575,6 +626,7 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
         m_AttrNameIn.Activate();
         m_AttrDescIn.Activate();
         m_DelButton.Activate();
+        m_AttrParmPicker.Activate();
         m_AttrVec3dRowAdd.Activate();
         m_AttrVec3dRowDel.Activate();
         m_AttrDmatRowAdd.Activate();
@@ -666,6 +718,38 @@ void AttributeExplorer::AttributeModify( GuiDevice* gui_device, Fl_Widget *w )
         else if ( static_cast<Fl_Text_Editor * >( w ) == m_DataText && attrType == vsp::STRING_DATA )
         {
             AttributeMgr.SetAttributeString( m_AttrID, m_DataBuffer->text() );
+        }
+
+        //modify parm id data
+        else if ( ( gui_device == &m_AttrParmIDInput || gui_device == &m_AttrParmPicker || w == m_ParmRefEntryLayout.GetGroup() ) && attrType == vsp::PARM_REFERENCE_DATA )
+        {
+            // string p_id = ( gui_device == &m_AttrParmPicker ) ? m_AttrParmPicker.GetParmChoice() : Fl::event_text();
+            string p_id;
+
+            if ( gui_device == &m_AttrParmIDInput )
+            {
+                p_id = m_AttrParmIDInput.GetString();
+            }
+            else if ( gui_device == &m_AttrParmPicker )
+            {
+                p_id = m_AttrParmPicker.GetParmChoice();
+            }
+            else
+            {
+                p_id = Fl::event_text();
+            }
+
+            AttributeMgr.SetAttributeParmID( m_AttrID, p_id );
+
+            Parm* p = ParmMgr.FindParm( p_id );
+            if ( p )
+            {
+                m_AttrParmIDInput.Update( p_id );
+
+                double parm_range = ( abs( p->Get() ) > 0.00001 ) ? p->Get()*0.5 : 10.;
+
+                m_AttrParmSlider.SetRange( parm_range );
+            }
         }
 
         //vec3d & matrix data modification already done via the spreadsheet widgets
@@ -782,6 +866,7 @@ void AttributeExplorer::AttrTypeDispGroup( int attr_type, GroupLayout * group )
     m_ToggleEntryLayout.Hide();
     m_InlineEntryLayout.Hide();
     m_StringEntryLayout.Hide();
+    m_ParmRefEntryLayout.Hide();
     m_Vec3dEntryLayout.Hide();
     m_IntMatEntryLayout.Hide();
     m_DblMatEntryLayout.Hide();
@@ -807,6 +892,13 @@ void AttributeExplorer::CallBack( Fl_Widget *w )
            || w == m_DoubleMatrixSpreadSheet )
     {
         AttributeModify( nullptr, w );
+    }
+    else if ( w == ( m_ParmRefEntryLayout.GetGroup() ) && Fl::event_inside( w ) )
+    {
+        if( Fl::event() == FL_PASTE || Fl::event() == FL_DND_RELEASE )
+        {
+            AttributeModify( nullptr, w );
+        }
     }
 
     m_ScreenMgr->SetUpdateFlag( true );

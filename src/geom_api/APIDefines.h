@@ -1166,6 +1166,7 @@ enum RES_DATA_TYPE {    INVALID_TYPE = -1,	/*!< Invalid data type */
                         DOUBLE_MATRIX_DATA = 6,	/*!< Double matrix data type */
                         NAMEVAL_COLLECTION_DATA = 7,	/*!< NameVal collection data type */
                         ATTR_COLLECTION_DATA = 8,	/*!< Attribute collection data type */
+                        PARM_REFERENCE_DATA = 9,	/*!< Parm reference data type */
 };
 
 /*!

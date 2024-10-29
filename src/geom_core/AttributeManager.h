@@ -85,6 +85,8 @@ public:
     vector < int > GetAttributeIntVal( const string &attrID );
     vector < double > GetAttributeDoubleVal( const string &attrID );
     vector < string > GetAttributeStringVal( const string &attrID );
+    vector < double > GetAttributeParmVal( const string &attrID );
+    vector < string > GetAttributeParmName( const string &attrID );
     vector < vec3d > GetAttributeVec3dVal( const string &attrID );
     vector < vector < int > > GetAttributeIntMatrixVal( const string &attrID );
     vector < vector < double > > GetAttributeDoubleMatrixVal( const string &attrID );
@@ -95,6 +97,7 @@ public:
     void SetAttributeInt( const string &attrID, int value, bool updateFlag = true );
     void SetAttributeDouble( const string &attrID, double value, bool updateFlag = true );
     void SetAttributeString( const string &attrID, const string &value, bool updateFlag = true );
+    void SetAttributeParmID( const string &attrID, const string &value, bool updateFlag = true );
     void SetAttributeVec3d( const string &attrID, const vector< vec3d > &value, bool updateFlag = true );
     void SetAttributeIntMatrix( const string &attrID, const vector< vector< int > > &value, bool updateFlag = true );
     void SetAttributeDoubleMatrix( const string &attrID, const vector< vector< double > > &value, bool updateFlag = true );

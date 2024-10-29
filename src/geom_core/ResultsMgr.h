@@ -86,6 +86,10 @@ public:
     {
         return m_StringData;
     }
+    const vector<string> & GetParmIDData() const
+    {
+        return m_ParmIDData;
+    }
     const vector<vec3d> & GetVec3dData() const
     {
         return m_Vec3dData;
@@ -122,6 +126,10 @@ public:
     {
         return m_StringData;
     }
+    vector<string> & GetParmIDData()
+    {
+        return m_ParmIDData;
+    }
     vector<vec3d> & GetVec3dData()
     {
         return m_Vec3dData;
@@ -141,6 +149,7 @@ public:
     double GetDouble( int index ) const;
     double GetDouble( int row, int col ) const;
     string GetString( int index ) const;
+    string GetParmID( int index ) const;
     vec3d GetVec3d( int index ) const;
     NameValCollection GetNameValCollection( int index ) const;
     NameValCollection* GetNameValCollectionPtr( int index );
@@ -169,6 +178,11 @@ public:
     void SetStringData( const vector< string > & d )
     {
         m_StringData = d;
+    }
+
+    void SetParmIDData( const vector< string > & d )
+    {
+        m_ParmIDData = d;
     }
 
     void SetVec3dData( const vector< vec3d > & d )
@@ -260,6 +274,7 @@ protected:
     vector< int > m_IntData;
     vector< double > m_DoubleData;
     vector< string > m_StringData;
+    vector< string > m_ParmIDData;
     vector< vec3d > m_Vec3dData;
     vector< vector< int > >  m_IntMatData;
     vector< vector< double > >  m_DoubleMatData;
