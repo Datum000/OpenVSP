@@ -15,6 +15,7 @@
 #include "APIDefines.h"
 #include "ParmMgr.h"
 #include "Vehicle.h"
+#include "Xsec.h"
 
 #include "VehicleMgr.h"
 #include "LinkMgr.h"
@@ -1369,16 +1370,64 @@ string AttributeMgrSingleton::GetObjectParent( const string & id )
     // parmcontainer type things with parents
     if ( id.size() == vsp::ID_LENGTH_PARMCONTAINER )
     {
-        Geom* geom_ptr = VehicleMgr.GetVehicle()->FindGeom( id );
-        if ( geom_ptr )
-        {
-            parent_id = geom_ptr->GetParentID();
-        }
+        ParmContainer* pc = ParmMgr.FindParmContainer( id );
 
-        SubSurface* ss_ptr = SubSurfaceMgr.GetSubSurf( id );
-        if ( ss_ptr )
+        if ( pc )
         {
-            parent_id = ss_ptr->GetCompID();
+            int pc_type = pc->GetParmContainerType();
+            if ( pc_type == vsp::ATTROBJ_GEOM )
+            {
+                Geom* geom_ptr = VehicleMgr.GetVehicle()->FindGeom( id );
+                if ( geom_ptr )
+                {
+                    parent_id = geom_ptr->GetParentID();
+                }
+            }
+            else if ( pc_type == vsp::ATTROBJ_SUBSURF )
+            {
+                SubSurface* ss_ptr = SubSurfaceMgr.GetSubSurf( id );
+                if ( ss_ptr )
+                {
+                    parent_id = ss_ptr->GetCompID();
+                }
+            }
+            else if ( pc_type == vsp::ATTROBJ_XSEC )
+            {
+                ParmContainer* parent_pc = pc->GetParentContainerPtr();
+                if ( parent_pc )
+                {
+                    parent_pc = parent_pc->GetParentContainerPtr();
+                    if ( parent_pc )
+                    {
+                        parent_pc = parent_pc->GetParentContainerPtr();
+                        if ( parent_pc )
+                        {
+                            parent_id = parent_pc->GetID();
+                        }
+                    }
+                }
+            }
+            else if ( pc_type == vsp::ATTROBJ_SEC )
+            {
+                ParmContainer* parent_pc = pc->GetParentContainerPtr();
+                if ( parent_pc )
+                {
+                    parent_pc = parent_pc->GetParentContainerPtr();
+
+                    if ( parent_pc )
+                    {
+                        parent_id = parent_pc->GetID();
+                    }
+                }
+            }
+            else
+            {
+                ParmContainer* parent_pc = pc->GetParentContainerPtr();
+                if ( parent_pc )
+                {
+                    parent_id = parent_pc->GetID();
+                }
+            }
         }
     }
 
@@ -1433,6 +1482,7 @@ string AttributeMgrSingleton::GetName( const string & id, bool return_name_input
     if ( id.size() == vsp::ID_LENGTH_PARMCONTAINER )
     {
         ParmContainer* pc_ptr = ParmMgr.FindParmContainer( id );
+        ParmContainer* pc_parent;
         Link* link_ptr = dynamic_cast<Link*>(pc_ptr);
 
         if ( link_ptr )
@@ -1441,6 +1491,40 @@ string AttributeMgrSingleton::GetName( const string & id, bool return_name_input
         }
         else if ( pc_ptr )
         {
+            XSecSurf* xsec_surf = dynamic_cast< XSecSurf* >( pc_ptr );
+            int pc_type = pc_ptr->GetParmContainerType();
+            if ( pc_type == vsp::ATTROBJ_XSEC )
+            {
+                pc_parent = pc_ptr->GetParentContainerPtr();
+                if ( pc_parent )
+                {
+                    XSecSurf* xsp_ptr = dynamic_cast<XSecSurf*>( pc_parent->GetParentContainerPtr() );
+                    if ( xsp_ptr )
+                    {
+                        int xs_i = xsp_ptr->FindXSecIndex( pc_parent->GetID() );
+                        string name_str = string("Xsec_");
+                        name_str += to_string(xs_i);
+                        return name_str;
+                    }
+                }
+                return string("ERROR XSEC NAME");
+            }
+            else if ( pc_type == vsp::ATTROBJ_SEC )
+            {
+                XSecSurf* xsp_ptr = dynamic_cast<XSecSurf*>( pc_ptr->GetParentContainerPtr() );
+                if ( xsp_ptr )
+                {
+                    int xs_i = xsp_ptr->FindXSecIndex( pc_ptr->GetID() );
+                    string name_str = string("Sect_");
+                    name_str += to_string(xs_i);
+                    return name_str;
+                }
+                return string("ERROR SECT NAME");
+            }
+            else if ( xsec_surf )
+            {
+                return string("XSecs");
+            }
             return pc_ptr->GetName();
         }
     }
@@ -1801,18 +1885,38 @@ vector< vector< vector< string > > > AttributeMgrSingleton::GetAttrTreeVec( cons
             }
 
             if ( attachType == vsp::ATTROBJ_GEOM
+            || attachType == vsp::ATTROBJ_SEC
+            || attachType == vsp::ATTROBJ_XSEC
             || attachType == vsp::ATTROBJ_SUBSURF )
             {
                 if ( !check_root_id || CheckTreeVecID( attachID, root_id ) || special_parmission )
                 {
-                    bool remove_orphan_subsurf = false;
+                    bool exclude_orphan = false;
                     if ( attachType == vsp::ATTROBJ_SUBSURF )
                     {
                         vecbranch = ExtendStringVector( { "SubSurfs", attachID }, vecbranch );
                         attachID = GetObjectParent( attachID );
                         if ( attachID == "NONE" ) //I should know which one is the failure state... casting a wide net implies that it's a poorly controlled method
                         {
-                            remove_orphan_subsurf = true;
+                            exclude_orphan = true;
+                        }
+                    }
+                    else if ( attachType == vsp::ATTROBJ_XSEC )
+                    {
+                        vecbranch = ExtendStringVector( { "XSecs", attachID }, vecbranch );
+                        attachID = GetObjectParent( attachID );
+                        if ( attachID == "NONE" ) //I should know which one is the failure state... casting a wide net implies that it's a poorly controlled method
+                        {
+                            exclude_orphan = true;
+                        }
+                    }
+                    else if ( attachType == vsp::ATTROBJ_SEC )
+                    {
+                        vecbranch = ExtendStringVector( { "Sections", attachID }, vecbranch );
+                        attachID = GetObjectParent( attachID );
+                        if ( attachID == "NONE" ) //I should know which one is the failure state... casting a wide net implies that it's a poorly controlled method
+                        {
+                            exclude_orphan = true;
                         }
                     }
 
@@ -1829,7 +1933,7 @@ vector< vector< vector< string > > > AttributeMgrSingleton::GetAttrTreeVec( cons
                     }
                     branch_coll_vectors = GetCollParentVecs( branch_id_vectors );
 
-                    if ( !remove_orphan_subsurf && !VecInClipboard( { branch_id_vectors, branch_coll_vectors } ) )
+                    if ( !exclude_orphan && !VecInClipboard( { branch_id_vectors, branch_coll_vectors } ) )
                     {
                         attribute_vectors = ExtendNestedStringVector( attribute_vectors, branch_id_vectors );
                         parent_vectors = ExtendNestedStringVector( parent_vectors, branch_coll_vectors );

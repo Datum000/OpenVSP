@@ -177,6 +177,9 @@ XSecCurve::XSecCurve()
     m_ForceWingType = false;
 
     m_yscale = 1.0;
+
+    m_ParmContainer_Type = vsp::ATTROBJ_XSEC;
+    m_AttrCollection.SetCollAttach( GetID(), vsp::ATTROBJ_XSEC );
 }
 
 XSecCurve::~XSecCurve()

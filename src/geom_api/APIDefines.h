@@ -113,6 +113,8 @@ enum ATTRIBUTABLE_TYPE { ATTROBJ_PARM = 0,	/*!< Parm */
                          ATTROBJ_ADVLINK,	/*!< Adv Link */
                          ATTROBJ_ATTR,	/*!< Attribute  */
                          ATTROBJ_COLLECTION,	/*!< Attribute Collection */
+                         ATTROBJ_XSEC,	/*!< Cross Section */
+                         ATTROBJ_SEC,	/*!< Wing Section */
                          ATTROBJ_FREE,	/*!< Unattached attribute */
 };
 

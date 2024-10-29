@@ -485,10 +485,14 @@ public:
         ((static_cast <XSecScreen*>(data))->CallBack(w));
     }
 
+    virtual void GetCollIDs( vector < string > &collIDVec );
+
     void AddXSecLayout(bool include_point_type = true); // Default flag to include point type but allow PropGeom to skip it
 
     virtual void DisplayGroup(GroupLayout* group);
     virtual void RebuildCSTGroup(CSTAirfoil* cst_xs);
+
+    AttributeEditor m_XsecAttributeEditor;
 
 protected:
     GroupLayout* m_CurrDisplayGroup;
