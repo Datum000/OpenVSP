@@ -288,34 +288,76 @@ void VspGlWindow::update()
 
                 VSPGraphic::Viewport *vp = display->getViewport();
                 AttributeCollection* ac = vPtr->GetAttrCollection();
-                AttributeCollection* wm_ac = ac->FindPtr( "VSP::WatermarkGroup", 0 )->GetAttributeCollectionPtr( 0 );
+
+                AttributeCollection* wm_ac = nullptr;
+                if ( ac->FindPtr( "VSP::WatermarkGroup", 0 ) )
+                {
+                    wm_ac = ac->FindPtr( "VSP::WatermarkGroup", 0 )->GetAttributeCollectionPtr( 0 );
+                }
+
                 if ( vp && wm_ac )
                 {
                     VSPGraphic::Watermark * wm = display->getViewport()->getWatermark();
 
                     if ( wm )
                     {
-                        display->getViewport()->showWatermark( wm_ac->FindPtr( "VSP::Show", 0 )->GetBool( 0 ) );
+                        if ( wm_ac->FindPtr( "VSP::Show", 0 ) )
+                        {
+                            display->getViewport()->showWatermark( wm_ac->FindPtr( "VSP::Show", 0 )->GetBool( 0 ) );
+                            if ( wm_ac->FindPtr("VSP::Text", 0) )
+                            {
+                                wm->setText( wm_ac->FindPtr("VSP::Text", 0)->GetString(0) );
+                            }
 
-                        wm->setText( wm_ac->FindPtr("VSP::Text", 0)->GetString(0) );
+                            if ( wm_ac->FindPtr( "VSP::TextScale", 0 ) )
+                            {
+                                wm->setTextScale( wm_ac->FindPtr( "VSP::TextScale", 0 )->GetDouble( 0 ) );
+                            }
 
-                        wm->setTextScale( wm_ac->FindPtr( "VSP::TextScale", 0 )->GetDouble( 0 ) );
+                            vec3d tc = vec3d(0.,0.,0.);
+                            vec3d bc = vec3d(0.,0.,0.);
+                            vec3d fc = vec3d(0.,0.,0.);
+                            double ta = 0.;
+                            double ba = 0.;
+                            double fa = 0.;
 
-                        vec3d tc = wm_ac->FindPtr( "VSP::TextColor", 0 )->GetVec3d( 0 );
-                        double ta = wm_ac->FindPtr( "VSP::TextAlpha", 0 )->GetDouble( 0 );
-                        wm->setTextColor( tc.x(), tc.y(), tc.z(), ta );
+                            if ( wm_ac->FindPtr( "VSP::TextColor", 0 ) )
+                            {
+                                tc = wm_ac->FindPtr( "VSP::TextColor", 0 )->GetVec3d( 0 );
+                            }
+                            if ( wm_ac->FindPtr( "VSP::TextAlpha", 0 ) )
+                            {
+                                ta = wm_ac->FindPtr( "VSP::TextAlpha", 0 )->GetDouble( 0 );
+                            }
+                            if ( wm_ac->FindPtr( "VSP::EdgeColor", 0 ) )
+                            {
+                                bc = wm_ac->FindPtr( "VSP::EdgeColor", 0 )->GetVec3d( 0 );
+                            }
+                            if ( wm_ac->FindPtr( "VSP::EdgeAlpha", 0 ) )
+                            {
+                                ba = wm_ac->FindPtr( "VSP::EdgeAlpha", 0 )->GetDouble( 0 );
+                            }
+                            if ( wm_ac->FindPtr( "VSP::FillColor", 0 ) )
+                            {
+                                fc = wm_ac->FindPtr( "VSP::FillColor", 0 )->GetVec3d( 0 );
+                            }
+                            if ( wm_ac->FindPtr( "VSP::FillAlpha", 0 ) )
+                            {
+                                fa = wm_ac->FindPtr( "VSP::FillAlpha", 0 )->GetDouble( 0 );
+                            }
 
-                        vec3d bc = wm_ac->FindPtr( "VSP::EdgeColor", 0 )->GetVec3d( 0 );
-                        double ba = wm_ac->FindPtr( "VSP::EdgeAlpha", 0 )->GetDouble( 0 );
-                        wm->setLineColor( bc.x(), bc.y(), bc.z(), ba );
+                            wm->setTextColor( tc.x(), tc.y(), tc.z(), ta );
+                            wm->setLineColor( bc.x(), bc.y(), bc.z(), ba );
+                            wm->setFillColor( fc.x(), fc.y(), fc.z(), fa );
 
-                        vec3d fc = wm_ac->FindPtr( "VSP::FillColor", 0 )->GetVec3d( 0 );
-                        double fa = wm_ac->FindPtr( "VSP::FillAlpha", 0 )->GetDouble( 0 );
-                        wm->setFillColor( fc.x(), fc.y(), fc.z(), fa );
+                        }
+                        else
+                        {
+                            display->getViewport()->showWatermark( false );
+                        }
                     }
                 }
             }
-
         }
 
         vector<DrawObj *> drawObjs;
