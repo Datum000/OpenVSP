@@ -45,7 +45,7 @@ void AttributeTree::Init( ScreenMgr* mgr, GroupLayout * layout, Fl_Group* group,
     m_AttrTree->callback( StaticDeviceCB, this );
     m_AttrTree->selectmode( FL_TREE_SELECT_SINGLE );
     m_AttrTree->item_reselect_mode( FL_TREE_SELECTABLE_ALWAYS );
-    m_AttrTree->sortorder( FL_TREE_SORT_ASCENDING );
+    m_AttrTree->sortorder( FL_TREE_SORT_NONE );
 
     m_ColWidths[0] = 120;
     m_ColWidths[1] = 120;

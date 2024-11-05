@@ -139,6 +139,9 @@ public:
     static vector < vector < string > > ExtendNestedStringVector( vector < vector < string > > vec, vector < vector < string > > vec_add );
 
 protected:
+
+    static bool NestedVecSorter( const vector < vector < string > > & v1, const vector < vector < string > > & v2 );
+
     map< string, AttributeCollection*> m_AttrCollMap;
     map< string, NameValData*> m_AttrPtrMap;
 

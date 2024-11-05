@@ -1598,6 +1598,7 @@ vector< vector< vector< string > > > AttributeMgrSingleton::GetAttrTreeVec( cons
     //      2nd vec = vec of tree string's next-highest attributecollectionID at each index
 
     vector< vector< vector< string > > > attr_parent_vectors;
+
     vector< vector< string > > attribute_vectors;
     vector< vector< string > > parent_vectors;
 
@@ -1868,9 +1869,38 @@ vector< vector< vector< string > > > AttributeMgrSingleton::GetAttrTreeVec( cons
         }
     }
 
-    attr_parent_vectors.push_back( attribute_vectors );
-    attr_parent_vectors.push_back( parent_vectors );
+    vector< vector< vector < string > > > name_id_parent_vec; //for sorting
+    string name_concat;
+
+    for ( int i = 0; i != attribute_vectors.size(); ++i )
+    {
+        name_concat.clear();
+        for ( int j = 0; j != attribute_vectors[i].size(); ++j )
+        {
+            name_concat += GetName( attribute_vectors[i][j] );
+        }
+        name_id_parent_vec.push_back( { { name_concat }, attribute_vectors[i], parent_vectors[i] } );
+    }
+
+    sort( name_id_parent_vec.begin(), name_id_parent_vec.end(), AttributeMgrSingleton::NestedVecSorter );
+
+    vector < vector < string > > sorted_attribute_vectors;
+    vector < vector < string > > sorted_parent_vectors;
+
+    for ( int i = 0; i != name_id_parent_vec.size(); ++i )
+    {
+        sorted_attribute_vectors.push_back(name_id_parent_vec[i][1]);
+        sorted_parent_vectors.push_back(name_id_parent_vec[i][2]);
+    }
+
+    attr_parent_vectors.push_back( sorted_attribute_vectors );
+    attr_parent_vectors.push_back( sorted_parent_vectors );
 
     return attr_parent_vectors;
 
+}
+
+bool AttributeMgrSingleton::NestedVecSorter( const vector < vector < string > > & v1, const vector < vector < string > > & v2 )
+{
+    return v1[0][0] < v2[0][0];
 }
