@@ -14,8 +14,8 @@
 //==== Constructor ====//
 Link::Link()
 {
-    m_ParmContainer_Type = vsp::ATTROBJ_LINK;
-    m_AttrCollection.SetCollAttach( m_ID, m_ParmContainer_Type );
+    SetParmContainerType( vsp::ATTROBJ_LINK );
+    AttachAttrCollection();
 
     m_Name = "Link";
     m_OffsetFlag = true;

@@ -124,7 +124,7 @@ void ParmContainer::ChangeID( string id )
     }
 
     m_ID = id;
-    m_AttrCollection.SetCollAttach( m_ID, m_ParmContainer_Type );
+    AttachAttrCollection();
 
     for ( int i = 0 ; i < ( int )m_ParmVec.size() ; i++ )
     {

@@ -59,8 +59,8 @@ Vehicle::Vehicle()
 {
     m_Name = "Vehicle_Constructor";
 
-    m_ParmContainer_Type = vsp::ATTROBJ_VEH;
-    m_AttrCollection.SetCollAttach( m_ID, m_ParmContainer_Type );
+    SetParmContainerType( vsp::ATTROBJ_VEH );
+    AttachAttrCollection();
 
     m_STEPLenUnit.Init( "LenUnit", "STEPSettings", this, vsp::LEN_FT, vsp::LEN_MM, vsp::LEN_YD );
     m_STEPTol.Init( "Tolerance", "STEPSettings", this, 1e-6, 1e-12, 1e12 );

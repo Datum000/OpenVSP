@@ -42,8 +42,8 @@ XSec::XSec( XSecCurve *xsc )
     m_SectTessU.Init( "SectTess_U", m_GroupName, this, 6, 2,  1000 );
     m_SectTessU.SetDescript( "Number of tessellated curves in the U direction for this section" );
 
-    m_ParmContainer_Type = vsp::ATTROBJ_SEC;
-    m_AttrCollection.SetCollAttach( GetID(), vsp::ATTROBJ_SEC );
+    SetParmContainerType( vsp::ATTROBJ_SEC );
+    AttachAttrCollection();
 }
 
 //==== Destructor ====//

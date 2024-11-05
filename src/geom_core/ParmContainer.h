@@ -56,6 +56,11 @@ public:
     virtual void SetName( const string& name, bool removeslashes = true );
     virtual string GetName() const                  { return m_Name; }
 
+    void SetParmContainerType( int type )
+    {
+        m_ParmContainer_Type = type;
+    }
+
     int GetParmContainerType()
     {
         return m_ParmContainer_Type;
@@ -84,6 +89,11 @@ public:
     AttributeCollection* GetAttrCollection()
     {
         return &m_AttrCollection;
+    }
+
+    void AttachAttrCollection()
+    {
+        m_AttrCollection.SetCollAttach( m_ID, m_ParmContainer_Type );
     }
 
     AttributeCollection m_AttrCollection;

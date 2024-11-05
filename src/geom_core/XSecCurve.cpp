@@ -178,8 +178,8 @@ XSecCurve::XSecCurve()
 
     m_yscale = 1.0;
 
-    m_ParmContainer_Type = vsp::ATTROBJ_XSEC;
-    m_AttrCollection.SetCollAttach( GetID(), vsp::ATTROBJ_XSEC );
+    SetParmContainerType( vsp::ATTROBJ_XSEC );
+    AttachAttrCollection();
 }
 
 XSecCurve::~XSecCurve()
