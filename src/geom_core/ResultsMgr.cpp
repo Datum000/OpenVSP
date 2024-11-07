@@ -521,14 +521,7 @@ void NameValData::DecodeXml( xmlNodePtr & node, vector < string > name_vector )
         string attachID = IDMgr.RemapID( XmlUtil::FindStringProp( node, "AttachID", default_str ) );
 
         string base_name = XmlUtil::FindStringProp( node, "Name", default_str );
-        string iter_name = base_name;
-        int counter = 1;
-        while ( !AttributeCollection::CanAddName( name_vector, iter_name ) && !protect_flag )
-        {
-            iter_name = base_name + '_' + to_string( counter );
-            counter ++;
-        }
-        m_Name = iter_name;
+        m_Name = AttributeMgr.IterName( base_name, name_vector, protect_flag );
         m_Type = XmlUtil::FindIntProp( node, "Type", default_int );
         m_Doc = XmlUtil::FindStringProp( node, "Desc", default_str );
         m_AttributeEventGroup = XmlUtil::FindIntProp( node, "EventGroup", vsp::ATTR_GROUP_NONE );
@@ -1124,14 +1117,15 @@ string AttributeCollection::GetNewAttrName( int attrType )
 
 void AttributeCollection::RenameAttr( const string & oldName, const string & newName )
 {
-    if ( CanGetName( GetAllAttrNames(), oldName ) && CanAddName( GetAllAttrNames(), newName ) )
+    string iter_new_name = AttributeMgr.IterName( newName, GetAllAttrNames() );
+    if ( CanGetName( GetAllAttrNames(), oldName ) && CanAddName( GetAllAttrNames(), iter_new_name ) )
     {
         if ( m_DataMap[oldName].size() )
         {
-            m_DataMap[oldName][0].SetName( newName );
+            m_DataMap[oldName][0].SetName( iter_new_name );
 
             auto node = m_DataMap.extract( oldName );
-            node.key() = newName;
+            node.key() = iter_new_name;
 
             m_DataMap.insert( move(node) );
         }

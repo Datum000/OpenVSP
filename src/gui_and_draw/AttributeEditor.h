@@ -30,6 +30,14 @@ public:
     void Deactivate();
     void Update();
     void UpdateTree();
+    void SetRedrawFlag()
+    {
+        m_RedrawFlag = true;
+    }
+    void ClearRedrawFlag()
+    {
+        m_RedrawFlag = false;
+    }
     void SetTreeRootID( const string & attrCollectionID = "" );
     void SetTreeAttrID();
     void AddEmptyCollID( const string & coll_id );
@@ -50,25 +58,29 @@ public:
 
     static int CheckVecMatch( const vector < string > & vec1, const vector < string > & vec2 );
 
-    void SetAutoSelectID( const string & id );
+    void SetAutoSelectID( const vector < string > & ids );
 
-    string GetSelectedID()
+    vector < string > GetSelectedID()
     {
-        if ( m_SelectID.size() )
+        vector < string > ids;
+        for ( int i = 0; i != m_SelectIDs.size(); ++i )
         {
-            return m_SelectID.back();
+            if ( !m_SelectIDs.at( i ).empty() )
+            {
+                ids.push_back( m_SelectIDs.at( i ).back() );
+            }
         }
-        return string();
+        return ids;
     }
 
-    string GetTreeAttrID()
+    vector < string > GetTreeAttrID()
     {
-        return m_AttrID;
+        return m_AttrIDs;
     }
 
-    string GetTreeCollID()
+    vector < string > GetTreeCollID()
     {
-        return m_CollID;
+        return m_CollIDs;
     }
 
     string GetTreeRootCollID()
@@ -85,7 +97,7 @@ public:
 
 protected:
 
-    string m_AutoSelectID;
+    vector < string > m_AutoSelectIDs;
 
     virtual void SetValAndLimits( Parm* p )                      {} // Do Nothing
 
@@ -99,9 +111,9 @@ protected:
 
     GroupLayout m_TreeGroup;
 
-    vector < string > m_SelectID; //build select ID from positively-ID'd anchor point (anything with an actual ID) and vector path from that one.
-    string m_AttrID;
-    string m_CollID;
+    vector < vector < string > > m_SelectIDs; //build select ID from positively-ID'd anchor point (anything with an actual ID) and vector path from that one.
+    vector < string > m_AttrIDs;
+    vector < string > m_CollIDs;
     string m_AttrRootCollID;
 
     vector < string > m_OpenBranchUpdate;
@@ -114,6 +126,8 @@ protected:
     VspScreen* m_Screen;
     ScreenMgr* m_ScreenMgr;
 
+    bool m_RedrawFlag;
+
 private:
 
     map< TreeRowItem*, string > m_MapTreeAttributes;
@@ -121,6 +135,7 @@ private:
     map< TreeRowItem*, vector < string > > m_MapTreeFullIDs;
 
     TreeRowItem* m_TreeItem;
+    vector < TreeRowItem* > m_TreeItemArray;
 };
 
 class AttributeEditor : public GuiDevice
@@ -160,6 +175,8 @@ protected:
 
     VspScreen* m_Screen;
     ScreenMgr* m_ScreenMgr;
+
+    bool m_ShowState;
 
 private:
 

@@ -103,6 +103,7 @@ public:
     void SetAttributeDoubleMatrix( const string &attrID, const vector< vector< double > > &value, bool updateFlag = true );
 
     void DeleteAttribute( const string &attrID, bool updateFlag = true );
+    void DeleteAttribute( const vector < string > &attrIDs, bool updateFlag = true );
 
     void GuiAddAttribute( AttributeCollection* ac_ptr, const int & attrType, bool updateFlag = true );
     void AddAttributeBool( const string &collID, const string &attributeName, int value, bool updateFlag = true );
@@ -120,8 +121,13 @@ public:
     void PasteAttribute( const string &obj_id, bool updateFlag = true );
 
     int CopyAttributeUtil( const string &attr_id, bool updateFlag = true );
+    int CopyAttributeUtil( const vector < string > &attr_ids, bool updateFlag = true );
     void CutAttributeUtil( const string &attr_id, bool updateFlag = true );
+    void CutAttributeUtil( const vector < string > &attr_ids, bool updateFlag = true );
     void PasteAttributeUtil( const string &obj_id, bool updateFlag = true );
+    void PasteAttributeUtil( const vector < string > &obj_ids, bool updateFlag = true );
+
+    static string IterName( const string & base_name, const vector < string > & name_vector = {}, bool protect_flag = false );
 
     //tree things
     vector < vector < vector < string > > > GetAttrTreeVec( const string & root_id = "", vector < string > inc_ids = {}, bool exclude_clipboard = true, int attr_type = vsp::INVALID_TYPE, int attach_type = vsp::ATTROBJ_FREE, const string & attr_search = "", bool case_sens = false );

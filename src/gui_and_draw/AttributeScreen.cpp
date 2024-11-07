@@ -305,9 +305,9 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
 
     //initialize pointers etc.
     m_CurAttrGroup = &m_StringEntryLayout;
-    m_AttrID.clear();
-    m_CollID.clear();
-    m_GroupID.clear();
+
+    m_AttrIDs.clear();
+    m_CollIDs.clear();
 
     Vehicle* veh = VehicleMgr.GetVehicle();
     m_AttrBoolParmPtr = &veh->m_AttrBoolButtonParm;
@@ -318,6 +318,8 @@ AttributeExplorer::AttributeExplorer( ScreenMgr* mgr ) : BasicScreen( mgr, 800, 
     m_ObjTypeSearchChoice.SetVal( vsp::ATTROBJ_FREE );
     AttrTypeDispGroup( vsp::STRING_DATA, &m_StringEntryLayout );
 
+    m_valid_collector_set = false;
+    m_types_selected = 0;
 }
 
 AttributeExplorer::~AttributeExplorer()
@@ -347,60 +349,34 @@ bool AttributeExplorer::Update()
     {
         m_AttrToggleField.Update( "False" );
     }
+
     m_AttrTreeWidget.SetSearchTerms( m_AttrTypeSearchChoice.GetVal(), m_ObjTypeSearchChoice.GetVal(), m_AttrSearchIn.GetString(), m_CaseSensParmPtr->Get() );
     m_AttrTreeWidget.Update();
+
     SetAttrData();
+    UpdateAttrFields();
 
-    GroupLayout* group_choice  = nullptr;
-
-    NameValData* attr_ptr = AttributeMgr.GetAttributePtr( m_AttrID );
-
-    if ( attr_ptr )
-    {
-        switch ( attr_ptr->GetType() )
-        {
-        case vsp::BOOL_DATA:
-            group_choice = &m_ToggleEntryLayout;
-            break;
-        case vsp::STRING_DATA:
-            group_choice = &m_StringEntryLayout;
-            break;
-        case vsp::PARM_REFERENCE_DATA:
-            group_choice = &m_ParmRefEntryLayout;
-            break;
-        case vsp::INT_DATA:
-            group_choice = &m_InlineEntryLayout;
-            break;
-        case vsp::DOUBLE_DATA:
-            group_choice = &m_InlineEntryLayout;
-            break;
-        case vsp::ATTR_COLLECTION_DATA:
-            group_choice = &m_EmptyEntryLayout;
-            break;
-        case vsp::VEC3D_DATA:
-            group_choice = &m_Vec3dEntryLayout;
-            break;
-        case vsp::INT_MATRIX_DATA:
-            group_choice = &m_IntMatEntryLayout;
-            break;
-        case vsp::DOUBLE_MATRIX_DATA:
-            group_choice = &m_DblMatEntryLayout;
-            break;
-        }
-    }
-    UpdateAttrFields( group_choice );
     return true;
 };
 
 void AttributeExplorer::SetAttrData()
 {
-    m_AttrID = m_AttrTreeWidget.GetTreeAttrID();
-    m_CollID = m_AttrTreeWidget.GetTreeCollID();
-    m_GroupID.clear();
-    if ( AttributeMgr.GetAttributeType( m_AttrID ) == vsp::ATTR_COLLECTION_DATA )
+    m_AttrIDs = m_AttrTreeWidget.GetTreeAttrID();
+    m_CollIDs = m_AttrTreeWidget.GetTreeCollID();
+
+    AttributeCollection* ac_ptr = nullptr;
+
+    m_valid_collector_set = !( m_CollIDs.empty() );
+    for ( int i = 0; i != m_CollIDs.size(); ++i )
     {
-        m_GroupID = AttributeMgr.GetChildCollection( m_AttrID );
+        ac_ptr = AttributeMgr.GetCollectionPtr( m_CollIDs.at( i ) );
+        if ( !ac_ptr )
+        {
+            m_valid_collector_set = false;
+        }
     }
+
+    m_types_selected = NumAttrTypes();
 };
 
 void AttributeExplorer::AddEmptyCollID( vector < string > coll_ids )
@@ -437,8 +413,42 @@ void AttributeExplorer::GetEmptyColls()
 
     AddEmptyCollID( coll_id_vec );
 }
+int AttributeExplorer::NumAttrTypes()
+{
+    NameValData* attr_ptr = nullptr;
 
-void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
+    int num_attr_types = 0;
+    int current_type = -2;
+    bool type_in_vec = false;
+    vector < int > attr_type_vec;
+
+    for ( int i = 0; i != m_AttrIDs.size(); ++ i )
+    {
+        type_in_vec = false;
+        current_type = -2;
+        attr_ptr = AttributeMgr.GetAttributePtr( m_AttrIDs.at( i ) );
+
+        if ( attr_ptr )
+        {
+            current_type = attr_ptr->GetType();
+            for ( int j = 0; j != attr_type_vec.size(); ++j )
+            {
+                if ( attr_type_vec.at( j ) == current_type )
+                {
+                    type_in_vec = true;
+                }
+            }
+            if ( !type_in_vec )
+            {
+                attr_type_vec.push_back( attr_ptr->GetType() );
+                num_attr_types++;
+            }
+        }
+    }
+    return num_attr_types;
+}
+
+void AttributeExplorer::UpdateAttrFields()
 {
     bool attrDataBool = false;
     int attrDataInt;
@@ -453,134 +463,161 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
     string attrBufferText = "";
     string attrInlineText = "";
 
-    string header_str = "Attribute Explorer";
     string name_str = "";
 
     //default to string data
     int attr_type = -2;
 
-    NameValData* attr_ptr = AttributeMgr.GetAttributePtr( m_AttrID );
-    AttributeCollection* ac_ptr = AttributeMgr.GetCollectionPtr( m_CollID );
-    AttributeCollection* ac_group_ptr = AttributeMgr.GetCollectionPtr( m_GroupID );
+    // only update if just one selected? Or if all are the same type??
 
-    if ( attr_ptr )
+    GroupLayout* group_choice = nullptr;
+    if ( m_types_selected == 1 )
     {
-        name_str = attr_ptr->GetName();
-        attr_type = attr_ptr->GetType();
-
-        attrDataBool = attr_ptr->GetBool( 0 );
-        attrDataInt = attr_ptr->GetInt( 0 );
-        attrDataDbl = attr_ptr->GetDouble( 0 );
-        attrDataStr = attr_ptr->GetString( 0 );
-
-
-
-        attrDescStr = attr_ptr->GetDoc();
-
-        if ( attr_type == vsp::VEC3D_DATA
-          || attr_type == vsp::INT_MATRIX_DATA
-          || attr_type == vsp::DOUBLE_MATRIX_DATA )
-        {
-            NameValData* col_attr = ac_ptr->FindPtr( name_str+"_col" );
-            NameValData* row_attr = ac_ptr->FindPtr( name_str+"_row" );
-
-            if ( col_attr && col_attr->GetType() == vsp::STRING_DATA )
-            {
-                m_Vec3dSpreadSingle->set_col_header_txt( col_attr->GetString( 0 ) );
-                m_IntMatrixSpreadSheet->set_col_header_txt( col_attr->GetString( 0 ) );
-                m_DoubleMatrixSpreadSheet->set_col_header_txt( col_attr->GetString( 0 ) );
-            }
-            else
-            {
-                m_Vec3dSpreadSingle->set_col_user_header_flag( false );
-                m_IntMatrixSpreadSheet->set_col_user_header_flag( false );
-                m_DoubleMatrixSpreadSheet->set_col_user_header_flag( false );
-            }
-
-            if ( row_attr && row_attr->GetType() == vsp::STRING_DATA )
-            {
-                m_Vec3dSpreadSingle->set_row_header_txt( row_attr->GetString( 0 ) );
-                m_IntMatrixSpreadSheet->set_row_header_txt( row_attr->GetString( 0 ) );
-                m_DoubleMatrixSpreadSheet->set_row_header_txt( row_attr->GetString( 0 ) );
-            }
-            else
-            {
-                m_Vec3dSpreadSingle->set_row_user_header_flag( false );
-                m_IntMatrixSpreadSheet->set_row_user_header_flag( false );
-                m_DoubleMatrixSpreadSheet->set_row_user_header_flag( false );
-            }
-        }
-
-        switch ( attr_type )
+        int attr_type_multi = AttributeMgr.GetAttributePtr( m_AttrIDs.front() )->GetType();
+        switch ( attr_type_multi )
         {
         case vsp::BOOL_DATA:
-            m_AttrBoolParmPtr->Set( attrDataBool );
+            group_choice = &m_ToggleEntryLayout;
             break;
         case vsp::STRING_DATA:
-            attrBufferText = attrDataStr;
+            group_choice = &m_StringEntryLayout;
             break;
         case vsp::PARM_REFERENCE_DATA:
-            {
-                attrParmIDStr = attr_ptr->GetParmID( 0 );
-                Parm* p = ParmMgr.FindParm( attr_ptr->GetParmID( 0 ) );
-                attrParmNameStr = string("");
-                if ( p )
-                {
-                    string pc_name = p->GetContainer()->GetName();
-                    string grp_name = p->GetGroupName();
-                    string p_name = p->GetName();
-                    attrParmNameStr = pc_name + " | " + grp_name + " | " + p_name;
-                }
-                m_AttrParmPicker.SetParmChoice( attr_ptr->GetParmID( 0 ) );
-                m_AttrParmPicker.Update();
-            }
+            group_choice = &m_ParmRefEntryLayout;
             break;
         case vsp::INT_DATA:
-            attrInlineText = to_string( attrDataInt );
+            group_choice = &m_InlineEntryLayout;
             break;
         case vsp::DOUBLE_DATA:
-            attrInlineText = to_string( attrDataDbl );
+            group_choice = &m_InlineEntryLayout;
             break;
         case vsp::ATTR_COLLECTION_DATA:
+            group_choice = &m_EmptyEntryLayout;
             break;
         case vsp::VEC3D_DATA:
-            m_Vec3dSpreadSingle->set_data( &( attr_ptr->GetVec3dData() ) );
+            group_choice = &m_Vec3dEntryLayout;
             break;
         case vsp::INT_MATRIX_DATA:
-            m_IntMatrixSpreadSheet->set_data( &( attr_ptr->GetIntMatData() ) );
+            group_choice = &m_IntMatEntryLayout;
             break;
         case vsp::DOUBLE_MATRIX_DATA:
-            m_DoubleMatrixSpreadSheet->set_data( &( attr_ptr->GetDoubleMatData() ) );
+            group_choice = &m_DblMatEntryLayout;
+            break;
+        default:
+            group_choice = nullptr;
             break;
         }
-
-        m_CutButton.Activate();
-        m_CopyButton.Activate();
-
     }
-    else
+
+    // if single attribute selected, populate editor fields
+
+    NameValData* attr_ptr = nullptr;
+    AttributeCollection* ac_ptr = nullptr;
+
+    if ( m_AttrIDs.size() == 1 && m_CollIDs.size() == 1 )
     {
-        m_CutButton.Deactivate();
-        m_CopyButton.Deactivate();
+        NameValData* attr_ptr = AttributeMgr.GetAttributePtr( m_AttrIDs.front() );
+        AttributeCollection* ac_ptr = AttributeMgr.GetCollectionPtr( m_CollIDs.front() );
+
+        if ( attr_ptr && ac_ptr )
+        {
+            name_str = attr_ptr->GetName();
+            attr_type = attr_ptr->GetType();
+
+            attrDataBool = attr_ptr->GetBool( 0 );
+            attrDataInt = attr_ptr->GetInt( 0 );
+            attrDataDbl = attr_ptr->GetDouble( 0 );
+            attrDataStr = attr_ptr->GetString( 0 );
+
+            attrDescStr = attr_ptr->GetDoc();
+
+            // check for row/col naming attributes
+            if ( attr_type == vsp::VEC3D_DATA
+            || attr_type == vsp::INT_MATRIX_DATA
+            || attr_type == vsp::DOUBLE_MATRIX_DATA )
+            {
+                NameValData* col_attr = ac_ptr->FindPtr( name_str+"_col" );
+                NameValData* row_attr = ac_ptr->FindPtr( name_str+"_row" );
+
+                if ( col_attr && col_attr->GetType() == vsp::STRING_DATA )
+                {
+                    m_Vec3dSpreadSingle->set_col_header_txt( col_attr->GetString( 0 ) );
+                    m_IntMatrixSpreadSheet->set_col_header_txt( col_attr->GetString( 0 ) );
+                    m_DoubleMatrixSpreadSheet->set_col_header_txt( col_attr->GetString( 0 ) );
+                }
+                else
+                {
+                    m_Vec3dSpreadSingle->set_col_user_header_flag( false );
+                    m_IntMatrixSpreadSheet->set_col_user_header_flag( false );
+                    m_DoubleMatrixSpreadSheet->set_col_user_header_flag( false );
+                }
+
+                if ( row_attr && row_attr->GetType() == vsp::STRING_DATA )
+                {
+                    m_Vec3dSpreadSingle->set_row_header_txt( row_attr->GetString( 0 ) );
+                    m_IntMatrixSpreadSheet->set_row_header_txt( row_attr->GetString( 0 ) );
+                    m_DoubleMatrixSpreadSheet->set_row_header_txt( row_attr->GetString( 0 ) );
+                }
+                else
+                {
+                    m_Vec3dSpreadSingle->set_row_user_header_flag( false );
+                    m_IntMatrixSpreadSheet->set_row_user_header_flag( false );
+                    m_DoubleMatrixSpreadSheet->set_row_user_header_flag( false );
+                }
+            }
+
+            // populate appropriate fields based on attr type
+            switch ( attr_type )
+            {
+            case vsp::BOOL_DATA:
+                m_AttrBoolParmPtr->Set( attrDataBool );
+                break;
+            case vsp::STRING_DATA:
+                attrBufferText = attrDataStr;
+                break;
+            case vsp::PARM_REFERENCE_DATA:
+                {
+                    attrParmIDStr = attr_ptr->GetParmID( 0 );
+                    Parm* p = ParmMgr.FindParm( attr_ptr->GetParmID( 0 ) );
+                    attrParmNameStr = string("");
+                    if ( p )
+                    {
+                        string pc_name = p->GetContainer()->GetName();
+                        string grp_name = p->GetGroupName();
+                        string p_name = p->GetName();
+                        attrParmNameStr = pc_name + " | " + grp_name + " | " + p_name;
+                    }
+                    m_AttrParmPicker.SetParmChoice( attr_ptr->GetParmID( 0 ) );
+                    m_AttrParmPicker.Update();
+                }
+                break;
+            case vsp::INT_DATA:
+                attrInlineText = to_string( attrDataInt );
+                break;
+            case vsp::DOUBLE_DATA:
+                attrInlineText = to_string( attrDataDbl );
+                break;
+            case vsp::ATTR_COLLECTION_DATA:
+                break;
+            case vsp::VEC3D_DATA:
+                m_Vec3dSpreadSingle->set_data( &( attr_ptr->GetVec3dData() ) );
+                break;
+            case vsp::INT_MATRIX_DATA:
+                m_IntMatrixSpreadSheet->set_data( &( attr_ptr->GetIntMatData() ) );
+                break;
+            case vsp::DOUBLE_MATRIX_DATA:
+                m_DoubleMatrixSpreadSheet->set_data( &( attr_ptr->GetDoubleMatData() ) );
+                break;
+            }
+        }
     }
 
-    if ( ac_group_ptr )
+    if ( m_valid_collector_set )
     {
         m_AttrAddTrigger.Activate();
         m_AttrAddGroupTrigger.Activate();
         m_PasteButton.Activate();
-        header_str += " : ";
-        header_str += AttributeMgr.GetName( ac_group_ptr->GetAttachID() );
     }
-    else if ( ac_ptr )
-    {
-        m_AttrAddTrigger.Activate();
-        m_AttrAddGroupTrigger.Activate();
-        m_PasteButton.Activate();
-        header_str += " : ";
-        header_str += AttributeMgr.GetName( ac_ptr->GetAttachID() );
-    }
-
     else
     {
         m_AttrAddTrigger.Deactivate();
@@ -588,6 +625,7 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
         m_PasteButton.Deactivate();
     }
 
+    // update attribute fields
     m_AttrNameIn.Update( name_str );
     m_DataBuffer->text( attrBufferText.c_str() );
     m_InlineDataIn.Update( attrInlineText.c_str() );
@@ -596,15 +634,20 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
     m_AttrParmIDInput.Update( attrParmIDStr );
 
     m_AttrDescIn.Update( attrDescStr.c_str() );
-    SetTitle(header_str);
 
-    AttrTypeDispGroup( attr_type , group );
-
-    if ( !group || ( attr_ptr && attr_ptr->IsProtected() ) )
+    // toggle copy/paste/edit controls based on validity of attribute selection
+    bool valid_attrs = !( m_AttrIDs.empty() );
+    for ( int i = 0; i != m_AttrIDs.size(); ++i )
     {
-        m_CutButton.Deactivate();
-        m_CopyButton.Deactivate();
+        NameValData* a = AttributeMgr.GetAttributePtr( m_AttrIDs.at( i ) );
+        if ( !( a && !a->IsProtected() ) )
+        {
+            valid_attrs = false;
+        }
+    }
 
+    if ( !valid_attrs )
+    {
         m_AttrNameIn.Deactivate();
         m_AttrDescIn.Deactivate();
         m_DelButton.Deactivate();
@@ -620,12 +663,16 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
         m_AttrImatRowDel.Deactivate();
         m_AttrImatColAdd.Deactivate();
         m_AttrImatColDel.Deactivate();
+
+        m_CutButton.Deactivate();
+        m_CopyButton.Deactivate();
     }
     else
     {
         m_AttrNameIn.Activate();
         m_AttrDescIn.Activate();
         m_DelButton.Activate();
+
         m_AttrParmPicker.Activate();
         m_AttrVec3dRowAdd.Activate();
         m_AttrVec3dRowDel.Activate();
@@ -637,12 +684,18 @@ void AttributeExplorer::UpdateAttrFields( GroupLayout* group )
         m_AttrImatRowDel.Activate();
         m_AttrImatColAdd.Activate();
         m_AttrImatColDel.Activate();
+
+        m_CutButton.Activate();
+        m_CopyButton.Activate();
     }
+
+    AttrTypeDispGroup( attr_type , group_choice );
 }
 
+// only used by double click opening of attribute explorer from the inline gui
 void AttributeExplorer::SetTreeAutoSelectID( const string & id )
 {
-    m_AttrTreeWidget.SetAutoSelectID( id );
+    m_AttrTreeWidget.SetAutoSelectID( { id } );
 }
 
 void AttributeExplorer::AttributeAdd()
@@ -652,189 +705,225 @@ void AttributeExplorer::AttributeAdd()
 
 void AttributeExplorer::AttributeAdd( int attrAddType )
 {
-    AttributeCollection* ac_ptr = AttributeMgr.GetCollectionPtr( m_CollID );
-    AttributeCollection* ac_group_ptr = AttributeMgr.GetCollectionPtr( m_GroupID );
+    // do for every currently selected collection and group id...
 
-    string new_id;
-    if ( ac_group_ptr )
+    vector < string > new_ids;
+
+    AttributeCollection* ac_ptr;
+
+    for ( int i = 0; i != m_CollIDs.size(); ++i )
     {
-        AttributeMgr.GuiAddAttribute( ac_group_ptr, attrAddType );
-        new_id = ac_group_ptr->GetLastAddedID();
+        ac_ptr = AttributeMgr.GetCollectionPtr( m_CollIDs.at( i ) );
+        if ( ac_ptr )
+        {
+            AttributeMgr.GuiAddAttribute( ac_ptr, attrAddType );
+            new_ids.push_back( ac_ptr->GetLastAddedID() );
+        }
     }
-    else if ( ac_ptr )
-    {
-        AttributeMgr.GuiAddAttribute( ac_ptr, attrAddType );
-        new_id = ac_ptr->GetLastAddedID();
-    }
-    m_AttrTreeWidget.SetAutoSelectID( new_id );
+    m_AttrTreeWidget.SetAutoSelectID( new_ids );
 }
 
 void AttributeExplorer::AttributeModify( GuiDevice* gui_device, Fl_Widget *w )
 {
-    NameValData* attr_ptr = AttributeMgr.GetAttributePtr( m_AttrID );
+    NameValData* attr_ptr = nullptr;
+    string attr_id = "NONE";
+    int attrType = -1;
 
-    //AttributeModify will detect if the attribute has changed to a new & valid attribute, and create that attribute in the place of the old one
-    if ( attr_ptr )
+    if ( m_types_selected > 0 )
     {
-        int attrType = attr_ptr->GetType();
-
-        //rename
-        if ( gui_device == &m_AttrNameIn )
+        for ( int i = 0; i != m_AttrIDs.size(); ++ i )
         {
-            AttributeMgr.SetAttributeName( m_AttrID, m_AttrNameIn.GetString() );
-        }
-
-        //change description
-        else if ( gui_device == &m_AttrDescIn )
-        {
-            AttributeMgr.SetAttributeDoc( m_AttrID, m_AttrDescIn.GetString() );
-        }
-
-        //modify bool data
-        else if ( gui_device == &m_AttrDataToggleIn && attrType == vsp::BOOL_DATA )
-        {
-            AttributeMgr.SetAttributeBool( m_AttrID, m_AttrBoolParmPtr->Get() );
-        }
-
-        //modify int data
-        else if ( gui_device == &m_InlineDataIn && attrType == vsp::INT_DATA )
-        {
-            if ( AttributeEditor::canMakeInt( m_InlineDataIn.GetString() ) )
+            attr_ptr = AttributeMgr.GetAttributePtr( m_AttrIDs.at( i ) );
+            //AttributeModify will detect if the attribute has changed to a new & valid attribute, and create that attribute in the place of the old one
+            if ( attr_ptr )
             {
-                AttributeMgr.SetAttributeInt( m_AttrID, stoi( m_InlineDataIn.GetString() ) );
+                attr_id = attr_ptr->GetID();
+                attrType = attr_ptr->GetType();
+
+                //rename
+                if ( gui_device == &m_AttrNameIn )
+                {
+                    AttributeMgr.SetAttributeName( attr_id, m_AttrNameIn.GetString() );
+                }
+
+                //change description
+                else if ( gui_device == &m_AttrDescIn )
+                {
+                    AttributeMgr.SetAttributeDoc( attr_id, m_AttrDescIn.GetString() );
+                }
+
+                //modify bool data
+                else if ( gui_device == &m_AttrDataToggleIn && attrType == vsp::BOOL_DATA )
+                {
+                    AttributeMgr.SetAttributeBool( attr_id, m_AttrBoolParmPtr->Get() );
+                }
+
+                //modify int data
+                else if ( gui_device == &m_InlineDataIn && attrType == vsp::INT_DATA )
+                {
+                    if ( AttributeEditor::canMakeInt( m_InlineDataIn.GetString() ) )
+                    {
+                        AttributeMgr.SetAttributeInt( attr_id, stoi( m_InlineDataIn.GetString() ) );
+                    }
+                }
+
+                //modify double data
+                else if ( gui_device == &m_InlineDataIn && attrType == vsp::DOUBLE_DATA )
+                {
+                    if ( AttributeEditor::canMakeDbl( m_InlineDataIn.GetString() ) )
+                    {
+                        AttributeMgr.SetAttributeDouble( attr_id, stod( m_InlineDataIn.GetString() ) );
+                    }
+                }
+
+                //modify string data
+                else if ( static_cast<Fl_Text_Editor * >( w ) == m_DataText && attrType == vsp::STRING_DATA )
+                {
+                    AttributeMgr.SetAttributeString( attr_id, m_DataBuffer->text() );
+                }
+
+                //modify parm id data
+                else if ( ( gui_device == &m_AttrParmIDInput || gui_device == &m_AttrParmPicker || w == m_ParmRefEntryLayout.GetGroup() ) && attrType == vsp::PARM_REFERENCE_DATA )
+                {
+                    // string p_id = ( gui_device == &m_AttrParmPicker ) ? m_AttrParmPicker.GetParmChoice() : Fl::event_text();
+                    string p_id;
+
+                    if ( gui_device == &m_AttrParmIDInput )
+                    {
+                        p_id = m_AttrParmIDInput.GetString();
+                    }
+                    else if ( gui_device == &m_AttrParmPicker )
+                    {
+                        p_id = m_AttrParmPicker.GetParmChoice();
+                    }
+                    else
+                    {
+                        p_id = Fl::event_text();
+                    }
+
+                    AttributeMgr.SetAttributeParmID( attr_id, p_id );
+
+                    Parm* p = ParmMgr.FindParm( p_id );
+                    if ( p )
+                    {
+                        m_AttrParmIDInput.Update( p_id );
+
+                        double parm_range = ( abs( p->Get() ) > 0.00001 ) ? p->Get()*0.5 : 10.;
+
+                        m_AttrParmSlider.SetRange( parm_range );
+                    }
+                }
+
+                //vec3d & matrix data modification already done via the spreadsheet widgets
+
+                //vec3d resizing
+                else if ( gui_device == &m_AttrVec3dRowAdd && attrType == vsp::VEC3D_DATA )
+                {
+                    vector < vec3d > * attrVec3dPtr = &attr_ptr->GetVec3dData();
+                    ResizeVector( attrVec3dPtr, 1, vec3d(0.,0.,0.) );
+                }
+
+                else if ( gui_device == &m_AttrVec3dRowDel && attrType == vsp::VEC3D_DATA )
+                {
+                    vector < vec3d > * attrVec3dPtr = &attr_ptr->GetVec3dData();
+                    ResizeVector( attrVec3dPtr, -1, vec3d(0.,0.,0.) );
+                }
+
+                //int matrix resizing
+                else if ( gui_device == &m_AttrImatRowAdd && attrType == vsp::INT_MATRIX_DATA )
+                {
+                    vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
+                    ResizeMat( attrImatPtr, {1, 0}, 0 );
+                }
+
+                else if ( gui_device == &m_AttrImatRowDel && attrType == vsp::INT_MATRIX_DATA )
+                {
+                    vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
+                    ResizeMat( attrImatPtr, {-1, 0}, 0 );
+                }
+
+                else if ( gui_device == &m_AttrImatColAdd && attrType == vsp::INT_MATRIX_DATA )
+                {
+                    vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
+                    ResizeMat( attrImatPtr, {0, 1}, 0 );
+                }
+
+                else if ( gui_device == &m_AttrImatColDel && attrType == vsp::INT_MATRIX_DATA )
+                {
+                    vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
+                    ResizeMat( attrImatPtr, {0, -1}, 0 );
+                }
+
+                //double matrix resizing
+                else if ( gui_device == &m_AttrDmatRowAdd && attrType == vsp::DOUBLE_MATRIX_DATA )
+                {
+                    vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
+                    ResizeMat( attrDmatPtr, {1, 0}, 0. );
+                }
+
+                else if ( gui_device == &m_AttrDmatRowDel && attrType == vsp::DOUBLE_MATRIX_DATA )
+                {
+                    vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
+                    ResizeMat( attrDmatPtr, {-1, 0}, 0. );
+                }
+
+                else if ( gui_device == &m_AttrDmatColAdd && attrType == vsp::DOUBLE_MATRIX_DATA )
+                {
+                    vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
+                    ResizeMat( attrDmatPtr, {0, 1}, 0. );
+                }
+
+                else if ( gui_device == &m_AttrDmatColDel && attrType == vsp::DOUBLE_MATRIX_DATA )
+                {
+                    vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
+                    ResizeMat( attrDmatPtr, {0, -1}, 0. );
+                }
+
+                AttributeMgr.SetAttrDirtyFlag( attr_ptr->GetID() );
             }
         }
-
-        //modify double data
-        else if ( gui_device == &m_InlineDataIn && attrType == vsp::DOUBLE_DATA )
-        {
-            if ( AttributeEditor::canMakeDbl( m_InlineDataIn.GetString() ) )
-            {
-                AttributeMgr.SetAttributeDouble( m_AttrID, stod( m_InlineDataIn.GetString() ) );
-            }
-        }
-
-        //modify string data
-        else if ( static_cast<Fl_Text_Editor * >( w ) == m_DataText && attrType == vsp::STRING_DATA )
-        {
-            AttributeMgr.SetAttributeString( m_AttrID, m_DataBuffer->text() );
-        }
-
-        //modify parm id data
-        else if ( ( gui_device == &m_AttrParmIDInput || gui_device == &m_AttrParmPicker || w == m_ParmRefEntryLayout.GetGroup() ) && attrType == vsp::PARM_REFERENCE_DATA )
-        {
-            // string p_id = ( gui_device == &m_AttrParmPicker ) ? m_AttrParmPicker.GetParmChoice() : Fl::event_text();
-            string p_id;
-
-            if ( gui_device == &m_AttrParmIDInput )
-            {
-                p_id = m_AttrParmIDInput.GetString();
-            }
-            else if ( gui_device == &m_AttrParmPicker )
-            {
-                p_id = m_AttrParmPicker.GetParmChoice();
-            }
-            else
-            {
-                p_id = Fl::event_text();
-            }
-
-            AttributeMgr.SetAttributeParmID( m_AttrID, p_id );
-
-            Parm* p = ParmMgr.FindParm( p_id );
-            if ( p )
-            {
-                m_AttrParmIDInput.Update( p_id );
-
-                double parm_range = ( abs( p->Get() ) > 0.00001 ) ? p->Get()*0.5 : 10.;
-
-                m_AttrParmSlider.SetRange( parm_range );
-            }
-        }
-
-        //vec3d & matrix data modification already done via the spreadsheet widgets
-
-        //vec3d resizing
-        else if ( gui_device == &m_AttrVec3dRowAdd && attrType == vsp::VEC3D_DATA )
-        {
-            vector < vec3d > * attrVec3dPtr = &attr_ptr->GetVec3dData();
-            ResizeVector( attrVec3dPtr, 1, vec3d(0.,0.,0.) );
-        }
-
-        else if ( gui_device == &m_AttrVec3dRowDel && attrType == vsp::VEC3D_DATA )
-        {
-            vector < vec3d > * attrVec3dPtr = &attr_ptr->GetVec3dData();
-            ResizeVector( attrVec3dPtr, -1, vec3d(0.,0.,0.) );
-        }
-
-        //int matrix resizing
-        else if ( gui_device == &m_AttrImatRowAdd && attrType == vsp::INT_MATRIX_DATA )
-        {
-            vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
-            ResizeMat( attrImatPtr, {1, 0}, 0 );
-        }
-
-        else if ( gui_device == &m_AttrImatRowDel && attrType == vsp::INT_MATRIX_DATA )
-        {
-            vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
-            ResizeMat( attrImatPtr, {-1, 0}, 0 );
-        }
-
-        else if ( gui_device == &m_AttrImatColAdd && attrType == vsp::INT_MATRIX_DATA )
-        {
-            vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
-            ResizeMat( attrImatPtr, {0, 1}, 0 );
-        }
-
-        else if ( gui_device == &m_AttrImatColDel && attrType == vsp::INT_MATRIX_DATA )
-        {
-            vector < vector < int > > * attrImatPtr = &attr_ptr->GetIntMatData();
-            ResizeMat( attrImatPtr, {0, -1}, 0 );
-        }
-
-        //double matrix resizing
-        else if ( gui_device == &m_AttrDmatRowAdd && attrType == vsp::DOUBLE_MATRIX_DATA )
-        {
-            vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
-            ResizeMat( attrDmatPtr, {1, 0}, 0. );
-        }
-
-        else if ( gui_device == &m_AttrDmatRowDel && attrType == vsp::DOUBLE_MATRIX_DATA )
-        {
-            vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
-            ResizeMat( attrDmatPtr, {-1, 0}, 0. );
-        }
-
-        else if ( gui_device == &m_AttrDmatColAdd && attrType == vsp::DOUBLE_MATRIX_DATA )
-        {
-            vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
-            ResizeMat( attrDmatPtr, {0, 1}, 0. );
-        }
-
-        else if ( gui_device == &m_AttrDmatColDel && attrType == vsp::DOUBLE_MATRIX_DATA )
-        {
-            vector < vector < double > > * attrDmatPtr = &attr_ptr->GetDoubleMatData();
-            ResizeMat( attrDmatPtr, {0, -1}, 0. );
-        }
-
-        AttributeMgr.SetAttrDirtyFlag( attr_ptr->GetID() );
     }
 }
 
+// Control which GUI group is shown/hidden for attribute edit window, and set data label descriptor
 void AttributeExplorer::AttrTypeDispGroup( int attr_type, GroupLayout * group )
 {
     // rename data entry label
     bool cap = true;
     bool short_name = false;
 
-    string data_name = NameValData::GetTypeName( attr_type, cap, short_name );
-    if ( data_name.size() )
-    {
-        data_name += " ";
-    }
-    data_name += "Data";
+    string data_name;
 
-    NameValData* attr_ptr = AttributeMgr.GetAttributePtr( m_AttrID );
+    string header_str = "Attribute Explorer";
+
+    if ( m_types_selected == 1 )
+    {
+        NameValData* nvd_temp = AttributeMgr.GetAttributePtr( m_AttrIDs.front() );
+        if ( nvd_temp )
+        {
+            attr_type = nvd_temp->GetType();
+        }
+
+        data_name = NameValData::GetTypeName( attr_type, cap, short_name );
+
+        if ( data_name.size() )
+        {
+            data_name += " ";
+        }
+        data_name += "Data";
+    }
+    else
+    {
+        data_name = "Multiple Data Types";
+    }
+
+    NameValData* attr_ptr = nullptr;
+    AttributeCollection* ac_ptr = nullptr;
+    if ( m_AttrIDs.size() == 1 && m_CollIDs.size() == 1 )
+    {
+        attr_ptr = AttributeMgr.GetAttributePtr( m_AttrIDs.front() );
+        ac_ptr = AttributeMgr.GetCollectionPtr( m_CollIDs.front() );
+    }
 
     if ( attr_ptr )
     {
@@ -855,6 +944,14 @@ void AttributeExplorer::AttrTypeDispGroup( int attr_type, GroupLayout * group )
     }
 
     m_DataLabel->copy_label( data_name.c_str() );
+
+    // set name of explorer to current attr collection
+    if ( ac_ptr )
+    {
+        header_str += " : ";
+        header_str += AttributeMgr.GetName( ac_ptr->GetAttachID() );
+    }
+    SetTitle(header_str);
 
     // select active GUI group by datatype
     if ( m_CurAttrGroup == group && group )
@@ -901,6 +998,10 @@ void AttributeExplorer::CallBack( Fl_Widget *w )
         }
     }
 
+    if ( w == m_AttrTreeWidget.GetTreeWidget() )
+    {
+        m_AttrTreeWidget.ClearRedrawFlag();
+    }
     m_ScreenMgr->SetUpdateFlag( true );
 }
 
@@ -917,8 +1018,8 @@ void AttributeExplorer::GuiDeviceCallBack( GuiDevice* gui_device )
     }
     else if ( gui_device == &m_DelButton )
     {
-        AttributeMgr.DeleteAttribute( m_AttrID );
-        m_AttrID.clear();
+        AttributeMgr.DeleteAttribute( m_AttrIDs );
+        m_AttrIDs.clear();
     }
     else if ( gui_device == &m_OpenTrigger )
     {
@@ -930,23 +1031,15 @@ void AttributeExplorer::GuiDeviceCallBack( GuiDevice* gui_device )
     }
     else if ( gui_device == &m_CutButton )
     {
-        AttributeMgr.CutAttributeUtil( m_AttrID );
+        AttributeMgr.CutAttributeUtil( m_AttrIDs );
     }
     else if ( gui_device == &m_CopyButton )
     {
-        AttributeMgr.CopyAttributeUtil( m_AttrID );
+        AttributeMgr.CopyAttributeUtil( m_AttrIDs );
     }
-    else if ( !m_CollID.empty() && ( gui_device == &m_PasteButton ) )
+    else if ( !m_CollIDs.empty() && ( gui_device == &m_PasteButton ) )
     {
-        if ( !m_GroupID.empty() )
-        {
-            AttributeMgr.PasteAttributeUtil( m_GroupID );
-        }
-        else
-        {
-            AttributeMgr.PasteAttributeUtil( m_CollID );
-        }
-
+        AttributeMgr.PasteAttributeUtil( m_CollIDs );
     }
     else
     {

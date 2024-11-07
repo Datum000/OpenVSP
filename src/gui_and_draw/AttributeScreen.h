@@ -34,7 +34,9 @@ public:
     void AddEmptyCollID( vector < string > coll_ids );
     void GetEmptyColls();
 
-    void UpdateAttrFields( GroupLayout* group );
+    int NumAttrTypes();
+
+    void UpdateAttrFields();
 
     void SetTreeAutoSelectID( const string & id );
     void AttributeAdd();
@@ -210,9 +212,11 @@ protected:
 
     GroupLayout* m_CurAttrGroup;
 
-    string m_AttrID;
-    string m_CollID;
-    string m_GroupID;
+    vector < string > m_AttrIDs;
+    vector < string > m_CollIDs;
+
+    bool m_valid_collector_set;
+    int m_types_selected;
 
 };
 

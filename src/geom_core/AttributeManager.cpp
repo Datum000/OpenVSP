@@ -756,6 +756,14 @@ void AttributeMgrSingleton::DeleteAttribute( const string &attrID, bool updateFl
     }
 }
 
+void AttributeMgrSingleton::DeleteAttribute( const vector < string > &attrIDs, bool updateFlag )
+{
+    for ( int i = 0; i != attrIDs.size(); ++i )
+    {
+        DeleteAttribute( attrIDs.at( i ), updateFlag );
+    }
+}
+
 void AttributeMgrSingleton::GuiAddAttribute( AttributeCollection* ac_ptr, const int & attrType, bool updateFlag )
 {
     string attrName = ac_ptr->GetNewAttrName( attrType );
@@ -1195,12 +1203,55 @@ int AttributeMgrSingleton::CopyAttributeUtil( const string &attr_id, bool update
     return 0;
 }
 
+int AttributeMgrSingleton::CopyAttributeUtil( const vector < string > &attr_ids, bool updateFlag )
+{
+    // check vector of attribute ids for any copy errors before clearing the clipboard and copying onto it
+    int copy_error = 0;
+    vector < NameValData* > nvd_ptr_vec;
+    for ( int i = 0; i != attr_ids.size(); ++ i )
+    {
+        nvd_ptr_vec.push_back( GetAttributePtr( attr_ids.at( i ) ) );
+        if ( !nvd_ptr_vec.at( i ) || nvd_ptr_vec.at( i )->IsProtected() )
+        {
+            copy_error = 1;
+        }
+    }
+
+    // return from method if there are any errors
+    if ( copy_error )
+    {
+        return 1;
+    }
+
+    // go through and populate the clipboard
+    m_AttrClipboard.clear();
+    for ( int i = 0; i != attr_ids.size(); ++ i )
+    {
+        NameValData nvd;
+        nvd.CopyFrom( nvd_ptr_vec.at( i ) );
+        m_AttrClipboard.push_back( nvd );
+        SetAttrDirtyFlag( nvd.GetID() );
+    }
+
+    if ( updateFlag )
+    {
+        Update();
+    }
+
+    return 0;
+}
+
 void AttributeMgrSingleton::CutAttributeUtil( const string &attr_id, bool updateFlag )
 {
-    int copy_error = CopyAttributeUtil( attr_id, false );
+    CutAttributeUtil( { attr_id }, updateFlag );
+}
+
+void AttributeMgrSingleton::CutAttributeUtil( const vector < string > &attr_ids, bool updateFlag )
+{
+    int copy_error = CopyAttributeUtil( attr_ids, false );
     if ( !copy_error )
     {
-        DeleteAttribute( attr_id, false );
+        DeleteAttribute( attr_ids, false );
     }
     if ( updateFlag )
     {
@@ -1232,6 +1283,48 @@ void AttributeMgrSingleton::PasteAttributeUtil( const string &coll_id, bool upda
             }
         }
         IDMgr.ResetRemapID( lastreset );
+    }
+}
+
+void AttributeMgrSingleton::PasteAttributeUtil( const vector < string > &coll_ids, bool updateFlag )
+{
+    int paste_error = 0;
+    vector < AttributeCollection* > ac_vec;
+    for ( int i = 0 ; i != coll_ids.size(); ++i )
+    {
+        ac_vec.push_back( GetCollectionPtr( coll_ids.at( i ) ) );
+        if ( !ac_vec.at( i ) )
+        {
+            paste_error = 1;
+        }
+    }
+
+    if ( paste_error )
+    {
+        return;
+    }
+
+    for ( int i = 0 ; i != ac_vec.size(); ++i )
+    {
+        for ( int j = 0; j != m_AttrClipboard.size(); ++j )
+        {
+            string lastreset = IDMgr.ResetRemapID();
+            NameValData nvd_ref = m_AttrClipboard[j];
+            NameValData nvd;
+            if ( &(nvd_ref) )
+            {
+                nvd.CopyFrom( &(nvd_ref) ,ac_vec.at( i )->GetAllAttrNames() );
+                nvd.SetAttrAttach( ac_vec.at( i )->GetID() );
+                string attrID = nvd.GetID();
+                ac_vec.at( i )->Add( nvd );
+                SetAttrDirtyFlag( attrID );
+            }
+            IDMgr.ResetRemapID( lastreset );
+        }
+    }
+    if ( updateFlag )
+    {
+        Update();
     }
 }
 
@@ -1316,6 +1409,7 @@ vector < string > AttributeMgrSingleton::GetCollParentVec( const vector < string
 
     string id;
     string curr_coll = "NONE";
+    NameValData* nvd;
     AttributeCollection* ac;
 
     for ( int i = 0; i != vec_ids.size(); i++ )
@@ -1726,6 +1820,21 @@ int AttributeMgrSingleton::GetObjectType( const string & id )
     }
 
     return vsp::ATTROBJ_FREE;
+}
+
+string AttributeMgrSingleton::IterName( const string & base_name, const vector < string > & name_vector, bool protect_flag )
+{
+    string iter_name = base_name;
+    if ( !protect_flag )
+    {
+        int counter = 1;
+        while ( !AttributeCollection::CanAddName( name_vector, iter_name ) )
+        {
+            iter_name = base_name + '_' + to_string( counter );
+            counter ++;
+        }
+    }
+    return iter_name;
 }
 
 vector< vector< vector< string > > > AttributeMgrSingleton::GetAttrTreeVec( const string & root_id, vector < string > inc_ids, bool exclude_clipboard, int filter_attr_type, int filter_attach_type, const string & filter_attr_string, bool filter_attr_case_sens )
