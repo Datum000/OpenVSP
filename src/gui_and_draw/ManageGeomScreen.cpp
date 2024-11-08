@@ -153,6 +153,24 @@ bool ManageGeomScreen::Update()
     return true;
 }
 
+void ManageGeomScreen::GetCollIDs( vector < string > &collIDVec )
+{
+    vector< string > activeVec = m_VehiclePtr->GetActiveGeomVec();
+
+    for ( int i = 0; i != activeVec.size(); ++i )
+    {
+        Geom* g = m_VehiclePtr->FindGeom( activeVec.at( i ) );
+        if ( g )
+        {
+            AttributeCollection* ac = g->GetAttrCollection();
+            if ( ac )
+            {
+                collIDVec.push_back( ac->GetID() );
+            }
+        }
+    }
+}
+
 //==== Update All Geom Screens ====//
 void ManageGeomScreen::UpdateGeomScreens()
 {
