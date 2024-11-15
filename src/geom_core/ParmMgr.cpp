@@ -128,23 +128,6 @@ Parm* ParmMgrSingleton::FindParm( const string & id )
     return NULL;
 }
 
-vector < Parm* > ParmMgrSingleton::GetAllParmPtrs()
-{
-    vector < Parm* > ParmVec;
-
-    unordered_map< string, Parm* >::iterator iter;
-
-    for ( iter = m_ParmMap.begin(); iter != m_ParmMap.end(); ++iter )
-    {
-        Parm* p = iter->second;
-        if ( p )
-        {
-            ParmVec.push_back( p );
-        }
-    }
-    return ParmVec;
-}
-
 //==== Find Parm Container GivenID ====//
 ParmContainer* ParmMgrSingleton::FindParmContainer( const string & id )
 {

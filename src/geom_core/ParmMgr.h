@@ -67,7 +67,6 @@ public:
     void RemoveParmContainer( ParmContainer* parm_container_ptr );
 
     Parm* FindParm( const string & id );
-    vector < Parm* > GetAllParmPtrs();
     ParmContainer* FindParmContainer( const string & id );
     vector < ParmContainer* > GetAllParmContainerPtrs();
 
