@@ -15,7 +15,7 @@
 #include "APIDefines.h"
 #include "ParmMgr.h"
 #include "Vehicle.h"
-#include "Xsec.h"
+#include "XSec.h"
 
 #include "VehicleMgr.h"
 #include "LinkMgr.h"
