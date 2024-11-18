@@ -113,7 +113,7 @@ bool DegenGeomScreen::Update()
 
     BasicScreen::Update();
 
-    m_ScreenMgr->LoadSetChoice( {&m_UseSet}, {m_SelectedSetIndex} );
+    m_ScreenMgr->LoadSetChoice( {&m_UseSet}, vector < int >( { m_SelectedSetIndex } ) );
 
     m_ScreenMgr->LoadModeChoice( m_ModeChoice, m_ModeIDs, m_SelectedModeChoice );
 

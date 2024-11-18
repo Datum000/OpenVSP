@@ -125,7 +125,7 @@ bool SnapToScreen::Update()
     string parm_id = m_ParmPicker.GetParmChoice();
     m_ValSlider.Update( parm_id );
 
-    m_ScreenMgr->LoadSetChoice( {&m_SetChoice}, {snap->m_CollisionSet} );
+    m_ScreenMgr->LoadSetChoice( {&m_SetChoice}, vector<int>({snap->m_CollisionSet}) );
     m_ScreenMgr->LoadModeChoice( m_ModeChoice, m_ModeIDs, snap->m_ModeID );
 
     m_ModeSetToggleGroup.Update( snap->m_UseMode.GetID() );

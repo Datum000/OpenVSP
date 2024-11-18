@@ -128,7 +128,7 @@ bool PSliceScreen::Update()
     assert( m_ScreenMgr );
     Vehicle* veh = m_ScreenMgr->GetVehiclePtr();
 
-    m_ScreenMgr->LoadSetChoice( {&m_SetChoice}, {m_SelectedSetIndex} );
+    m_ScreenMgr->LoadSetChoice( {&m_SetChoice}, vector<int>({m_SelectedSetIndex}) );
 
     m_ScreenMgr->LoadModeChoice( m_ModeChoice, m_ModeIDs, m_SelectedModeChoice );
 
