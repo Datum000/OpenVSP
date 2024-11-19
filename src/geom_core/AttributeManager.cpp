@@ -22,6 +22,7 @@
 #include "AdvLinkMgr.h"
 #include "SubSurfaceMgr.h"
 #include "MeasureMgr.h"
+#include "VarPresetMgr.h"
 
 #include "IDMgr.h"
 
@@ -1461,6 +1462,15 @@ string AttributeMgrSingleton::GetObjectParent( const string & id )
         }
     }
 
+    if ( id.size() == vsp::ID_LENGTH_PRESET_SETTING )
+    {
+        Setting* s = VarPresetMgr.FindSetting( id );
+        if ( s )
+        {
+            parent_id = s->GetGroupID();
+        }
+    }
+
     // parmcontainer type things with parents
     if ( id.size() == vsp::ID_LENGTH_PARMCONTAINER )
     {
@@ -1620,6 +1630,24 @@ string AttributeMgrSingleton::GetName( const string & id, bool return_name_input
                 return string("XSecs");
             }
             return pc_ptr->GetName();
+        }
+    }
+
+    if ( id.size() == vsp::ID_LENGTH_PRESET_SETTING )
+    {
+        Setting* s = VarPresetMgr.FindSetting( id );
+        if ( s )
+        {
+            return s->GetName();
+        }
+    }
+
+    if ( id.size() == vsp::ID_LENGTH_PRESET_GROUP )
+    {
+        SettingGroup* sg = VarPresetMgr.FindSettingGroup( id );
+        if ( sg )
+        {
+            return sg->GetName();
         }
     }
 
@@ -1816,6 +1844,24 @@ int AttributeMgrSingleton::GetObjectType( const string & id )
         if ( pc_ptr )
         {
             return pc_ptr->GetParmContainerType();
+        }
+    }
+
+    if ( id.size() == vsp::ID_LENGTH_PRESET_GROUP )
+    {
+        SettingGroup* sg = VarPresetMgr.FindSettingGroup( id );
+        if ( sg )
+        {
+            return vsp::ATTROBJ_VARGROUP;
+        }
+    }
+
+    if ( id.size() == vsp::ID_LENGTH_PRESET_SETTING )
+    {
+        Setting* s = VarPresetMgr.FindSetting( id );
+        if ( s )
+        {
+            return vsp::ATTROBJ_VARSETTING;
         }
     }
 
@@ -2127,6 +2173,36 @@ vector< vector< vector< string > > > AttributeMgrSingleton::GetAttrTreeVec( cons
                     if ( !check_root_id )
                     {
                         vecbranch = ExtendStringVector( { "Modes" }, vecbranch );
+                    }
+
+                    branch_id_vectors = TransposeExtendStringVector( vecbranch, nvd_ids );
+                    if ( !nvd_ids.size() )
+                    {
+                        branch_id_vectors.push_back( vecbranch );
+                    }
+                    branch_coll_vectors = GetCollParentVecs( branch_id_vectors );
+
+                    if ( !VecInClipboard( { branch_id_vectors, branch_coll_vectors } ) )
+                    {
+                        attribute_vectors = ExtendNestedStringVector( attribute_vectors, branch_id_vectors );
+                        parent_vectors = ExtendNestedStringVector( parent_vectors, branch_coll_vectors );
+                    }
+                }
+            }
+            else if ( attachType == vsp::ATTROBJ_VARGROUP || attachType == vsp::ATTROBJ_VARSETTING )
+            {
+                if ( !check_root_id || CheckTreeVecID( attachID, root_id ) || special_parmission )
+                {
+                    if ( attachType == vsp::ATTROBJ_VARSETTING )
+                    {
+                        vecbranch = ExtendStringVector( { "Settings", attachID }, vecbranch );
+                        attachID = GetObjectParent( attachID );
+                    }
+
+                    vecbranch.insert( vecbranch.begin() , attachID );
+                    if ( !check_root_id )
+                    {
+                        vecbranch = ExtendStringVector( { "VarPresetGroups" }, vecbranch );
                     }
 
                     branch_id_vectors = TransposeExtendStringVector( vecbranch, nvd_ids );
