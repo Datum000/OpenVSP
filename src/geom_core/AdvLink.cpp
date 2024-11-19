@@ -158,7 +158,7 @@ string AdvLink::MakeVarNameUnique( const string & name )
 void AdvLink::SetName( const string & name )
 {
     m_Name = name;
-    m_AdvLinkAttrCollection.SetCollAttach( m_Name, vsp::ATTROBJ_ADVLINK );
+    AttachAttrCollection();
 }
 
 void AdvLink::AddVar( const string & parm_id, const string & var_name, bool input_flag )

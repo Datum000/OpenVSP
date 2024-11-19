@@ -105,6 +105,11 @@ public:
     void ReadCode( const string & file_name );
     void SearchReplaceCode( const string & from, const string & to );
 
+    void AttachAttrCollection()
+    {
+        m_AdvLinkAttrCollection.SetCollAttach( m_Name, vsp::ATTROBJ_ADVLINK );
+    }
+
     AttributeCollection* GetAttrCollection()
     {
         return &m_AdvLinkAttrCollection;
