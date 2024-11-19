@@ -115,6 +115,10 @@ enum ATTRIBUTABLE_TYPE { ATTROBJ_PARM = 0,	/*!< Parm */
                          ATTROBJ_COLLECTION,	/*!< Attribute Collection */
                          ATTROBJ_XSEC,	/*!< Cross Section */
                          ATTROBJ_SEC,	/*!< Wing Section */
+                         ATTROBJ_MODE,	/*!< Mode */
+                         ATTROBJ_SET,	/*!< Geom Set */
+                         ATTROBJ_VARGROUP,	/*!< Var Preset Group */
+                         ATTROBJ_VARSETTING,	/*!< Var Preset Setting*/
                          ATTROBJ_FREE,	/*!< Unattached attribute */
 };
 
