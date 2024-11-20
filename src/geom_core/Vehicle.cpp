@@ -351,15 +351,33 @@ void Vehicle::Init()
     m_FileOpenVersion = -1;
 
     m_SetNameVec.clear();
+
+    for ( int i = 0; i < m_SetAttrCollVec.size(); i++ )
+    {
+        AttributeMgr.DeregisterCollID( m_SetAttrCollVec[i]->GetID() );
+        delete m_SetAttrCollVec[i];
+    }
+    m_SetAttrCollVec.clear();
+
     //==== Load Default Set Names =====//
     m_SetNameVec.push_back( "All" );        // SET_ALL
     m_SetNameVec.push_back( "Shown" );      // SET_SHOWN
     m_SetNameVec.push_back( "Not_Shown" );  // SET_NOT_SHOWN
+
     for ( int i = 0 ; i < m_NumUserSets(); i++ )
     {
         char str[256];
         snprintf( str, sizeof( str ),  "Set_%d", i );
         m_SetNameVec.push_back( str );
+
+        AttributeCollection* ac_ptr = new AttributeCollection();
+
+        string collname = m_SetNameVec.back() + "_Attributes";
+        ac_ptr->SetName( collname );
+        ac_ptr->SetCollAttach( GetID(), vsp::ATTROBJ_SET );
+        m_SetAttrCollVec.push_back( ac_ptr );
+
+        AttributeMgr.RegisterCollID( ac_ptr->GetID(), ac_ptr );
     }
 
     //==== Initialize Protected Vehicle Attributes ====//
@@ -602,6 +620,13 @@ void Vehicle::Wype()
     m_TopGeom.clear();
     m_ClipBoard.clear();
     m_SetNameVec.clear();
+
+    for ( int i = 0; i < m_SetAttrCollVec.size(); i++ )
+    {
+        AttributeMgr.DeregisterCollID( m_SetAttrCollVec[i]->GetID() );
+        delete m_SetAttrCollVec[i];
+    }
+    m_SetAttrCollVec.clear();
 
 //jrg should we clear types????
     m_GeomTypeVec.clear();
@@ -1643,10 +1668,28 @@ void Vehicle::SetNumUserSets( int nuset )
         m_SetNameVec.resize( ntotal );
     }
 
+    if ( m_SetAttrCollVec.size() > nuset )
+    {
+        for ( int i = nuset; i < m_SetAttrCollVec.size(); i++ )
+        {
+            AttributeMgr.DeregisterCollID( m_SetAttrCollVec[i]->GetID() );
+            delete m_SetAttrCollVec[i];
+        }
+        m_SetAttrCollVec.resize( nuset );
+    }
+
     while ( ( int )m_SetNameVec.size() < ntotal )
     {
         snprintf( str, sizeof( str ),  "Set_%d", ( int )m_SetNameVec.size() - SET_FIRST_USER );
         m_SetNameVec.push_back( string( str ) );
+
+        AttributeCollection* ac_ptr = new AttributeCollection();
+        string collname = m_SetNameVec.back() + "_Attributes";
+        ac_ptr->SetName( collname );
+        ac_ptr->SetCollAttach( GetID(), vsp::ATTROBJ_SET );
+        m_SetAttrCollVec.push_back( ac_ptr );
+
+        AttributeMgr.RegisterCollID( ac_ptr->GetID(), ac_ptr );
     }
 }
 
@@ -1658,6 +1701,14 @@ void Vehicle::SetSetName( int index, const string& name )
     }
 
     m_SetNameVec[index] = name;
+
+    int coll_index = index - SET_FIRST_USER;
+
+    if ( coll_index > -1 && coll_index <= m_SetAttrCollVec.size() )
+    {
+        string collname = name + "_Attributes";
+        m_SetAttrCollVec[ coll_index ]->SetName( collname );
+    }
 }
 
 vector< string > Vehicle::GetSetNameVec( bool includeNone )
@@ -1730,6 +1781,17 @@ vector< string > Vehicle::GetGeomSet( int index )
         }
     }
     return geom_id_vec;
+}
+
+string Vehicle::GetGeomSetAttrColl( int index )
+{
+    string ac_id = string();
+
+    if ( index > -1 && index <= m_SetAttrCollVec.size() )
+    {
+        ac_id = m_SetAttrCollVec[ index ]->GetID();
+    }
+    return ac_id;
 }
 
 void Vehicle::SetNormalDisplayType( int index )
@@ -1987,6 +2049,22 @@ xmlNodePtr Vehicle::EncodeXml( xmlNodePtr & node, int set )
         }
     }
 
+    xmlNodePtr setattrnode = xmlNewChild( node, NULL, BAD_CAST"SetAttrs", NULL );
+    if ( setattrnode )
+    {
+        for ( int i = 0; i < m_SetAttrCollVec.size(); i++ )
+        {
+            int j = i + SET_FIRST_USER;
+            string set_name = m_SetNameVec[j];
+            xmlNodePtr setcollnode = xmlNewChild( setattrnode, NULL, BAD_CAST set_name.c_str(), NULL );
+            if ( setcollnode )
+            {
+                m_SetAttrCollVec[i]->EncodeXml( setcollnode );
+            }
+
+        }
+    }
+
     return vehicle_node;
 }
 
@@ -2032,6 +2110,25 @@ xmlNodePtr Vehicle::DecodeXml( xmlNodePtr & node )
             {
                 string name = XmlUtil::ExtractString( namenode );
                 SetSetName( i, name );
+            }
+        }
+    }
+
+    for ( int i = 0; i < m_SetAttrCollVec.size(); i++ )
+    {
+        m_SetAttrCollVec[i]->SetCollAttach( GetID(), vsp::ATTROBJ_SET );
+    }
+
+    xmlNodePtr setattrnode = XmlUtil::GetNode( node, "SetAttrs", 0 );
+    if ( setattrnode )
+    {
+        for ( int i = 0; i < m_SetNameVec.size() - SET_FIRST_USER; i++ )
+        {
+            int j = i + SET_FIRST_USER;
+            xmlNodePtr collnode = XmlUtil::GetNode( setattrnode, m_SetNameVec[j].c_str(), 0 );
+            if ( collnode )
+            {
+                m_SetAttrCollVec[i]->DecodeXml( collnode );
             }
         }
     }

@@ -120,6 +120,7 @@ public:
     void NoShowSet( int index );
     void ShowSet( int index );
     vector< string > GetGeomSet( int index );
+    string GetGeomSetAttrColl( int index );
 
     void SetNormalDisplayType( int index );
     void SetDegenDisplayType( int index );
@@ -539,6 +540,8 @@ protected:
     vector< string > m_ClipBoard;               // Clipboard IDs
 
     vector< string > m_SetNameVec;
+
+    vector< AttributeCollection* > m_SetAttrCollVec;
 
     vector< GeomType > m_GeomTypeVec;
 

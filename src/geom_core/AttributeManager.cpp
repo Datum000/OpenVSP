@@ -2189,6 +2189,30 @@ vector< vector< vector< string > > > AttributeMgrSingleton::GetAttrTreeVec( cons
                     }
                 }
             }
+            else if ( attachType == vsp::ATTROBJ_SET )
+            {
+                if ( !check_root_id || CheckTreeVecID( attachID, root_id ) || special_parmission )
+                {
+                    vecbranch.insert( vecbranch.begin() , attachID );
+                    if ( !check_root_id )
+                    {
+                        vecbranch = ExtendStringVector( { "Sets" }, vecbranch );
+                    }
+
+                    branch_id_vectors = TransposeExtendStringVector( vecbranch, nvd_ids );
+                    if ( !nvd_ids.size() )
+                    {
+                        branch_id_vectors.push_back( vecbranch );
+                    }
+                    branch_coll_vectors = GetCollParentVecs( branch_id_vectors );
+
+                    if ( !VecInClipboard( { branch_id_vectors, branch_coll_vectors } ) )
+                    {
+                        attribute_vectors = ExtendNestedStringVector( attribute_vectors, branch_id_vectors );
+                        parent_vectors = ExtendNestedStringVector( parent_vectors, branch_coll_vectors );
+                    }
+                }
+            }
             else if ( attachType == vsp::ATTROBJ_VARGROUP || attachType == vsp::ATTROBJ_VARSETTING )
             {
                 if ( !check_root_id || CheckTreeVecID( attachID, root_id ) || special_parmission )
