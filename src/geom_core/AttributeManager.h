@@ -75,6 +75,8 @@ public:
 
     string GetChildCollection( const string &attachID );
 
+    string GetGeomSetCollection( const int & index );
+
     string GetAttributeID( const string &collID, const string &attributeName );
     string GetAttributeDoc( const string &attrID );
 
@@ -110,6 +112,7 @@ public:
     void AddAttributeInt( const string &collID, const string &attributeName, int value, bool updateFlag = true );
     void AddAttributeDouble( const string &collID, const string &attributeName, double value, bool updateFlag = true );
     void AddAttributeString( const string &collID, const string &attributeName, const string &value, bool updateFlag = true );
+    void AddAttributeParm( const string &collID, const string &attributeName, const string &parmID, bool updateFlag = true );
     void AddAttributeVec3d( const string &collID, const string &attributeName, const vector < vec3d > &value, bool updateFlag = true );
     void AddAttributeIntMatrix( const string &collID, const string &attributeName, const vector< vector< int > > &value, bool updateFlag = true );
     void AddAttributeDoubleMatrix( const string &collID, const string &attributeName, const vector< vector< double > > &value, bool updateFlag = true );

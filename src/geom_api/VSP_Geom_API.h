@@ -2679,6 +2679,32 @@ extern string GetChildCollection(const string & attachID );
     \ingroup Attributes
 */
 /*!
+    Get collection ID from a vehicle's GeomSet
+    \forcpponly
+    \code{.cpp}
+    //==== Write Some Fake Test Results =====//
+    // not implemented
+    \endcode
+    \endforcpponly
+    \beginPythonOnly
+    \code{.py}
+    # get attributes from user geom set at index 0
+    collection_id = vsp.GetGeomSetCollection( 0 );
+    #==== Write Some Fake Test Results =====//
+    # not implemented
+
+    \endcode
+    \endPythonOnly
+    \return String ID of attribute collection associated with the geom set
+    \param [in] attachID string ID of an OpenVSP object
+*/
+
+extern string GetGeomSetCollection( const int & index );
+
+/*!
+    \ingroup Attributes
+*/
+/*!
     Return the ID of an attribute by its name and collection ID
     \forcpponly
     \code{.cpp}
@@ -2908,6 +2934,82 @@ extern vector< double > GetAttributeDoubleVal(const string & attrID);
 */
 
 extern vector< string > GetAttributeStringVal(const string & attrID);
+
+/*!
+    \ingroup Attributes
+*/
+/*!
+    Get the parm value of a parm-type attribute
+    \forcpponly
+    \code{.cpp}
+    //==== Write Some Fake Test Results =====//
+    // not implemented
+    \endcode
+    \endforcpponly
+    \beginPythonOnly
+    \code{.py}
+    #Generate a parm attribute and get its value
+    VehID = vsp.GetVehicleID()
+    CollID = vsp.GetChildCollection( VehID )
+
+    pid = AddGeom( "POD", "" )
+    print( "---> Test Get Parm Val" )
+    parm_array = GetGeomParmIDs( pid )
+
+    AttrName = 'Example_Parm_Attr'
+    ParmID = Parm_Array[0];
+    vsp.AddAttributeParm( CollID, AttrName, ParmID )
+
+    AttrID = vsp.GetAttributeID( CollID, AttrName )
+    Parm_val = vsp.GetAttributeParmVal( AttrID )
+    #==== Write Some Fake Test Results =====//
+    # not implemented
+
+    \endcode
+    \endPythonOnly
+    \return Parm value of attribute
+    \param [in] attrID string ID of attribute
+*/
+
+extern vector < double > GetAttributeParmVal( const string &attrID );
+
+/*!
+    \ingroup Attributes
+*/
+/*!
+    Get the name of the referenced parm of a parm-type attribute
+    \forcpponly
+    \code{.cpp}
+    //==== Write Some Fake Test Results =====//
+    // not implemented
+    \endcode
+    \endforcpponly
+    \beginPythonOnly
+    \code{.py}
+    #Generate a parm attribute and get its value
+    VehID = vsp.GetVehicleID()
+    CollID = vsp.GetChildCollection( VehID )
+
+    pid = AddGeom( "POD", "" )
+    print( "---> Test Get Parm Val" )
+    parm_array = GetGeomParmIDs( pid )
+
+    AttrName = 'Example_Parm_Attr'
+    ParmID = Parm_Array[0];
+    vsp.AddAttributeBool( CollID, AttrName, ParmID )
+
+    AttrID = vsp.GetAttributeID( CollID, AttrName )
+    Parm_name = vsp.GetAttributeParmName( AttrID )
+    #==== Write Some Fake Test Results =====//
+    # not implemented
+
+    \endcode
+    \endPythonOnly
+    \return Parm name of attribute
+    \param [in] attrID string ID of attribute
+*/
+
+extern vector < string > GetAttributeParmName( const string &attrID );
 
 /*!
     \ingroup Attributes
@@ -3388,6 +3490,42 @@ extern void AddAttributeDouble( const string & collID, const string & attributeN
 */
 
 extern void AddAttributeString( const string & collID, const string & attributeName, const string & value );
+
+/*!
+    \ingroup Attributes
+*/
+/*!
+    Add a parm attribute by name to an attribute collection
+    \forcpponly
+    \code{.cpp}
+    //==== Write Some Fake Test Results =====//
+    // not implemented
+    \endcode
+    \endforcpponly
+    \beginPythonOnly
+    \code{.py}
+    VehID = vsp.GetVehicleID()
+    CollID = vsp.GetChildCollection( VehID )
+
+    pid = AddGeom( "POD", "" )
+    print( "---> Test Add Parm Attr" )
+    parm_array = GetGeomParmIDs( pid )
+
+    AttrName = 'Example_Parm_Attr'
+    ParmID = parm_array[0];
+    vsp.AddAttributeParm( CollID, AttrName, ParmID )
+
+    #==== Write Some Fake Test Results =====//
+    # not implemented
+
+    \endcode
+    \endPythonOnly
+    \param [in] collID string ID of attribute collection
+    \param [in] attributeName string name of new attribute
+    \param [in] value string value of new attribute
+*/
+
+extern void AddAttributeParm( const string &collID, const string &attributeName, const string &parmID );
 
 /*!
     \ingroup Attributes

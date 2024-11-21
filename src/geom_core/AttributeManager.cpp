@@ -524,6 +524,17 @@ string AttributeMgrSingleton::GetChildCollection( const string &attachID )
     return id;
 }
 
+string AttributeMgrSingleton::GetGeomSetCollection( const int & index )
+{
+    string ac_id = string("NONE");
+    Vehicle* veh = VehicleMgr.GetVehicle();
+    if ( veh )
+    {
+        ac_id = veh->GetGeomSetAttrColl( index );
+    }
+    return ac_id;
+}
+
 vector< string > AttributeMgrSingleton::FindAttributesInCollection( const string &collID )
 {
     vector< string > attribute_ids;
@@ -874,6 +885,16 @@ void AttributeMgrSingleton::AddAttributeString( const string &collID, const stri
     // Are all these if statements necessary?
     // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
     NameValData attrAdd = NameValData( attributeName, value, "" );
+    AddAttributeUtil( collID, attrAdd, updateFlag );
+}
+
+void AttributeMgrSingleton::AddAttributeParm( const string &collID, const string &attributeName, const string &parmID, bool updateFlag )
+{
+    // Are all these if statements necessary?
+    // Should we just throw an error if they are pointing to a parm/geom that doesn't exist?
+    NameValData attrAdd = NameValData( attributeName );
+    attrAdd.SetType( vsp::PARM_REFERENCE_DATA );
+    attrAdd.SetParmIDData( { parmID } );
     AddAttributeUtil( collID, attrAdd, updateFlag );
 }
 

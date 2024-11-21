@@ -3374,6 +3374,14 @@ void ScriptMgrSingleton::RegisterAPI( asIScriptEngine* se )
     assert( r >= 0 );
 
 
+    r = se->RegisterGlobalFunction( "array<double>@+ GetAttributeParmVal( const string & in attrID )", asMETHOD( ScriptMgrSingleton, GetAttributeParmVal ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
+    r = se->RegisterGlobalFunction( "array<string>@+ GetAttributeParmName( const string & in attrID )", asMETHOD( ScriptMgrSingleton, GetAttributeParmName ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
+    assert( r >= 0 );
+
+
     r = se->RegisterGlobalFunction( "array<vec3d>@+ GetAttributeVec3dVal( const string & in attrID )", asMETHOD( ScriptMgrSingleton, GetAttributeVec3dVal ), asCALL_THISCALL_ASGLOBAL, &ScriptMgr);
     assert( r >= 0 );
 
@@ -5397,6 +5405,18 @@ CScriptArray* ScriptMgrSingleton::GetAttributeDoubleVal( const string & attrID )
 CScriptArray* ScriptMgrSingleton::GetAttributeStringVal( const string & attrID )
 {
     m_ProxyStringArray = vsp::GetAttributeStringVal( attrID );
+    return GetProxyStringArray();
+}
+
+CScriptArray* ScriptMgrSingleton::GetAttributeParmVal( const string & attrID )
+{
+    m_ProxyDoubleArray = vsp::GetAttributeParmVal( attrID );
+    return GetProxyDoubleArray();
+}
+
+CScriptArray* ScriptMgrSingleton::GetAttributeParmName( const string & attrID )
+{
+    m_ProxyStringArray = vsp::GetAttributeParmName( attrID );
     return GetProxyStringArray();
 }
 

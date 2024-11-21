@@ -1450,6 +1450,11 @@ string GetChildCollection( const string & id )
     return AttributeMgr.GetChildCollection( id );
 }
 
+string GetGeomSetCollection( const int & index )
+{
+    return AttributeMgr.GetGeomSetCollection( index );
+}
+
 string GetAttributeID( const string & collID, const string & attributeName )
 {
     return AttributeMgr.GetAttributeID( collID, attributeName );
@@ -1488,6 +1493,16 @@ vector< double > GetAttributeDoubleVal( const string & attrID )
 vector< string > GetAttributeStringVal( const string & attrID )
 {
     return AttributeMgr.GetAttributeStringVal( attrID );
+}
+
+vector< double > GetAttributeParmVal( const string & attrID )
+{
+    return AttributeMgr.GetAttributeParmVal( attrID );
+}
+
+vector< string > GetAttributeParmName( const string & attrID )
+{
+    return AttributeMgr.GetAttributeParmName( attrID );
 }
 
 vector< vec3d > GetAttributeVec3dVal( const string & attrID )
@@ -1573,6 +1588,11 @@ void AddAttributeDouble( const string & collID, const string & attributeName, do
 void AddAttributeString( const string & collID, const string & attributeName, const string & value )
 {
     AttributeMgr.AddAttributeString( collID, attributeName, value );
+}
+
+void AddAttributeParm( const string & collID, const string & attributeName, const string & parmID )
+{
+    AttributeMgr.AddAttributeParm( collID, attributeName, parmID );
 }
 
 void AddAttributeVec3d( const string & collID, const string & attributeName, vector < vec3d > value )
