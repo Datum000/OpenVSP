@@ -15,7 +15,7 @@
 
 
 //==== Constructor ====//
-AdvLinkScreen::AdvLinkScreen( ScreenMgr* mgr ) : BasicScreen( mgr, 829, 645+175-20, "Advanced Parameter Links", "AdvLink.html" )
+AdvLinkScreen::AdvLinkScreen( ScreenMgr* mgr ) : BasicScreen( mgr, 829, 800, "Advanced Parameter Links", "AdvLink.html" )
 {
     m_InputBrowserSelect = -1;
     m_OutputBrowserSelect = -1;
