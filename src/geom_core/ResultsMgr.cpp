@@ -676,7 +676,7 @@ string NameValData::GetAsString( bool inline_data_flag )
         case vsp::PARM_REFERENCE_DATA:
             if ( m_ParmIDData.empty() )
             {
-                outstring.append( string(" - ") );
+                outstring.append( string("-") );
             }
             for ( unsigned int i = 0; i < m_ParmIDData.size(); i++ )
             {
@@ -685,9 +685,13 @@ string NameValData::GetAsString( bool inline_data_flag )
                 {
                     outstring.append( to_string( p->Get() ) );
                 }
+                else if ( !m_ParmIDData[i].empty() )
+                {
+                    outstring.append( string("INVALID PARM ID") );
+                }
                 else
                 {
-                    outstring.append( string(" - ") );
+                    outstring.append( string("-") );
                 }
             }
             break;

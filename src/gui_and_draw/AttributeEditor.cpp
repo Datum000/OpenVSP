@@ -208,6 +208,16 @@ void AttributeTree::UpdateTree()
                         {
                             const_cast< TreeRowItem* >( child_item )->labelcolor( FL_DARK_MAGENTA );
                         }
+                        else if ( nvd->GetType() == vsp::PARM_REFERENCE_DATA )
+                        {
+                            string pid = nvd->GetParmID( 0 );
+                            Parm* p = ParmMgr.FindParm( pid );
+                            if ( !pid.empty() && !p )
+                            {
+                                const_cast< TreeRowItem* >( child_item )->labelfont( FL_HELVETICA_BOLD );
+                                const_cast< TreeRowItem* >( child_item )->labelcolor( FL_RED );
+                            }
+                        }
                     }
                     else
                     {
